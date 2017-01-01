@@ -22,7 +22,7 @@ public class SecurityController {
     private LDAPService ldapService;
 
 
-    @RequestMapping(value = "/loginCheck", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Map loginCheck(@RequestBody Map loginData,
                           HttpServletRequest request) throws Exception {
 
@@ -52,17 +52,27 @@ public class SecurityController {
         return result;
     }
 
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    public Map logout(HttpServletRequest request) {
 
+        HttpSession session = request.getSession();
+        session.removeAttribute("user");
+
+        Map result = new HashMap();
+        result.put("succeed", true);
+
+        return result;
+    }
 
     @RequestMapping(value = "/session", method = RequestMethod.POST)
-    public String viewSession(HttpServletRequest request) {
+    public Map viewSession(HttpServletRequest request) throws Exception {
 
         Map user = (Map) request.getSession(true).getAttribute("user");
 
         if (user == null) {
-            return "No user connected";
+            throw new Exception("No user connected");
         }
 
-        return "session : " + user.toString();
+        return user;
     }
 }
