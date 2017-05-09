@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pandaroux.Service.GroupeService;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -17,7 +18,7 @@ public class GroupeAPI {
     private GroupeService groupeService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<Object> getGroupes() {
+    public List<Map> getGroupes() {
         return groupeService.getGroupes();
     }
 }

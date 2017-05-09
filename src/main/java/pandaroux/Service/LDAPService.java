@@ -9,6 +9,8 @@ import pandaroux.Service.LDAP.LDAPObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 public class LDAPService {
 
@@ -19,7 +21,7 @@ public class LDAPService {
     RoleRepository roleRepository;
 
 
-    public boolean loginCheck(String login, String password) {
+    public Object loginCheck(String login, String password) {
 
         LDAPAccess access = new LDAPAccess();
         try {
