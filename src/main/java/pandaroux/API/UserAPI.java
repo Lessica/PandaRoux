@@ -1,4 +1,4 @@
-package pandaroux.Controller.API;
+package pandaroux.API;
 
 import pandaroux.Entity.User;
 import pandaroux.Service.UserService;
