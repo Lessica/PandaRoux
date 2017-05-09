@@ -36,11 +36,11 @@ if (typeof jQuery !== 'undefined') {
             });
         },
         /*
-        {"id": group_id, "selected_student": [
-                {"id": 10000, "name": "Herbert Pratt"}, {"id": 10001, "name": "Alma Salazar"},
-                {"id": 10012, "name": "Gordon Pena"}, {"id": 10013, "name": "Fred Shaw"},
-                {"id": 10048, "name": "Dwayne Robinson"}, {"id": 10049, "name": "Edward Brady"},
-            ], "session_list": [
+            {"id": group_id, "selected_student": [
+                    {"id": 10000, "name": "Herbert Pratt"}, {"id": 10001, "name": "Alma Salazar"},
+                    {"id": 10012, "name": "Gordon Pena"}, {"id": 10013, "name": "Fred Shaw"},
+                    {"id": 10048, "name": "Dwayne Robinson"}, {"id": 10049, "name": "Edward Brady"},
+                ], "session_list": [
                 {
                     "id": 1,
                     "name": "Session 1",

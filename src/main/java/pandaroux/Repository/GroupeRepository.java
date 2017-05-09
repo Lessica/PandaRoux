@@ -14,6 +14,6 @@ public interface GroupeRepository  extends CrudRepository<Groupe, Integer> {
 
     List<Groupe> findAll();
 
-    @Query("SELECT g FROM Groupe g WHERE g.teacher.id = :id")
-    List<Groupe> findAllTeatcherGroupes(@Param("id") int id);
+    @Query("SELECT g.id AS id, g.name AS name FROM Groupe g WHERE g.teacher.id = ?1")
+    List<Object> getGroupes(int teacherId);
 }

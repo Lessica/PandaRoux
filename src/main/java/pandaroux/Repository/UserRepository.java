@@ -1,5 +1,6 @@
 package pandaroux.Repository;
 
+import org.springframework.data.repository.query.Param;
 import pandaroux.Entity.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -17,7 +18,4 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     void deleteById(Integer id);
 
     boolean exists(int id);
-
-    @Query("SELECT u FROM User u WHERE u.role.id = 1 ORDER BY u.id ASC")
-    List<User> findAllStudents();
 }
