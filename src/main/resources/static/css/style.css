@@ -1,0 +1,316 @@
+/* Global */
+
+.prototype {
+    display: none;
+}
+
+.overlay {
+    background: #fff;
+    bottom: 0;
+    left: 0;
+    opacity: .5;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.float-right {
+    float: right;
+}
+
+/* Navigation Bar */
+.header-icon {
+    width: 36px;
+    height: 36px;
+}
+
+.header-brand {
+    padding: 6px 15px;
+}
+
+/* Roux Login View */
+.roux-login-wrap {
+    display: table;
+    margin: 0 auto;
+    height: 100%;
+}
+
+.roux-login {
+    display: table-cell;
+    padding: 60px 0 60px;
+    width: 280px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.roux-login h1 {
+    margin: 0 0 1em;
+}
+
+.roux-login label {
+    font-weight: normal;
+    user-select: none;
+}
+
+.roux-login p {
+    margin: 1em 0;
+}
+
+.roux-login .i-logo {
+    width: 280px;
+    height: 50px;
+    display: inline-block;
+    background: url(data:image/svg+xml;base64,Cjxzdmcgd2lkdGg9IjcwMHB4IiBoZWlnaHQ9IjEyMHB4IiB2aWV3Qm94PSIwIDAgNzAwIDEyMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggNDMuMSAoMzkwMTIpIC0gaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoIC0tPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgICA8ZyBpZD0iUGFuZGFSb3V4Ij4KICAgICAgICAgICAgPHRleHQgZm9udC1mYW1pbHk9Ik5ldXJvcG9sIiBmb250LXNpemU9IjcyIiBmb250LXdlaWdodD0ibm9ybWFsIiBmaWxsPSIjMDAwMDAwIj4KICAgICAgICAgICAgICAgIDx0c3BhbiB4PSIxODUuOTg4MjgxIiB5PSIxMTYiPlBhbmRhUm91eDwvdHNwYW4+CiAgICAgICAgICAgIDwvdGV4dD4KICAgICAgICAgICAgPGltYWdlIGlkPSJsb2dvX3BhbmRhcm91eF9mb25kbm9pciIgeD0iMCIgeT0iMCIgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxMTYiIHhsaW5rOmhyZWY9ImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBS0FBQUFCMENBWUFBQUFDWURrVUFBQUFCR2RCVFVFQUExdGVYUDhtZUFBQURQWkpSRUZVZUFIdFhIMndGMVVaOWlNRlFWSUNBVk81Q0lXb3lJeXBKV1pjS0QvQ2p6U3BFRE95a05RYXhuS2NTcUt4WnZ3ajdZK2FSdE5Nc3pCRHFVeEhDMFhpWGpFL1JrekRJUTAwN2dVMVZDd3pTUVdSZXA3TDd6Qjc5N2RmWi9lY3MyZDMzM2ZtK2UzdStYemY1N3kvczJmUE9idTc3MUp0R1FiMXZ3U2NEdXdOckFGRWhBRm5ETXhEVGF1QUY0QTdnVW1BaUREZ2hJRnJVTXYvSWpEWlNlMVNTYU1adURqQzhaUXp2bzI0OFkxbVI0eTN5c0JZbEs2Y0xlNzRFdExzWlZVTEtieXhEQ3lCNVhHT0Z3eS9yYkVNaWVIV0dIaFBSdWRUam5pb05VMmtZQ01NN0dha0ZIZUZuS3RaMVdXYTZTVzVZd1oyZFZ4ZlVuV2N4enNOR0Fxc0JmNEloSVhoN3c4SEpsenpnV1FJc0NVaGpVUUpBN3Z3VnJrUlVMZE9IcDhBVGdhVXpNSkpNRDdyT1NlcVJZU0JSQVllUjJ5Y1F5MUMzRWxBYjBLYXVMd01meG9RRVFaaUdXRHZsK1JBSnVLbXhOWXVFYVV5NE1ORHlIUUhETnlHT2c1MFVJOVVvY25BdXpUVDIwamVZYVBRVUptamNNMWJjUmV3RGRnWDJCTXc5UkRHWG5vcndIRXN4NjZQQUg4RlhnVkVFaGp3d1FIM1N0RFBaQlNmc3JscnhyYWMwNnBnTTQ2YkFEcm1tOEFHWURsd0I3QWVFUEdFZ1o5Q0R4UGp2S3FVc1IzMlBnQjhIemdUR0FFMFZremRncElJM0IyUnZBWHlkdlJHUk1MckVUWTNJcndwUVcvQlVONjJ1YTJNc3dIZHdET0FTRUVHVGtCK0R2NmZCemp1ZWdXNERnZzdQUjJ3S3IyWEt6M3ZCeWZjNnpnU0VORmtnTHRWYmdmaUdtdEZxRHh4d0hpdU9IWmNESndON0JmaVRTNGpHTGdJWVZ6K2luTStGWDVLSUs4NFlEcGY1STNERjk1UlpnS0RBSkVBQTN2Z2ZDR2dIQ3p0eUxSS2JzQkpXbnFKNzg4Um42NS9BaHlyU0d6eWtac0gxZ0E2VGtJQzFWandSczI4T3ZVMElXMFgrUHM0MEVnWkRxdi9EdVJwNlBFdHhxN05tVDlQblhYT3d6bkc2UzFPSzNQWXJZQ21vNUQzU1dCc3pqSW10UEt0ejVsZnN2Vm5ZQm91L3dCd2p2R00vbEgrWHVWMXdJRXc2V0ZnL3dLbUhkSEsrMmlCTWlSck93UEhJNGlyTGR4UGVXSjdkRDFDa3JaUFpiM04zZHVpZ3M3OFh5QnJQa21ueDlWU2NGdVpIckhsRTRtSEh4bHlGcTZNcUFjUnJnS0lZOW5sNEI1dy9BR2cwdklKYUcvU1VUcGFiUHpPY0xrbWRheGJXWmY3NUlFNlk4RFJVUHhPdzhydjB5cVBEek1pYmhqNERxcDVDdkJpRGxISEFaZFk0SWU5QzJYWmpvUDhPbUxnVU5URGg4aXJBQisyNUtXYUhmY2RscUszcDRtQm1sL0VlZEh5Skw4K2g4K0M5K0RTYUtCSi9EaWRZdEV4Z2c3SWY2TTRVSGtjWEEzKytRcXJkMkt6WnpvOFlDMG50c1VCeStXQWJUMDEwQ2JXVDlQR2dOK0dCaU10YXFHbVlWZ0ZqZitWeGJxazZIUUcyTlpkd0t6MHBQWlRqRUFWdG51azQwSm1qSE5RcDIyYjZsTCtOMEp0WStVeXFRZTh6RXFOL1FzTmYyYURHeHRXOUU4aVZ5VXg4RDNVK3d0Z1lCbjE4dzJ5dHdEYi8yWnVSZzBMbjhoczF5dmxaK2U0QisweE5keEl0cSt2UkFVdUdtbERqQ0gvZGxTL0N4dnJVc2M1TVcxbFBIaGZsSmhsVzcwcFlvTlB3c3FZNjNCaXFud3B4eHlYRjZnR3NubmtmSkRMUmpzdHdoak9EN3JVUWVyS3p2ZlhJdHJMV05CZ2xPU3k5MlBEejRqUi9oYUVpMlA0eWNIY21EYlREZzQvQlYrQ0VseXZEUWJuQW9NR2ZCWVg2NElCY3U0TkEzeDR0SEk3M29pQ1hmYzZaeVhRZW5RSityaTJ2OHIxZlRxaDdUSkZCWHZBVHVUZ2NwaHI0YWM3NHVReFJQQWxkeEUvR1ZnTXRXWVdVUzNvZ0lVS0txQUU1eHlUNVB5a1NJa3JuWUZib2NINzhtb1JkTUNvcDlHODVlcmtDNitHaFBOeTYvNm53b0Z5N1JVRGZBRXFseWdIUEF5NUQ4cFZRdkZNeDJRbzRyZEljMk9HZEpLa0hBYTRXLzQzUmFxK0hKbkxHZ3kvaExyM3lLajh5aEwxTEl1Zkt0WDdyWXp0MkphTTI3UExOUFRBTm8yaUEvZ1prREwxbExyVCtaOGQzWFRSb2J3RmMvS1oweDFsQ2gwcmkzQTh5SytLaXZqTEFIZlFqTTJxSGgxd0R1QjY4am1zbjg3NGsyL21uUmN1UUs2OVltQkpWbTA0QjNjWHdGNndUT0ZyZ2c5b0tMQUthZmsxaFpNMDhwU1ZsS3NHUHdBZUJQak9oYzZmRGNrcktjT2dOVzFkbWtYNzdVaFU5dGlHZjRJODhtVmtLbHYzcFBxanByWk9oYzU4RXkwcFgxM2lNZzN0L3VNQkdmK0VEbXBLQ0tkYThuV2s5ckhCYmtxd2drTWVXNis2K3NRRi8yaXA0b01Ea3JTalVqV05UL0FWUlBsRVBIV1pISy91emhnT0llcSsrZmFITzYyTk9mSEZBZG1URlpHTGtka1hKOXdLWGJLT3E4Y2hiZDJkTUhHMXl4Y0g3Q3JpZmEyODgzRDB3UW5WcCtleW1qUUdDWi96UkhjYi9DVStqUGppZ0h3SmFnQlFWSHh3UXZiR3V2SmVaT0JZMklZRCtGRG1rWEdFK09LQUpPbkVPQ1Uxdzh0K09wNmlxYTlLemltYUhzQUhoekd0dzZQS3lQRFJKd2U4UHF4Y2dlc3luWEJpQWIySEkrOG13TFFEK0ZCZVp4UXZQamtnQitPY0hEY2wzRFplQnZFVENockEzU1c5SmVsdWt5L3VPV2dUbnh5UXhwL1hwbUd4QU43V1hkdDRTREdWKzNKek5ZRTdoV3c2UkJsbHQwMVB1VzZjTktQL1lxRHh3a1hzajRBN0hEWm0wUjVRNmM5ZFF1c2Q2cDNXTmliaWx5bmoxTkUzQjZTUms1UnlobzhMVUo0SkV0UEtNT1dBTko4N2hmN2hTTzgwdTB6RmQ5QXdTdDdscngyNTdmMFduWlNPMCt3S1JIQmNXQ1hoRmpUZXRqZytyb3VjRlRURXh4NlEvelRlTm0wSmw4Q2VCMHo5bzhQbDhCdk1wb1dyQ2VGNnFucDlUNUFjWHgzdy9xQ1NGczczUnBtTEFCdU5hUElXSERUOVhFdjYydUFncVV3dVZRNVJodm5xZ0RRZ3o0cUNzaXZyY1FZU3ZnZ2tFYVliTnlacjVUblMxZVhEVFo5WHR2dnNnR3o0RHFXb3hTTUgrcmNBdW80V2xaNWp0UUVXZFdYUlR3TlJkVmNwYk9kYmRMNHIzUXV5M3cyNGtGbW9wQWNvd2tuYk5JTUZ4UTlBbVZ3N0w2Sm4yWGs1QnUrVFh2eVdyVXhhL2F0M3FPcmtsNzNYRFFVNDRSS2dDL2tNS2tuanpmZjRnMG5VMlJVeHBBdDZjaWV4S3prVEZUMEo2RFlpMTNKZHllT29TRmMvbjlMejlZUSsyWXhmbnhTTDA0V0V1eGJPRzY0RDRuUUtodC9zV0xtUFpkUXJxS05QNTl6SjNpZDM0OWNueFpKMGVRaTZEdHFodHJOZmJwQWdXU3VCT04wNHQyWDc0UU5WdEVtVkgwaSt1V3ZMbkxrNG10d0sxY2FTNFFEMlNOT0J0WWJMelZMY0dDVGlQQjl2dFJ3UzhQVlE2c0ZYUmN1UU9haVVZOVlxeWdLbDlBaWN4UDJ6ZlEzblUrQVhsUUVOUG5LR2dCTzd2clpUa2w3ejFWcnd5ekRnc1lvMUltOTMvR0lXZDdsd1dxS3B3bm5jNVZVMVhqa2c5Yitwb2thY0FiM1hBQmRWVkg4VGF2L1pSQ0ZsbEJGMHdKOUJBWTVucWlpRG9mU1BBWTdETGdTQ2R1R3k5bExWZHV2WFVCeFQwUW1yTEpPZy9MWEFzd0Fkc1NreXVpNkcxbW5MRHdlL1R3RmNtZUQyOWpxTDZjMFVTUThPSnVQbVJ6WEtJd2cwV1lrUFpiME9teFlDSjBjWlhQR3dLNkcvRHh6bjBTSFNBWStzc0VGWlNIZ0M5bjBCcUVPdjJGbnh0cHJQR2Y2d3NEdm4zQkszZ2RkUlJzRW9Qamx6WmVNWWdCUEsyd0IrbFdBN1VCV1pBa1c3QWJXWVVCVzlnM3AyQlMvQzU3eHRaZWxSNnBKbUkreTlIZUNxRUozVVo1a0g1ZXJBZStKSHpjK3ZpWkY1R29vekF2Y0JmSUE1RENoampSZlZ0c2tuRVZLbk1mcWxhZDMzZ3pENHVEWWFtaGZ3Q2t6dUFWWUQzSkN3RnRqVUFudE9XeklRQlI4QmZCU1lBWERJVUNlWm5lYUFKSUJ6YWsxZTZrcHE4SGNRK1J6QUNYRHUwbmtHVUs4NGtOczlBWExJODYzQUZpQnVuTW1lbWhQb1E0SERBZjd4K1VESU1XcGRaVUthQTlMd3NRQ2RNRXRhcGhjUkJySXcwSXRFQi9NZmx5YnJrS0F6TFpIRUN3T2FEQ3htK3FocG1LaHlOaUNRdDQ1cFVaRVNKZ3prWU9CQzVIbFo5N2I2SjJUNmNJN0tKSXN3RUdTQXU1Y21NQ0RMTFRpWWNTb3UrRFFvSWd3VVllRG5Lck51RDhoOGZDTG0vck9SdkJBUkJqUVo0RXdBZmVjMTV0UHRBWm5uQllEYm5qamxJQ0lNNkRJd0d4bjZuRTgzWXpqOUVBUXNBemgvSlJBT3N2akFmV0VueW5NTERwZkJSZjJydzRGeUxReUVHSGdiMTF4ai8xY3dQTTh0T0ppZjU5Y0FId0xXODBKRUdJaGg0RlNFOTNPK21IUzVnL205dlp1QkxGMnhwR2tXVDNOeWUxV09qTE9RaHkvSmlKTUpCL1NCUzNQNFVPRXNIU2poVmtDY3NOa2NYRkxZa3dvVzhEbmtmMVVjc1pGL3hLOFc5QjFqMmZuWmo0WGloSTF5d2d1TWVZL0JndmlrdkZRY3NmYU9PTk9nejFncGlvL2ozWUNNRCt2RkFkL0JQaHFvakV5R3Bvc0FjY1RxYy9EZHluaGRoS0xjbG5NRndMVmxjY1pxY2ZCN3ROa0hnZHJJQ2JEazE0QTRvdDhjM0lVMjZxeU4xMFVZd2xjaHJ3S2tWL1RMRVZlaVRmang5a2JKTkZpN0FGZ092QUZJNytpZUErNkU5LzdwRmpwYWwvMVFBNzhOelRIaktrQ2MwUzRIOTRKamZzYkVtcGpZam1WTnVRd0ZINHMwcHdPY1k1d0lqQVJFOGpQd0pyTHlUa1BjRGZBRmZLdFNkUWNNa3NPWHdFY0Q0NEdQQUtjQTNMa3RrczdBQ2lUNUpjRHZiVzlLVDI0dVJaMGNNSW9WZm5EekVJQlRQVWNCL05MQVFjQWdvS215R1lhdkF4NEcrT2tWZ3RlbFNOMGRNSXJVb1FnY0R2Qkk1endlWUk4NURtQXZXaWZoWjBKV0E5M0FRMEFQd0hkNlhnTzhrQ1k2WUJ6eDNEU3hEOENYOWZsd013QTRBT0NLRFcvbnZMV2I1R3M3eXVPK1NmWkkzSzYrRFhnSFlMM0RnTUZBVnVISGs3cUJMdUJ2d092QUZvRGhkRUp2NWY4Wnh2aU9uKzVpWFFBQUFBQkpSVTVFcmtKZ2dnPT0iPjwvaW1hZ2U+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4=) no-repeat;
+    text-indent: -9999em;
+    -moz-background-size: auto 50px;
+    -o-background-size: auto 50px;
+    -webkit-background-size: auto 50px;
+    background-size: auto 50px;
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=15);
+    opacity: 0.15;
+}
+
+.roux-login .sr-only {
+    border: 0;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.roux-login input[type=text], input[type=password], input[type=email], textarea {
+    background: #FFF;
+    border: 1px solid #D9D9D6;
+    padding: 7px;
+    border-radius: 2px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+.roux-login input.text-l, textarea.text-l {
+    padding: 10px;
+    font-size: 1.14286em;
+}
+
+.roux-login button, html input[type="button"], input[type="reset"], input[type="submit"] {
+    -webkit-appearance: button;
+    cursor: pointer;
+}
+
+.roux-login .btn {
+    border: none;
+    background-color: #E9E9E6;
+    cursor: pointer;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    display: inline-block;
+    padding: 0 12px;
+    height: 32px;
+    color: #666;
+    vertical-align: middle;
+    zoom: 1;
+}
+
+.roux-login .btn-l {
+    height: 40px;
+    font-size: 1.14286em;
+    font-weight: bold;
+}
+
+.roux-login .primary {
+    border: none;
+    background-color: #CCC;
+    cursor: pointer;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    color: #FFF;
+}
+
+.roux-login .checkbox {
+    display: inline-block;
+}
+
+/* VGroup Management */
+.roux-row {
+    margin-top: 22px;
+    margin-bottom: 22px;
+}
+
+.roux-panel {
+
+}
+
+.roux-panel .group-title {
+    font-size: 22px;
+}
+
+.roux-panel .title-button {
+    line-height: 31px;
+    cursor: pointer;
+    color: #DD6B55;
+}
+
+.roux-panel .session-title-button {
+    line-height: 17px;
+    cursor: pointer;
+    color: #DD6B55;
+}
+
+.roux-panel .scroll-list {
+    padding: 20px 20px 20px 20px;
+    overflow-y: scroll;
+}
+
+.roux-panel .scroll-list-group {
+    height: 400px;
+}
+
+.roux-panel .scroll-list-all-student {
+    height: 200px;
+}
+
+.roux-panel .scroll-list-selected-student {
+    height: 200px;
+}
+
+.roux-panel .scroll-list .btn {
+    margin-bottom: 16px;
+    line-height: 20px;
+}
+
+.roux-panel .scroll-list .btn-icon {
+    vertical-align: middle;
+    line-height: normal;
+}
+
+.roux-panel .session-row {
+    height: 240px;
+    overflow-y: scroll;
+}
+
+.roux-panel .session-row .btn {
+    line-height: 20px;
+}
+
+.roux-panel .scroll-list .btn-icon {
+    vertical-align: middle;
+    line-height: normal;
+}
+
+.roux-panel .panel-session {
+    height: 158px;
+}
+
+.roux-panel .session-panel-title {
+    display: inline-block;
+}
+
+.roux-panel .panel-session-add {
+    height: 158px;
+    cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+.roux-panel .panel-session-add:hover {
+    background-color: #f5f5f5;
+}
+
+.roux-panel .panel-session-wrap {
+    text-align: center;
+    height: 120px;
+    color: #ddd;
+    padding-top: 30px;
+}
+
+.roux-panel .panel-session-wrap .glyphicon {
+    font-size: 40px;
+}
+
+.modal {
+    user-select: none;
+}
+
+.rate-input {
+    width: 100%;
+    height: 80px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.rate-input .rate-line {
+    height: 6px;
+    background: url(../img/hr-11.png) repeat-x 0 0;
+    border: 0;
+    position: relative;
+}
+
+.rate-input input[type=radio] {
+    display: none;
+}
+
+.rate-input input[type=radio] + label::before {
+    content: '';
+    display: inline-block;
+    border: 1px solid #000;
+    border-radius: 50%;
+    margin: 0 0.5em;
+}
+
+.rate-input input[type=radio]:checked + label::before {
+    background-color: #ffa;
+}
+
+.rate-input .rate-radio + label::before {
+    width: 1.5em;
+    height: 1.5em;
+}
+
+.rate-input .rate-button {
+    float: left;
+}
+
+.rate-input .rate-button-r1 {
+    position: absolute;
+    left: 5%;
+}
+
+.rate-input .rate-button-r2 {
+    position: absolute;
+    left: 25%;
+}
+
+.rate-input .rate-button-r3 {
+    position: absolute;
+    left: 45%;
+}
+
+.rate-input .rate-button-r4 {
+    position: absolute;
+    left: 65%;
+}
+
+.rate-input .rate-button-r5 {
+    position: absolute;
+    left: 85%;
+}
+
+.comment-input {
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.roux-panel .scroll-list-question {
+    height: 600px;
+}

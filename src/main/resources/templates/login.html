@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="site-base">
+<head>
+    <title>Login</title>
+    <script>
+        $(function () {
+            $("form[name=login]").on('submit', function (e) {
+                var email = $("#email").val();
+                var password = $("#password").val();
+                if (email.length !== 0 && password.length !== 0) {
+                    // Ajax Login ?
+                    return;
+                }
+                e.preventDefault();
+            });
+        });
+    </script>
+</head>
+<body>
+<div layout:fragment="container">
+    <div class="alert alert-danger alert-dismissible" role="alert" layout:fragment="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        Error: <strong>Wrong username or password!</strong> Better check yourself, you're not looking too good.
+    </div>
+    <div class="roux-login-wrap">
+        <div class="roux-login">
+            <h1><span class="i-logo">PandaRoux</span></h1>
+            <form th:action="@{/login}" method="post"
+                  name="login" role="form">
+                <p>
+                    <label for="email" class="sr-only">Email</label>
+                    <input type="email" id="email" name="email" value="" placeholder="Email"
+                           class="text-l w-100" autofocus/>
+                </p>
+                <p>
+                    <label for="password" class="sr-only">Password</label>
+                    <input type="password" id="password" name="password" class="text-l w-100"
+                           placeholder="Password"/>
+                </p>
+                <p class="submit">
+                    <button type="submit" class="btn btn-l w-100 primary">Login</button>
+                </p>
+                <p>
+                    <label for="remember"><input type="checkbox" name="remember" class="checkbox" value="1"
+                                                 id="remember"/> Remember me</label>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
