@@ -1,11 +1,11 @@
 package pandaroux.Service;
 
+import pandaroux.Entity.Groupe;
 import pandaroux.Repository.GroupeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class GroupeService {
@@ -16,5 +16,15 @@ public class GroupeService {
 
     public List<Map> getGroupes() {
         return groupeRepository.getGroupes(1);
+    }
+
+    public Map getGroupData(int groupeId) {
+
+        Map groupeData = new HashMap<>();
+
+        groupeData.put("students", groupeRepository.getGroupSudents(groupeId));
+        groupeData.put("lecture", groupeRepository.getGroupLectures(groupeId));
+
+        return groupeData;
     }
 }
