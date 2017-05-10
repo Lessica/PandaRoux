@@ -8,8 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface QuestionRepository  extends CrudRepository<Question, Integer> {
+public interface QuestionRepository extends CrudRepository<Question, Integer> {
 
-    @Query("SELECT q FROM Question q WHERE q.teacher.id = 1")
-    List<Question> findAllTeatcherQuestions();
 }

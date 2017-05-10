@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public interface GroupeRepository  extends CrudRepository<Groupe, Integer> {
+public interface GroupeRepository extends CrudRepository<Groupe, Integer> {
 
     List<Groupe> findAll();
 
