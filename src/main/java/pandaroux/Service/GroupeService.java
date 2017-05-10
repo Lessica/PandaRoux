@@ -27,4 +27,8 @@ public class GroupeService {
 
         return groupeData;
     }
+
+    public void save(Groupe groupe) {
+        groupeRepository.save(groupe);
+    }
 }

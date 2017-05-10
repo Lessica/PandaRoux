@@ -2,6 +2,7 @@ package pandaroux.API;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import pandaroux.Entity.Groupe;
 import pandaroux.Service.GroupeService;
 
 import java.util.List;
@@ -23,5 +24,10 @@ public class GroupeAPI {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Map getGroupData(@PathVariable("id") int id) {
         return groupeService.getGroupData(id);
+    }
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public void add(@RequestBody Groupe groupe) {
+        groupeService.save(groupe);
     }
 }

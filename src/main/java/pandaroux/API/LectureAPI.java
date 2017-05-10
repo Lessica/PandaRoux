@@ -11,7 +11,7 @@ import pandaroux.Service.LectureService;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/groupe")
+@RequestMapping("api/lecture")
 public class LectureAPI {
 
     @Autowired
