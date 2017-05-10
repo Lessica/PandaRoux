@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 import pandaroux.Entity.Lecture;
 import pandaroux.Service.LectureService;
 
-import java.util.Map;
 
 @RestController
 @RequestMapping("api/lecture")
