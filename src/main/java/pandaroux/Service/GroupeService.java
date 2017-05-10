@@ -23,7 +23,7 @@ public class GroupeService {
         Map groupeData = new HashMap<>();
 
         groupeData.put("students", groupeRepository.getGroupSudents(groupeId));
-        groupeData.put("lecture", groupeRepository.getGroupLectures(groupeId));
+        groupeData.put("lectures", groupeRepository.getGroupLectures(groupeId));
 
         return groupeData;
     }
