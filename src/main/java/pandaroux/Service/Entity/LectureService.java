@@ -1,4 +1,4 @@
-package pandaroux.Service;
+package pandaroux.Service.Entity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,4 +16,7 @@ public class LectureService {
         lectureRepository.save(lecture);
     }
 
+    public void deleteById(int id) {
+        lectureRepository.delete(id);
+    }
 }

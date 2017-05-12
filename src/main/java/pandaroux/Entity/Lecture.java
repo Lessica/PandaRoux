@@ -1,5 +1,8 @@
 package pandaroux.Entity;
 
+import org.hibernate.annotations.Type;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -16,6 +19,7 @@ public class Lecture {
     private String name;
 
     @Column
+    @Type(type="date")
     private Date date;
 
     @Column

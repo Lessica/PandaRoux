@@ -2,10 +2,8 @@ package pandaroux.Repository;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import pandaroux.Entity.Lecture;
+import pandaroux.Entity.Quiz;
 
 @Repository
-public interface LectureRepository extends CrudRepository<Lecture, Integer> {
-
-    void delete(int id);
+public interface QuizRepository extends CrudRepository<Quiz, Integer> {
 }

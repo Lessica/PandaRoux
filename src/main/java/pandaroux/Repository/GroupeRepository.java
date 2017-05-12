@@ -1,11 +1,9 @@
 package pandaroux.Repository;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import pandaroux.Entity.Groupe;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import pandaroux.Entity.Question;
 
 import java.util.List;
 import java.util.Map;

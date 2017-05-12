@@ -14,9 +14,10 @@ public class SecurityController {
     @Autowired
     private LDAPService ldapService;
 
+
     @RequestMapping(value = "/loginCheck", method = RequestMethod.POST)
-    public Object loginCheck(@RequestParam("login") String login,
-                              @RequestParam("password") String password) {
+    public boolean loginCheck(@RequestParam("login") String login,
+                          @RequestParam("password") String password) {
         return ldapService.loginCheck(login, password);
     }
 }

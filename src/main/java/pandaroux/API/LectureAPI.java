@@ -1,12 +1,9 @@
 package pandaroux.API;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pandaroux.Entity.Lecture;
-import pandaroux.Service.LectureService;
+import pandaroux.Service.Entity.LectureService;
 
 
 @RestController
@@ -16,8 +13,14 @@ public class LectureAPI {
     @Autowired
     private LectureService lectureService;
 
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public void add(@RequestBody Lecture lecture) {
         lectureService.save(lecture);
+    }
+
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    public void add(@PathVariable("id") int id) {
+        lectureService.deleteById(id);
     }
 }

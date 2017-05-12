@@ -1,4 +1,4 @@
-package pandaroux.Service;
+package pandaroux.Service.Entity;
 
 import pandaroux.Entity.Groupe;
 import pandaroux.Repository.GroupeRepository;
