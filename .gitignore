@@ -2,3 +2,4 @@ target
 .idea
 src/main/resources/application.properties
 PandaRoux.iml
+src/main/java/pandaroux/Config/
