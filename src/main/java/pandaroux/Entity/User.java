@@ -24,7 +24,7 @@ public class User {
     @ManyToMany
     @JoinTable(
             name = "students_groupes",
-            joinColumns = @JoinColumn(name = "id_user", referencedColumnName = "id"),
+            joinColumns = @JoinColumn(name = "id_student", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "id_groupe", referencedColumnName = "id")
     )
     private List<Groupe> studentGroupes;
@@ -35,8 +35,16 @@ public class User {
     @OneToMany(mappedBy = "student")
     private List<Answer> answers;
 
+    @ManyToMany
+    @JoinTable(
+            name = "students_quizzes",
+            joinColumns = @JoinColumn(name = "id_student", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "id_quiz", referencedColumnName = "id")
+    )
+    private List<Quiz> studentQuizzes;
+
     @OneToMany(mappedBy = "teacher")
-    private List<Quiz> quizzes;
+    private List<Quiz> teacherQuizzes;
 
     @OneToMany(mappedBy = "teacher")
     private List<Question> questions;
@@ -59,6 +67,22 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getFirst_name() {
+        return first_name;
+    }
+
+    public void setFirst_name(String first_name) {
+        this.first_name = first_name;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public List<Groupe> getStudentGroupes() {
@@ -85,28 +109,12 @@ public class User {
         this.answers = answers;
     }
 
-    public String getFirst_name() {
-        return first_name;
+    public List<Quiz> getTeacherQuizzes() {
+        return teacherQuizzes;
     }
 
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public List<Quiz> getQuizzes() {
-        return quizzes;
-    }
-
-    public void setQuizzes(List<Quiz> quizzes) {
-        this.quizzes = quizzes;
+    public void setTeacherQuizzes(List<Quiz> teacherQuizzes) {
+        this.teacherQuizzes = teacherQuizzes;
     }
 
     public List<Question> getQuestions() {
