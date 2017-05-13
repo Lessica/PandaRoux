@@ -20,4 +20,9 @@ public class UserAPI {
     public List<Map> findAll() {
         return userService.findAll();
     }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public Map findOneById(@PathVariable("id") int id) {
+        return userService.findOneById(id);
+    }
 }

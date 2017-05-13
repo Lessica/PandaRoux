@@ -2,12 +2,11 @@ package pandaroux.Service.Entity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pandaroux.Repository.QuestionRepository;
+import pandaroux.Repository.RoleRepository;
 
 @Service
-public class QuestionService {
+public class RoleService {
 
     @Autowired
-    private QuestionRepository questionRepository;
-
+    private RoleRepository roleRepository;
 }

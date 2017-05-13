@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class UserService {
+public class    UserService {
 
     @Autowired
     private UserRepository userRepository;
@@ -18,4 +18,7 @@ public class UserService {
         return userRepository.findAllUser();
     }
 
+    public Map findOneById(int id) {
+        return userRepository.findOneById(id);
+    }
 }
