@@ -7,29 +7,30 @@
     <title>Question</title>
     <script th:src="@{/js/roux-api.js}"></script>
     <script>
-    $(function () {
+        $(function () {
 
-        UI.init();
 
-        UI.allowsUserInteraction(false);
+            UI.init();
 
-        API.getQuestionList(function (data) {
-            var question_button_list = $(".question-button-list");
-            question_button_list.empty();
-            data['question_list'].forEach(function (questionObj) {
-                var prototype = UI.prototype('pt-question-button').clone(true, true);
-                prototype.text(questionObj['title']);
-                prototype.data('id', questionObj['id']);
-                question_button_list.append(prototype);
+            UI.allowsUserInteraction(false);
+
+            API.getQuestionList(function (data) {
+                var question_button_list = $(".question-button-list");
+                question_button_list.empty();
+                data['question_list'].forEach(function (questionObj) {
+                    var prototype = UI.prototype('pt-question-button').clone(true, true);
+                    prototype.text(questionObj['title']);
+                    prototype.data('id', questionObj['id']);
+                    question_button_list.append(prototype);
+                });
+                if (data['question_list'].length) {
+
+                }
             });
-            if (data['question_list'].length) {
 
-            }
+            UI.allowsUserInteraction(true);
+
         });
-
-        UI.allowsUserInteraction(true);
-
-    });
     </script>
 </head>
 <body>
@@ -57,7 +58,7 @@
     <div class="row roux-row">
 
         <!-- Question List Panel -->
-        <div class="col-md-4">
+        <div class="col-sm-4">
             <div class="panel panel-default roux-panel">
                 <div class="panel-body">
 
@@ -66,7 +67,7 @@
                             <span class="glyphicon glyphicon-search"></span>
                         </span>
                         <input type="text" id="input-question-search" class="form-control"
-                               placeholder="Search Question">
+                               placeholder="Search question">
                     </div>
                     <br>
 
@@ -84,7 +85,74 @@
                                     data-action="select">
                                 N/A
                             </button>
-                            <div class="question-button-list"></div>
+                            <div class="question-button-list">
+
+                                <!-- BEGIN -->
+
+                                <button type="button" class="btn btn-primary btn-block question-button">
+                                    Question 1
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 2
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 3
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 4
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 5
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 6
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 7
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 8
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 9
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 10
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 11
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 12
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 13
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 14
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 15
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 16
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 17
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 18
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 19
+                                </button>
+                                <button type="button" class="btn btn-default btn-block question-button">
+                                    Question 20
+                                </button>
+
+                                <!-- END -->
+
+                            </div>
                         </div>
                     </div>
                     <br>
@@ -94,9 +162,242 @@
         </div>
 
         <!-- Question Panel -->
-        <div class="col-md-8">
+        <div class="col-sm-8">
             <div class="panel panel-default roux-panel">
                 <div class="panel-body">
+
+                    <div class="question-form">
+
+                        <form method="POST" class="form-horizontal">
+
+                            <input class="question-title" type="text" placeholder="Untitled Question"
+                                   value="Question 1">
+
+                            <hr/>
+
+                            <div class="form-group">
+                                <label for="mandatory-option" class="col-sm-3 control-label">Mandatory</label>
+                                <div class="checkbox col-sm-9">
+                                    <label>
+                                        <input id="mandatory-option" name="mandatory-option" type="checkbox" checked
+                                               value="">
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="question-type" class="col-sm-3 control-label">Question Type</label>
+                                <div class="col-sm-9">
+                                    <select id="question-type" class="form-control" name="question-type" title="">
+                                        <option value="0">Radio Boxes</option>
+                                        <option value="1">Check Boxes</option>
+                                        <option value="2">Dropdown List</option>
+                                        <option value="3">Short Answer</option>
+                                        <option value="4">Paragraph</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="question-content" class="col-sm-3 control-label">Content</label>
+                                <div class="col-sm-9">
+                                    <textarea id="question-content" name="question-content" class="form-control"
+                                              placeholder="Dear teacher, what would you like to ask?"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="create-graph-option" class="col-sm-3 control-label">Extras</label>
+                                <div class="checkbox col-sm-9">
+                                    <label>
+                                        <input id="create-graph-option" name="create-graph-option" type="checkbox"
+                                               value="">
+                                        Create a chart
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="allow-comment-option" class="col-sm-3 control-label"></label>
+                                <div class="checkbox col-sm-9">
+                                    <label>
+                                        <input id="allow-comment-option" name="allow-comment-option" type="checkbox"
+                                               value="">
+                                        Allow comments
+                                    </label>
+                                </div>
+                            </div>
+
+                            <hr/>
+
+                            <!-- Question Area Radio -->
+                            <div class="question-area">
+
+                                <div class="question-field question-field-radio">
+                                    <div class="form-group">
+                                        <label for="user-radio-1" class="col-sm-3 control-label">Option 1</label>
+                                        <div class="col-sm-9">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <input type="radio" name="user-radio-default" value="1" title="">
+                                                </span>
+                                                <input id="user-radio-1" name="user-radio-1" class="form-control"
+                                                       type="text" placeholder="title of option 1" value="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="user-radio-2" class="col-sm-3 control-label">Option 2</label>
+                                        <div class="col-sm-9">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <input type="radio" name="user-radio-default" value="2" title="">
+                                                </span>
+                                                <input id="user-radio-2" name="user-radio-2" class="form-control"
+                                                       type="text" placeholder="title of option 2" value="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="user-radio-add" class="col-sm-3 control-label"></label>
+                                        <div class="col-sm-9">
+                                            <button id="user-radio-add" type="button" class="btn btn-success">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                                Add Option
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <hr/>
+
+                            <!-- Question Area Checkbox -->
+                            <div class="question-area">
+
+                                <div class="question-field question-field-property">
+                                    <div class="form-group">
+                                        <label for="user-property-checkbox-min" class="col-sm-3 control-label">Minimum
+                                            Count</label>
+                                        <div class="col-sm-3">
+                                            <input id="user-property-checkbox-min" name="user-property-checkbox-min"
+                                                   class="form-control"
+                                                   type="number" placeholder="0" value="0" min="0" step="1">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="user-property-checkbox-max" class="col-sm-3 control-label">Maximum
+                                            Count</label>
+                                        <div class="col-sm-3">
+                                            <input id="user-property-checkbox-max" name="user-property-checkbox-max"
+                                                   class="form-control"
+                                                   type="number" placeholder="2" value="2" min="0" step="1">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="question-field question-field-checkbox">
+                                    <div class="form-group">
+                                        <label for="user-checkbox-1" class="col-sm-3 control-label">Option 1</label>
+                                        <div class="col-sm-9">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <input type="checkbox" name="user-checkbox-default" value="1"
+                                                           title="">
+                                                </span>
+                                                <input id="user-checkbox-1" name="user-checkbox-1" class="form-control"
+                                                       type="text" placeholder="title of option 1" value="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="user-checkbox-2" class="col-sm-3 control-label">Option 2</label>
+                                        <div class="col-sm-9">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <input type="checkbox" name="user-checkbox-default" value="2"
+                                                           title="">
+                                                </span>
+                                                <input id="user-checkbox-2" name="user-checkbox-2" class="form-control"
+                                                       type="text" placeholder="title of option 2" value="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="user-checkbox-add" class="col-sm-3 control-label"></label>
+                                        <div class="col-sm-9">
+                                            <button id="user-checkbox-add" type="button" class="btn btn-success">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                                Add Option
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <hr/>
+
+                            <!-- Question Area Dropdown List -->
+                            <div class="question-area">
+
+                                <div class="question-field question-field-property">
+                                    <div class="form-group">
+                                        <label for="user-property-dropdown-multiple" class="col-sm-3 control-label">Multiple</label>
+                                        <div class="checkbox col-sm-9">
+                                            <label>
+                                                <input id="user-property-dropdown-multiple"
+                                                       name="user-property-dropdown-multiple" type="checkbox" value="">
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="question-field question-field-dropdown">
+                                    <div class="form-group">
+                                        <label for="user-dropdown-1" class="col-sm-3 control-label">Option 1</label>
+                                        <div class="col-sm-9">
+                                            <input id="user-dropdown-1" name="user-dropdown-1" class="form-control"
+                                                   type="text" placeholder="title of option 1" value="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="user-dropdown-2" class="col-sm-3 control-label">Option 2</label>
+                                        <div class="col-sm-9">
+                                            <input id="user-dropdown-2" name="user-dropdown-2" class="form-control"
+                                                   type="text" placeholder="title of option 2" value="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="user-dropdown-add" class="col-sm-3 control-label"></label>
+                                        <div class="col-sm-9">
+                                            <button id="user-dropdown-add" type="button" class="btn btn-success">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                                Add Option
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <hr/>
+
+                            <div class="form-group">
+                                <div class="question-button-group">
+                                    <div class="float-left">
+                                        <button type="reset" class="btn btn-danger">Delete</button>
+                                    </div>
+                                    <div class="float-right">
+                                        <button type="reset" class="btn btn-default">Reset</button>
+                                        <button type="button" class="btn btn-success">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
 
                 </div>
             </div>
