@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import pandaroux.Entity.Groupe;
 import pandaroux.Service.Entity.GroupeService;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,8 +19,10 @@ public class GroupeAPI {
 
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<Map> getGroupes() {
-        return groupeService.getGroupes();
+    public Map<String, List<Map>> getGroupes() {
+        HashMap <String, List<Map>> result = new HashMap<>();
+        result.put("group_list", groupeService.getGroupes());
+        return result;
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

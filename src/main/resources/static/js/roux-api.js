@@ -6,6 +6,16 @@
 if (typeof jQuery !== 'undefined') {
 
     API = {
+        loginCheck: function(callback, username, password) {
+            $.ajax("/loginCheck", {
+                method: "POST",
+                data: {
+                    "login": username,
+                    "password": password
+                },
+                success: callback
+            });
+        },
         getGroupList: function (callback) {
             $.ajax({
                 data: {
@@ -312,7 +322,12 @@ if (typeof jQuery !== 'undefined') {
         }
          */
         getQuestionList: function (callback) {
-
+            $.ajax({
+                data: {
+                    "action": "get_question_list"
+                },
+                success: callback
+            });
         }
     };
 

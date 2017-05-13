@@ -2,4 +2,5 @@ target
 .idea
 src/main/resources/application.properties
 PandaRoux.iml
+Springboot.iml
 src/main/java/pandaroux/Config/
