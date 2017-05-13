@@ -1,12 +1,11 @@
 package pandaroux.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import pandaroux.Service.LDAPService;
 
+import javax.servlet.http.HttpSession;
 
 @RestController
 public class SecurityController {
@@ -14,10 +13,11 @@ public class SecurityController {
     @Autowired
     private LDAPService ldapService;
 
-
     @RequestMapping(value = "/loginCheck", method = RequestMethod.POST)
     public boolean loginCheck(@RequestParam("login") String login,
-                          @RequestParam("password") String password) {
-        return ldapService.loginCheck(login, password);
+                                @RequestParam("password") String password) {
+        // return ldapService.loginCheck(login, password);
+
+        return true;
     }
 }

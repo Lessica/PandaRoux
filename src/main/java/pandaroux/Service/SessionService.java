@@ -7,16 +7,14 @@ import pandaroux.Repository.UserRepository;
 
 @Service
 public class SessionService {
-    /*
-    private User user;
 
+    /*
     @Autowired
     private UserRepository userRepository;
 
+    private User user;
 
-    public SessionService() {
-        user = userRepository.findOne(1);
-    }
+
 
     public User getUser() {
         return user;
