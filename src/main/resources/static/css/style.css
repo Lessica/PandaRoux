@@ -154,12 +154,8 @@
 
 }
 
-.roux-panel .group-title {
-    font-size: 22px;
-}
-
 .roux-panel .title-button {
-    line-height: 31px;
+    line-height: 45px;
     cursor: pointer;
     color: #DD6B55;
 }
@@ -346,4 +342,14 @@
 .roux-panel .question-field {
     padding-top: 28px;
     padding-bottom: 20px;
+}
+
+.roux-panel .panel-title {
+    height: 75px;
+}
+
+.roux-panel .group-title {
+    font-size: 24pt;
+    font-weight: 300;
+    border: none;
 }

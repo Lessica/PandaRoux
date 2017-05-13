@@ -266,7 +266,7 @@
                         return;
                     } else {
                         selectGroupButton(button, true);
-                        $(".group-title").text(button.text());
+                        $(".group-title").val(button.text());
                     }
 
                     var action = button.data('action');
@@ -593,9 +593,15 @@
         <!-- Group Title -->
         <div class="col-sm-8">
             <div class="panel panel-default roux-panel">
-                <div class="panel-body">
-                    <span class="group-title" data-id="">N/A</span>
+                <div class="panel-body panel-title">
+
+                    <div class="row">
+
+                    </div>
+
+                    <input class="group-title" type="text" placeholder="Untitled Group" data-id="" value="" title="">
                     <span class="glyphicon glyphicon-trash title-button float-right"></span>
+
                 </div>
             </div>
         </div>
