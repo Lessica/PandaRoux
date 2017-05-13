@@ -1,5 +1,7 @@
 package pandaroux.Entity;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -17,28 +19,26 @@ public class Quiz {
     private String name;
 
     @Column
+    @Type(type="date")
     private Date date_start;
 
     @Column
+    @Type(type="date")
     private Date date_end;
 
     @Column
     private boolean activate;
-
-    @ManyToMany
-    @JoinTable(
-            name = "quiz_questions",
-            joinColumns = @JoinColumn(name = "id_quiz", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "id_question", referencedColumnName = "id")
-    )
-    private List<Question> questions;
 
     @ManyToOne
     @JoinColumn(name = "id_teacher")
     private User teacher;
 
     @OneToMany(mappedBy = "quiz")
-    private List<Quiz_question_answer> quiz_question_answers;
+    private List<Quiz_question> quiz_question;
+
+    @ManyToOne
+    @JoinColumn(name = "id_groupe")
+    private Groupe groupe;
 
 
     public Quiz() {}
@@ -76,14 +76,6 @@ public class Quiz {
         this.date_end = date_end;
     }
 
-    public List<Question> getQuestions() {
-        return questions;
-    }
-
-    public void setQuestions(List<Question> questions) {
-        this.questions = questions;
-    }
-
     public boolean isActivate() {
         return activate;
     }
@@ -100,11 +92,11 @@ public class Quiz {
         this.teacher = teacher;
     }
 
-    public List<Quiz_question_answer> getQuiz_question_answers() {
-        return quiz_question_answers;
+    public List<Quiz_question> getQuiz_question() {
+        return quiz_question;
     }
 
-    public void setQuiz_question_answers(List<Quiz_question_answer> quiz_question_answers) {
-        this.quiz_question_answers = quiz_question_answers;
+    public void setQuiz_question(List<Quiz_question> quiz_question) {
+        this.quiz_question = quiz_question;
     }
 }

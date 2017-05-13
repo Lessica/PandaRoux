@@ -25,6 +25,9 @@ public class Groupe {
     @OneToMany(mappedBy = "groupe")
     private List<Lecture> lectures;
 
+    @OneToMany(mappedBy = "groupe")
+    private List<Quiz> quizzes;
+
 
     public Groupe() {}
 

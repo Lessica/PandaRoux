@@ -23,7 +23,7 @@ public class User {
 
     @ManyToMany
     @JoinTable(
-            name = "students_groupes",
+            name = "student_groupe",
             joinColumns = @JoinColumn(name = "id_student", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "id_groupe", referencedColumnName = "id")
     )
@@ -34,14 +34,6 @@ public class User {
 
     @OneToMany(mappedBy = "student")
     private List<Answer> answers;
-
-    @ManyToMany
-    @JoinTable(
-            name = "students_quizzes",
-            joinColumns = @JoinColumn(name = "id_student", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "id_quiz", referencedColumnName = "id")
-    )
-    private List<Quiz> studentQuizzes;
 
     @OneToMany(mappedBy = "teacher")
     private List<Quiz> teacherQuizzes;

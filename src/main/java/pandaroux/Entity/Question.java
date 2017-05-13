@@ -15,12 +15,6 @@ public class Question {
     @Column
     private String name;
 
-    @ManyToMany(mappedBy = "questions")
-    private List<Quiz> quizs;
-
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers;
-
     @Column
     private boolean has_commentary;
 
@@ -29,7 +23,7 @@ public class Question {
     private QuestionType questionType;
 
     @OneToMany(mappedBy = "question")
-    private List<Quiz_question_answer> quiz_question_answers;
+    private List<Quiz_question> quiz_question_answers;
 
     @ManyToOne
     @JoinColumn(name = "id_teacher")
@@ -54,22 +48,6 @@ public class Question {
         this.name = name;
     }
 
-    public List<Quiz> getQuizs() {
-        return quizs;
-    }
-
-    public void setQuizs(List<Quiz> quizs) {
-        this.quizs = quizs;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
-    public void setAnswers(List<Answer> answers) {
-        this.answers = answers;
-    }
-
     public boolean isHas_commentary() {
         return has_commentary;
     }
@@ -86,11 +64,11 @@ public class Question {
         this.questionType = questionType;
     }
 
-    public List<Quiz_question_answer> getQuiz_question_answers() {
+    public List<Quiz_question> getQuiz_question_answers() {
         return quiz_question_answers;
     }
 
-    public void setQuiz_question_answers(List<Quiz_question_answer> quiz_question_answers) {
+    public void setQuiz_question_answers(List<Quiz_question> quiz_question_answers) {
         this.quiz_question_answers = quiz_question_answers;
     }
 

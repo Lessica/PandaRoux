@@ -1,10 +1,11 @@
 package pandaroux.Entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name = "Quiz_question_answer")
-public class Quiz_question_answer {
+@Table(name = "Quiz_question")
+public class Quiz_question {
 
     @Id
     private int id;
@@ -17,7 +18,6 @@ public class Quiz_question_answer {
     @JoinColumn(name = "id_quiz", insertable = false, updatable = false)
     private Quiz quiz;
 
-    @ManyToOne
-    @JoinColumn(name = "id_answer", insertable = false, updatable = false)
-    private Answer answer;
+    @OneToMany(mappedBy = "quiz_question")
+    private List<Answer> answers;
 }

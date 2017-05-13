@@ -14,8 +14,8 @@ public class Answer {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "id_question")
-    private Question question;
+    @JoinColumn(name = "id_quiz_question")
+    private Quiz_question quiz_question;
 
     @ManyToOne
     @JoinColumn(name = "id_student")
@@ -26,9 +26,6 @@ public class Answer {
 
     @Column
     private Date date;
-
-    @OneToMany(mappedBy = "answer")
-    private List<Quiz_question_answer> quiz_question_answers;
 
 
     public Answer() {}
@@ -42,12 +39,12 @@ public class Answer {
         this.id = id;
     }
 
-    public Question getQuestion() {
-        return question;
+    public Quiz_question getQuiz_question() {
+        return quiz_question;
     }
 
-    public void setQuestion(Question question) {
-        this.question = question;
+    public void setQuiz_question(Quiz_question quiz_question) {
+        this.quiz_question = quiz_question;
     }
 
     public User getStudent() {
@@ -72,13 +69,5 @@ public class Answer {
 
     public void setDate(Date date) {
         this.date = date;
-    }
-
-    public List<Quiz_question_answer> getQuiz_question_answers() {
-        return quiz_question_answers;
-    }
-
-    public void setQuiz_question_answers(List<Quiz_question_answer> quiz_question_answers) {
-        this.quiz_question_answers = quiz_question_answers;
     }
 }
