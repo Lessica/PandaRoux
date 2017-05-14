@@ -2,6 +2,7 @@ package pandaroux.Service.Entity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pandaroux.Entity.Quiz;
 import pandaroux.Repository.QuizRepository;
 
 import java.util.List;
@@ -15,16 +16,14 @@ public class QuizService {
 
 
     public List<Map> findAll() {
-        /*
-        int userId = sessionService.getUserId();
+        return quizRepository.findAllQuizzes();
+    }
 
-        if (sessionService.hasRole("eleve")) {
-            return quizRepository.findAllStudentQuizzes(userId);
-        }
-        else if (sessionService.hasRole("prof")) {
-            return quizRepository.findAllTeacherQuizzes(userId);
-        }*/
+    public void save(Quiz quiz) {
+        quizRepository.save(quiz);
+    }
 
-        return null;
+    public Map getQuiz(int id) {
+        return quizRepository.getQuiz(id);
     }
 }

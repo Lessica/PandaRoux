@@ -19,7 +19,7 @@ public class Lecture {
     private String name;
 
     @Column
-    @Type(type="date")
+    @Type(type = "date")
     private Date date;
 
     @Column

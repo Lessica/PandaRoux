@@ -1,5 +1,7 @@
 package pandaroux.Entity;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -16,6 +18,7 @@ public class Question {
     private String name;
 
     @Column
+    @Type(type = "boolean")
     private boolean has_commentary;
 
     @ManyToOne
@@ -23,7 +26,7 @@ public class Question {
     private QuestionType questionType;
 
     @OneToMany(mappedBy = "question")
-    private List<Quiz_question> quiz_question_answers;
+    private List<Quiz_question> quiz_question;
 
     @ManyToOne
     @JoinColumn(name = "id_teacher")
@@ -64,12 +67,12 @@ public class Question {
         this.questionType = questionType;
     }
 
-    public List<Quiz_question> getQuiz_question_answers() {
-        return quiz_question_answers;
+    public List<Quiz_question> getQuiz_question() {
+        return quiz_question;
     }
 
-    public void setQuiz_question_answers(List<Quiz_question> quiz_question_answers) {
-        this.quiz_question_answers = quiz_question_answers;
+    public void setQuiz_question(List<Quiz_question> quiz_question) {
+        this.quiz_question = quiz_question;
     }
 
     public User getTeacher() {
