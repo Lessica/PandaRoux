@@ -19,15 +19,16 @@ public class Quiz {
     private String name;
 
     @Column
-    @Type(type="date")
+    @Type(type = "date")
     private Date date_start;
 
     @Column
-    @Type(type="date")
+    @Type(type = "date")
     private Date date_end;
 
     @Column
-    private boolean activate;
+    @Type(type = "boolean")
+    private boolean active;
 
     @ManyToOne
     @JoinColumn(name = "id_teacher")
@@ -76,12 +77,12 @@ public class Quiz {
         this.date_end = date_end;
     }
 
-    public boolean isActivate() {
-        return activate;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setActivate(boolean activate) {
-        this.activate = activate;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public User getTeacher() {
@@ -98,5 +99,13 @@ public class Quiz {
 
     public void setQuiz_question(List<Quiz_question> quiz_question) {
         this.quiz_question = quiz_question;
+    }
+
+    public Groupe getGroupe() {
+        return groupe;
+    }
+
+    public void setGroupe(Groupe groupe) {
+        this.groupe = groupe;
     }
 }

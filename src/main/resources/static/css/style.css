@@ -1,3 +1,59 @@
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+}
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+}
+select {
+    background: url(data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS‌​1uYW1lPSJMYXllciAxIi‌​B4bWxucz0iaHR0cDovL3‌​d3dy53My5vcmcvMjAwMC‌​9zdmciIHZpZXdCb3g9Ij‌​AgMCA0Ljk1IDEwIj48ZG‌​Vmcz48c3R5bGU+LmNscy‌​0ye2ZpbGw6IzQ0NDt9PC‌​9zdHlsZT48L2RlZnM+PH‌​RpdGxlPmFycm93czwvdG‌​l0bGU+PHBvbHlnb24gY2‌​xhc3M9ImNscy0yIiBwb2‌​ludHM9IjEuNDEgNC42Ny‌​AyLjQ4IDMuMTggMy41NC‌​A0LjY3IDEuNDEgNC42Ny‌​IvPjxwb2x5Z29uIGNsYX‌​NzPSJjbHMtMiIgcG9pbn‌​RzPSIzLjU0IDUuMzMgMi‌​40OCA2LjgyIDEuNDEgNS‌​4zMyAzLjU0IDUuMzMiLz‌​48L3N2Zz4=) no-repeat 95% 50%;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+option {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    background-color: #f5f5f5;
+}
+
+.form-horizontal .form-group {
+     margin-right: 0;
+     margin-left: 0;
+}
+
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+body > .container-fluid {
+    padding: 60px 30px 0;
+}
+.container-fluid .text-muted {
+    margin: 20px 0;
+}
+
+.footer > .container-fluid {
+    padding-right: 30px;
+    padding-left: 30px;
+}
+
+code {
+    font-size: 80%;
+}
+
 /* Global */
 
 .prototype {
@@ -317,7 +373,7 @@
     height: 600px;
 }
 
-.roux-panel .question-title {
+.roux-panel .edit-title {
     width: 100%;
     text-align: center;
     font-size: 24pt;
@@ -344,7 +400,7 @@
     padding-bottom: 20px;
 }
 
-.roux-panel .panel-title {
+.roux-panel .group-header {
     height: 75px;
 }
 
@@ -352,4 +408,31 @@
     font-size: 24pt;
     font-weight: 300;
     border: none;
+    width: 90%;
+}
+
+/* Questionnaire */
+
+.quiz-category a {
+    color: #333;
+    font-weight: 300;
+}
+
+.roux-panel .scroll-list-quiz {
+    height: 540px;
+}
+
+.roux-panel .question-select {
+    height: 240px;
+}
+
+.roux-panel .question-select option {
+    height: 24px;
+    font-size: 12pt;
+    font-weight: 300;
+}
+
+.roux-panel .multi-select {
+    padding: 12px;
+
 }

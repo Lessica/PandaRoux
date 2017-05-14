@@ -1,5 +1,7 @@
 package pandaroux.Entity;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +27,7 @@ public class Answer {
     private String text;
 
     @Column
+    @Type(type = "date")
     private Date date;
 
 

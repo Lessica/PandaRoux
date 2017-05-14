@@ -18,7 +18,7 @@ public class GroupeService {
         return groupeRepository.getGroupes(1);
     }
 
-    public Map getGroupData(int groupeId) {
+    public Map getGroup(int groupeId) {
 
         Map groupeData = new HashMap<>();
 
