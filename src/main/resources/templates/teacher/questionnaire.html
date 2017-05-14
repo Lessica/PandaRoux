@@ -26,5 +26,369 @@
     </div>
 </nav>
 
+<div layout:fragment="container">
+
+    <div class="row roux-row">
+
+        <!-- Quiz Area -->
+        <div class="col-sm-4">
+
+            <div class="panel-group quiz-category" id="quiz-category" role="tablist">
+                <div class="panel panel-default roux-panel">
+                    <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                            <a role="button" data-toggle="collapse" data-parent="#quiz-category" href="#quiz-opened">
+                                Opened
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="quiz-opened" class="panel-collapse collapse in" role="tabpanel">
+                        <div class="panel-body">
+
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </span>
+                                <input type="text" id="input-quiz-search opened" class="form-control"
+                                       placeholder="Search questionnaire">
+                            </div>
+
+                            <br>
+
+                            <div class="scroll-list">
+                                <div class="scroll-list-quiz opened">
+
+                                    <button type="button" class="btn btn-success btn-block"
+                                            data-toggle="modal" data-target="#new-quiz-popup">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                        New
+                                    </button>
+                                    <hr>
+                                    <button type="button" class="prototype btn btn-default btn-block quiz-button"
+                                            id="pt-quiz-button-opened"
+                                            data-id="1"
+                                            data-action="select">
+                                        N/A
+                                    </button>
+                                    <div class="quiz-button-list opened">
+
+                                        <!-- BEGIN -->
+
+                                        <button type="button" class="btn btn-primary btn-block quiz-button">
+                                            Questionnaire 1
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 2
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 3
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 4
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 5
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 6
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 7
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 8
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 9
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 10
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 11
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 12
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 13
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 14
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 15
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 16
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 17
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 18
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 19
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 20
+                                        </button>
+
+                                        <!-- END -->
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <br>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default roux-panel">
+                    <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#quiz-category" href="#quiz-saved">
+                                Saved
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="quiz-saved" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
+
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </span>
+                                <input type="text" id="input-quiz-search saved" class="form-control"
+                                       placeholder="Search questionnaire">
+                            </div>
+
+                            <br>
+
+                            <div class="scroll-list">
+                                <div class="scroll-list-quiz saved">
+
+                                    <button type="button" class="prototype btn btn-default btn-block quiz-button"
+                                            id="pt-quiz-button-saved"
+                                            data-id="1"
+                                            data-action="select">
+                                        N/A
+                                    </button>
+                                    <div class="quiz-button-list saved">
+
+                                        <!-- BEGIN -->
+
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 1
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 2
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 3
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 4
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 5
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 6
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 7
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 8
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 9
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 10
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 11
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 12
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 13
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 14
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 15
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 16
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 17
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 18
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 19
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 20
+                                        </button>
+
+                                        <!-- END -->
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <br>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default roux-panel">
+                    <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#quiz-category" href="#quiz-closed">
+                                Closed
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="quiz-closed" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
+
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </span>
+                                <input type="text" id="input-quiz-search closed" class="form-control"
+                                       placeholder="Search questionnaire">
+                            </div>
+
+                            <br>
+
+                            <div class="scroll-list">
+                                <div class="scroll-list-quiz closed">
+
+                                    <button type="button" class="prototype btn btn-default btn-block quiz-button"
+                                            id="pt-quiz-button-closed"
+                                            data-id="1"
+                                            data-action="select">
+                                        N/A
+                                    </button>
+                                    <div class="quiz-button-list closed">
+
+                                        <!-- BEGIN -->
+
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 1
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 2
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 3
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 4
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 5
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 6
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 7
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 8
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 9
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 10
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 11
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 12
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 13
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 14
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 15
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 16
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 17
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 18
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 19
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-block quiz-button">
+                                            Questionnaire 20
+                                        </button>
+
+                                        <!-- END -->
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <br>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Quiz Detail -->
+        <div class="col-sm-8">
+            <div class="panel panel-default roux-panel">
+                <div class="panel-body">
+
+                    <div class="question-form">
+
+                        <form method="POST" class="form-horizontal">
+
+                            <input class="edit-title quiz-title" type="text" placeholder="Untitled Questionnaire"
+                                   value="Questionnaire 1">
+
+                            <hr/>
+
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
 </body>
 </html>
