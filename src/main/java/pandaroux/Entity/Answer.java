@@ -15,7 +15,7 @@ public class Answer {
     @Column
     private int id;
 
-    @ManyToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne
     @JoinColumn(name = "id_quiz_question")
     private Quiz_question quiz_question;
 
