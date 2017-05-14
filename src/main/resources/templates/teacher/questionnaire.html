@@ -5,6 +5,40 @@
       layout:decorate="site-base">
 <head>
     <title>Questionnaire</title>
+    <link th:href="@{/css/sweetalert.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap-datetimepicker.css}" rel="stylesheet">
+    <script th:src="@{/js/sweetalert.min.js}"></script>
+    <script th:src="@{/js/bootstrap-notify.js}"></script>
+    <script th:src="@{/js/bootstrap-datetimepicker.js}"></script>
+    <script th:src="@{/js/multiselect.js}"></script>
+    <script th:src="@{/js/roux-api.js}"></script>
+    <script>
+
+        $(function () {
+
+            // DOM Binding
+            {
+                var registerDatetimePicker = function () {
+                    $(".select-date").datetimepicker({
+                        format: 'dd/mm/yyyy hh:ii',
+                        initialDate: new Date()
+                    }).on("changeDate", changeDateCallback);
+                };
+                var changeDateCallback = function () {
+
+                };
+                var registerMultiSelect = function() {
+                    $('#question-selection').multiselect();
+                }
+            }
+
+            registerDatetimePicker();
+            registerMultiSelect();
+
+        });
+
+    </script>
+
 </head>
 <body>
 
@@ -378,6 +412,141 @@
                                    value="Questionnaire 1">
 
                             <hr/>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <label for="target-class" class="col-sm-3 control-label">Class</label>
+                                    <div class="col-sm-9">
+                                        <select id="target-class" class="form-control" name="target-class" title="">
+                                            <option value="1">Class 1</option>
+                                            <option value="2">Class 2</option>
+                                            <option value="3">Class 3</option>
+                                            <option value="4">Class 4</option>
+                                            <option value="5">Class 5</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <label for="target-session" class="col-sm-3 control-label">Session</label>
+                                    <div class="col-sm-9">
+                                        <select id="target-session" class="form-control" name="target-session" title="">
+                                            <option value="1">Session 1</option>
+                                            <option value="2">Session 2</option>
+                                            <option value="3">Session 3</option>
+                                            <option value="4">Session 4</option>
+                                            <option value="5">Session 5</option>
+                                            <option value="6">Session 6</option>
+                                            <option value="7">Session 7</option>
+                                            <option value="8">Session 8</option>
+                                            <option value="9">Session 9</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <label for="quiz-start-at" class="col-sm-3 control-label">Start At</label>
+                                    <div class="col-sm-6">
+                                        <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </span>
+                                            <input type="text" class="form-control select-date" id="quiz-start-at"
+                                                   name="quiz-start-at"
+                                                   title=""
+                                                   data-id="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <label for="quiz-end-at" class="col-sm-3 control-label">End At</label>
+                                    <div class="col-sm-6">
+                                        <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </span>
+                                            <input type="text" class="form-control select-date" id="quiz-end-at"
+                                                   name="quiz-end-at"
+                                                   title=""
+                                                   data-id="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <label for="quiz-repeat-for" class="col-sm-3 control-label">Repeat</label>
+                                    <div class="col-sm-6">
+                                        <select id="quiz-repeat-for" class="form-control" name="quiz-repeat-for" title="">
+                                            <option value="1">No repeat</option>
+                                            <option value="2">Everyday</option>
+                                            <option value="3">Once a week</option>
+                                            <option value="4">Once a month</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr />
+
+                            <div class="form-group">
+                                <div class="row multi-select">
+                                    <div class="col-sm-5">
+                                        <select multiple id="question-selection" class="form-control question-select" name="question-selection-from[]" title="">
+                                            <option value="1">Question 1</option>
+                                            <option value="2">Question 2</option>
+                                            <option value="3">Question 3</option>
+                                            <option value="4">Question 4</option>
+                                            <option value="5">Question 5</option>
+                                            <option value="6">Question 6</option>
+                                            <option value="7">Question 7</option>
+                                            <option value="8">Question 8</option>
+                                            <option value="9">Question 9</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button type="button" id="question-selection_rightSelected" class="btn btn-default btn-block">
+                                            <i class="glyphicon glyphicon-chevron-right"></i>
+                                        </button>
+                                        <button type="button" id="question-selection_leftSelected" class="btn btn-default btn-block">
+                                            <i class="glyphicon glyphicon-chevron-left"></i>
+                                        </button>
+                                        <button type="button" id="question-selection_move_up" class="btn btn-default btn-block">
+                                            <i class="glyphicon glyphicon-arrow-up"></i>
+                                        </button>
+                                        <button type="button" id="question-selection_move_down" class="btn btn-default btn-block">
+                                            <i class="glyphicon glyphicon-arrow-down"></i>
+                                        </button>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <select multiple id="question-selection_to" class="form-control question-select" name="question-selection-to[]" title=""></select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr/>
+
+                            <div class="form-group">
+                                <div class="quiz-button-group">
+                                    <div class="float-left">
+                                        <button type="reset" class="btn btn-danger">Delete</button>
+                                    </div>
+                                    <div class="float-right">
+                                        <button type="reset" class="btn btn-default">Reset</button>
+                                        <button type="button" class="btn btn-success">Save</button>
+                                    </div>
+                                </div>
+                            </div>
 
                         </form>
                     </div>
