@@ -23,8 +23,8 @@ public class GroupeAPI {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Map getGroupData(@PathVariable("id") int id) {
-        return groupeService.getGroupData(id);
+    public Map getGroup(@PathVariable("id") int id) {
+        return groupeService.getGroup(id);
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)

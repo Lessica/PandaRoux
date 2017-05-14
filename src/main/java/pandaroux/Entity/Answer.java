@@ -1,5 +1,7 @@
 package pandaroux.Entity;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +15,7 @@ public class Answer {
     @Column
     private int id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "id_quiz_question")
     private Quiz_question quiz_question;
 
@@ -25,6 +27,7 @@ public class Answer {
     private String text;
 
     @Column
+    @Type(type = "date")
     private Date date;
 
 

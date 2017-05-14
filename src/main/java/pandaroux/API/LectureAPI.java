@@ -20,7 +20,7 @@ public class LectureAPI {
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-    public void add(@PathVariable("id") int id) {
+    public void delete(@PathVariable("id") int id) {
         lectureService.deleteById(id);
     }
 }

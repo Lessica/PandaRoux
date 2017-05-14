@@ -8,6 +8,8 @@ import java.util.List;
 public class Quiz_question {
 
     @Id
+    @GeneratedValue
+    @Column
     private int id;
 
     @ManyToOne
