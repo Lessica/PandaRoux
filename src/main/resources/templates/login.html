@@ -5,35 +5,45 @@
       layout:decorate="site-base">
 <head>
     <title>Login</title>
+    <script th:src="@{/js/roux-api.js}"></script>
     <script>
         $(function () {
-            $("form[name=login]").on('submit', function (e) {
-                var email = $("#email").val();
+            $("button[name=submit]").click(function (e) {
+                var username = $("#username").val();
                 var password = $("#password").val();
-                if (email.length !== 0 && password.length !== 0) {
-                    // Ajax Login ?
-                    return;
+                if (
+                    username.length !== 0 &&
+                    password.length !== 0
+                ) {
+                    API.loginCheck(function (data) {
+                        if (data['result'] === 'success') {
+                            if (data['role'] === 'eleve') {
+                                window.location.href = '/student';
+                            } else if (data['role'] === 'prof') {
+                                window.location.href = '/teacher';
+                            }
+                        }
+                    }, username, password);
                 }
-                e.preventDefault();
             });
         });
     </script>
 </head>
 <body>
 <div layout:fragment="container">
-    <div class="alert alert-danger alert-dismissible" role="alert" layout:fragment="alert">
+    <!--div class="alert alert-danger alert-dismissible" role="alert" layout:fragment="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
                 aria-hidden="true">&times;</span></button>
         Error: <strong>Wrong username or password!</strong> Better check yourself, you're not looking too good.
-    </div>
+    </div-->
     <div class="roux-login-wrap">
         <div class="roux-login">
             <h1><span class="i-logo">PandaRoux</span></h1>
-            <form th:action="@{/login}" method="post"
+            <form method="post"
                   name="login" role="form">
                 <p>
-                    <label for="email" class="sr-only">Email</label>
-                    <input type="email" id="email" name="email" value="" placeholder="Email"
+                    <label for="username" class="sr-only">Username</label>
+                    <input type="text" id="username" name="username" value="" placeholder="Username"
                            class="text-l w-100" autofocus/>
                 </p>
                 <p>
@@ -42,7 +52,7 @@
                            placeholder="Password"/>
                 </p>
                 <p class="submit">
-                    <button type="submit" class="btn btn-l w-100 primary">Login</button>
+                    <button name="submit" type="button" class="btn btn-l w-100 primary">Login</button>
                 </p>
                 <p>
                     <label for="remember"><input type="checkbox" name="remember" class="checkbox" value="1"
