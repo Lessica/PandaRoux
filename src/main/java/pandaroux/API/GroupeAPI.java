@@ -36,13 +36,13 @@ public class GroupeAPI {
 
     @RequestMapping(value = "/{id}/add/students", method = RequestMethod.POST)
     public Map addStudentsFromGroupe(@PathVariable("id") int id_groupe,
-                                     @RequestBody List<Integer> id_students) {
-        return groupeService.addStudentsToGroupe(id_groupe, id_students);
+                                     @RequestBody Map map) {
+        return groupeService.addStudentsToGroupe(id_groupe, (List<Integer>) map.get("id_students"));
     }
 
     @RequestMapping(value = "/{id}/remove/students", method = RequestMethod.POST)
     public Map removeStudentsFromGroupe(@PathVariable("id") int id_groupe,
-                                        @RequestBody List<Integer> id_students) {
-        return groupeService.removeStudentsFromGroupe(id_groupe, id_students);
+                                        @RequestBody Map map) {
+        return groupeService.removeStudentsFromGroupe(id_groupe, (List<Integer>) map.get("id_students"));
     }
 }
