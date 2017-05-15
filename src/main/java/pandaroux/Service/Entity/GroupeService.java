@@ -49,19 +49,48 @@ public class GroupeService {
         groupeRepository.save(groupe);
 
         Map data = new HashMap();
-
         data.put("result", "succeed");
 
         return data;
     }
 
-    public Map addStudentsToGroupe(int id_groupe, List<User> students) {
+    public Map addStudentsToGroupe(int id_groupe, List<Integer> id_students) {
 
         Groupe groupe = groupeRepository.findOne(id_groupe);
 
-        for (User student : students) {
-            // groupe.
+        for (int id_student : id_students) {
+            User student = userRepository.findOne(id_student);
+
+            if (!student.getStudentGroupes().contains(groupe)) {
+                student.getStudentGroupes().add(groupe);
+            }
+
+            userRepository.save(student);
         }
-        return null;
+
+        Map data = new HashMap();
+        data.put("result", "succeed");
+
+        return data;
+    }
+
+    public Map removeStudentsFromGroupe(int id_groupe, List<Integer> id_students) {
+
+        Groupe groupe = groupeRepository.findOne(id_groupe);
+
+        for (int id_student : id_students) {
+            User student = userRepository.findOne(id_student);
+
+            if (student.getStudentGroupes().contains(groupe)) {
+                student.getStudentGroupes().remove(groupe);
+            }
+
+            userRepository.save(student);
+        }
+
+        Map data = new HashMap();
+        data.put("result", "succeed");
+
+        return data;
     }
 }

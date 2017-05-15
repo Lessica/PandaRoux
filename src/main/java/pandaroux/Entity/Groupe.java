@@ -71,4 +71,12 @@ public class Groupe {
     public void setLectures(List<Lecture> lectures) {
         this.lectures = lectures;
     }
+
+    public List<Quiz> getQuizzes() {
+        return quizzes;
+    }
+
+    public void setQuizzes(List<Quiz> quizzes) {
+        this.quizzes = quizzes;
+    }
 }

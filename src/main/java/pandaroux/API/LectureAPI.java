@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import pandaroux.Entity.Lecture;
 import pandaroux.Service.Entity.LectureService;
 
+import java.text.ParseException;
 import java.util.Map;
 
 
@@ -21,8 +22,13 @@ public class LectureAPI {
         return lectureService.save(lecture);
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-    public void delete(@PathVariable("id") int id) {
-        lectureService.deleteById(id);
+    @RequestMapping(value = "/{id}/delete", method = RequestMethod.POST)
+    public Map delete(@PathVariable("id") int id) {
+        return lectureService.deleteById(id);
+    }
+
+    @RequestMapping(value = "/{id}/modify", method = RequestMethod.POST)
+    public Map modify(@PathVariable("id") int id_lecture, @RequestBody Map lecture) throws ParseException {
+        return lectureService.modify(id_lecture, lecture);
     }
 }
