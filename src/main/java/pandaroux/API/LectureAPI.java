@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import pandaroux.Entity.Lecture;
 import pandaroux.Service.Entity.LectureService;
 
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("api/lecture")
@@ -15,8 +17,8 @@ public class LectureAPI {
 
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public void add(@RequestBody Lecture lecture) {
-        lectureService.save(lecture);
+    public Map add(@RequestBody Lecture lecture) {
+        return lectureService.save(lecture);
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)

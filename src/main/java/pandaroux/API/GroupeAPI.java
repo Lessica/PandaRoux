@@ -34,7 +34,6 @@ public class GroupeAPI {
         return groupeService.getGroupes();
     }
 
-
     public void addStudentsToGroupe(@RequestBody List<User> students) {
         // groupeService.addStudentsToGroupe(students);
     }
