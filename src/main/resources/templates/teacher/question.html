@@ -5,34 +5,6 @@
       layout:decorate="site-base">
 <head>
     <title>Question</title>
-    <script th:src="@{/js/roux-api.js}"></script>
-    <script>
-        $(function () {
-
-            /*
-            UI.init();
-
-            UI.allowsUserInteraction(false);
-
-            API.getQuestionList(function (data) {
-                var question_button_list = $(".question-button-list");
-                question_button_list.empty();
-                data['question_list'].forEach(function (questionObj) {
-                    var prototype = UI.prototype('pt-question-button').clone(true, true);
-                    prototype.text(questionObj['title']);
-                    prototype.data('id', questionObj['id']);
-                    question_button_list.append(prototype);
-                });
-                if (data['question_list'].length) {
-
-                }
-            });
-            */
-
-            UI.allowsUserInteraction(true);
-
-        });
-    </script>
 </head>
 <body>
 
@@ -43,12 +15,12 @@
                 <img class="header-icon" th:src="@{/img/roux.png}" src="">
             </a>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
+        <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav" layout:fragment="nav-content">
-                <li id="nav_sect_group"><a th:href="@{/teacher/group}">Group</a></li>
-                <li class="active" id="nav_sect_question"><a th:href="@{/teacher/question}">Question</a></li>
-                <li id="nav_sect_questionnaire"><a th:href="@{/teacher/questionnaire}">Questionnaire</a></li>
-                <li id="nav_sect_statistics"><a th:href="@{/teacher/statistics}">Statistics</a></li>
+                <li><a th:href="@{/teacher/group}">Group</a></li>
+                <li class="active"><a th:href="@{/teacher/question}">Question</a></li>
+                <li><a th:href="@{/teacher/questionnaire}">Questionnaire</a></li>
+                <li><a th:href="@{/teacher/statistics}">Statistics</a></li>
             </ul>
         </div>
     </div>
@@ -440,8 +412,9 @@
 
     </div>
 
-    <!-- Ajax Overlay -->
+    <!-- Ajax Overlay
     <div class="overlay" style="z-index: 200;"></div>
+     -->
 
 </div>
 

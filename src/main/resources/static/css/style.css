@@ -56,10 +56,6 @@ code {
 
 /* Global */
 
-.prototype {
-    display: none;
-}
-
 .overlay {
     background: #fff;
     bottom: 0;
@@ -434,5 +430,4 @@ code {
 
 .roux-panel .multi-select {
     padding: 12px;
-
 }
