@@ -1,10 +1,7 @@
 package pandaroux.API;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pandaroux.Entity.Lecture;
 import pandaroux.Entity.Question;
 import pandaroux.Service.Entity.QuestionService;
@@ -27,5 +24,10 @@ public class QuestionAPI {
     @RequestMapping(method = RequestMethod.GET)
     public List<Map> getQuestions() {
         return questionService.getQuestions();
+    }
+
+    @RequestMapping(value = "/teacher/{id}", method = RequestMethod.GET)
+    public List<Map> getTeacherQuestions(@PathVariable("id") int id) {
+        return questionService.getTeacherQuestions(id);
     }
 }

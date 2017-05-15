@@ -20,7 +20,7 @@ public class GroupeService {
 
     public Map getGroup(int groupeId) {
 
-        Map groupeData = new HashMap<>();
+        Map groupeData = new HashMap();
 
         groupeData.put("students", groupeRepository.getGroupSudents(groupeId));
         groupeData.put("lectures", groupeRepository.getGroupLectures(groupeId));

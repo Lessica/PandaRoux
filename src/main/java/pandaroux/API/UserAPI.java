@@ -25,4 +25,9 @@ public class UserAPI {
     public Map findOneById(@PathVariable("id") int id) {
         return userService.findOneById(id);
     }
+
+    @RequestMapping(value = "/students", method = RequestMethod.POST)
+    public Map getStudents() {
+        return userService.getStudents();
+    }
 }

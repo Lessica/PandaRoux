@@ -21,4 +21,8 @@ public class QuestionService {
     public List<Map> getQuestions() {
         return questionRepository.getQuestions();
     }
+
+    public List<Map> getTeacherQuestions(int id) {
+        return questionRepository.getTeacherQuestions(id);
+    }
 }
