@@ -1,6 +1,7 @@
 package pandaroux.Service.Entity;
 
 import pandaroux.Entity.Groupe;
+import pandaroux.Entity.User;
 import pandaroux.Repository.GroupeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class GroupeService {
 
         groupeDetails.put("students", groupeRepository.getGroupSudents(groupeId));
         groupeDetails.put("lectures", groupeRepository.getGroupLectures(groupeId));
+        groupeDetails.put("id", groupeId);
 
         groupeData.put("result", "succeed");
         groupeData.put("groupeDetails", groupeDetails);
@@ -51,5 +53,15 @@ public class GroupeService {
         data.put("result", "succeed");
 
         return data;
+    }
+
+    public Map addStudentsToGroupe(int id_groupe, List<User> students) {
+
+        Groupe groupe = groupeRepository.findOne(id_groupe);
+
+        for (User student : students) {
+            // groupe.
+        }
+        return null;
     }
 }

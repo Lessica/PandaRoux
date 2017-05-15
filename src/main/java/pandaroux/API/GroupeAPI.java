@@ -34,7 +34,9 @@ public class GroupeAPI {
         return groupeService.getGroupes();
     }
 
-    public void addStudentsToGroupe(@RequestBody List<User> students) {
-        // groupeService.addStudentsToGroupe(students);
+    @RequestMapping(value = "/{id}/students", method = RequestMethod.POST)
+    public Map addStudentsToGroupe(@PathVariable("id") int id_groupe,
+                                   @RequestBody List<User> students) {
+        return groupeService.addStudentsToGroupe(id_groupe, students);
     }
 }
