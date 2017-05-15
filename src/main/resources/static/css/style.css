@@ -56,6 +56,10 @@ code {
 
 /* Global */
 
+.prototype {
+    display: none;
+}
+
 .overlay {
     background: #fff;
     bottom: 0;

@@ -32,13 +32,15 @@ public class GroupeService {
     public Map getGroup(int groupeId) {
 
         Map groupeData = new HashMap();
-        Map groupeDetails = new HashMap();
-
-        groupeDetails.put("students", groupeRepository.getGroupSudents(groupeId));
-        groupeDetails.put("lectures", groupeRepository.getGroupLectures(groupeId));
-        groupeDetails.put("id", groupeId);
-
         groupeData.put("result", "succeed");
+
+        Groupe groupe = groupeRepository.findOne(groupeId);
+        groupeData.put("id", groupeId);
+        groupeData.put("name", groupe.getName());
+
+        Map groupeDetails = new HashMap();
+        groupeDetails.put("students", groupeRepository.getGroupStudents(groupeId));
+        groupeDetails.put("lectures", groupeRepository.getGroupLectures(groupeId));
         groupeData.put("groupeDetails", groupeDetails);
 
         return groupeData;

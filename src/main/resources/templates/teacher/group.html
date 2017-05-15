@@ -5,7 +5,9 @@
       layout:decorate="site-base">
 <head>
     <title>Group</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-datepicker.css}">
     <link rel="stylesheet" th:href="@{/css/sweetalert.css}">
+    <script th:src="@{/js/bootstrap-datepicker.js}"></script>
     <script th:src="@{/js/sweetalert.min.js}"></script>
     <script>
 
@@ -15,74 +17,616 @@
 
             console.log("document ready");
 
-            var APIConnection = {
-                errorHandler: function (responseData) {
-                    if (responseData && responseData["error"]) {
-                        swal("Oops...", responseData['error'], "error");
+            var DOMFactory = {
+                elementWithId: function () {
+                    if (arguments.length === 0)
+                        return null;
+                    var elem_id = arguments[0];
+                    var result = $("#template-" + elem_id).html();
+                    for (var i = 1; i < arguments.length; i++) {
+                        var re = new RegExp('\\{' + (i) + '\\}', 'gm');
+                        result = result.replace(re, arguments[i]);
                     }
+                    return $(result);
                 }
             };
 
-            var Storage = {
-                workspace: $(".group-detail"), // div
-                groupTitle: $(".group-title"), // input val()
-                selectedGroupId: null
+            var APIService = {
+                init: function () {
+                    $.ajaxSetup({
+                        method: "POST",
+                        dataType: "json",
+                        contentType: "application/json; charset=UTF-8",
+                        timeout: 10000,
+                        error: APIService.errorHandler,
+                        async: true
+                    });
+                },
+                errorHandler: function (xmlHTTP, status, httperror) {
+                    var resp = $.parseJSON(xmlHTTP.responseText);
+                    if (resp && resp["error"]) {
+                        swal("Oops...", resp['error'], "error");
+                    }
+                },
+                getGroupList: function (callback) {
+                    $.ajax("/api/groupe", {
+                        success: callback
+                    });
+                },
+                getGroupDetail: function (callback, gid) {
+                    $.ajax("/api/groupe/" + gid.toString(), {
+                        success: callback
+                    });
+                },
+                getStudentList: function (callback) {
+                    $.ajax("/api/user/students", {
+                        success: callback
+                    });
+                },
+                selectStudentsIntoGroup: function (callback, gid, sid_list) {
+                    $.ajax("/api/groupe/" + gid.toString() + "/add/students", {
+                        data: JSON.stringify({
+                            "id_students": sid_list
+                        }),
+                        success: callback
+                    });
+                },
+                removeStudentsFromGroup: function (callback, gid, sid_list) {
+                    $.ajax("/api/groupe/" + gid.toString() + "/remove/students", {
+                        data: JSON.stringify({
+                            "id_students": sid_list
+                        }),
+                        success: callback
+                    });
+                },
+                createGroup: function (callback, form_data) {
+                    $.ajax("/api/groupe/add", {
+                        data: JSON.stringify({
+                            "name": form_data["name"]
+                        }),
+                        success: callback
+                    });
+                },
+                createSession: function (callback, gid, form_data) {
+                    $.ajax("/api/lecture/add", {
+                        data: JSON.stringify({
+                            "name": form_data["name"],
+                            "groupe": {
+                                "id": parseInt(gid)
+                            }
+                        }),
+                        success: callback
+                    });
+                },
+                removeSession: function (callback, sid) {
+                    $.ajax("/api/lecture/" + sid.toString() + "/delete", {
+                        success: callback
+                    });
+                },
+                modifySession: function (callback, sid, form_data) {
+                    $.ajax("/api/lecture/" + sid.toString() + "/modify", {
+                        data: JSON.stringify(form_data),
+                        success: callback
+                    });
+                }
             };
-            var Workspace = {
-                // "selected_group_id": 1
 
-                setGroupTitle: function (title) {
-                    Storage.groupTitle.val(title);
+            var CreateGroupModalController = {
+
+                storage: {
+                    modalWindow: $("#new-group-popup"),
+                    groupNameInput: $("#new-group-name"),
+                    modalSubmitButton: $("#create-new-group")
+                },
+
+                init: function () {
+                    CreateGroupModalController.bindEvent();
+                },
+
+                bindEvent: function () {
+                    CreateGroupModalController.storage.modalWindow.on('shown.bs.modal', function () {
+                        CreateGroupModalController.storage.groupNameInput.focus();
+                    });
+                    CreateGroupModalController.storage.groupNameInput.on("change paste keyup", function () {
+                        CreateGroupModalController.storage.modalSubmitButton.attr('disabled', $.trim($(this).val()).length <= 0);
+                    });
+                    CreateGroupModalController.storage.groupNameInput.on("keypress", function () {
+                        if (event.which === 13) {
+                            if ($.trim($(this).val()).length > 0) {
+                                CreateGroupModalController.storage.modalSubmitButton.click();
+                            }
+                        }
+                    });
+                    CreateGroupModalController.storage.modalSubmitButton.click(function (event) {
+                        var sender = $(this);
+                        var new_group_name = CreateGroupModalController.storage.groupNameInput.val();
+                        APIService.createGroup(function (resp) {
+                            if (resp["result"] === "succeed") {
+                                GroupListController.load();
+                                CreateGroupModalController.storage.modalWindow.modal("hide");
+                            }
+                        }, {"name": new_group_name});
+                    });
+                },
+
+                reset: function () {
+                    CreateGroupModalController.storage.groupNameInput.val("");
+                    CreateGroupModalController.storage.modalSubmitButton.attr('disabled', true);
+                },
+
+                show: function () {
+                    CreateGroupModalController.storage.modalWindow.modal("show");
+                }
+
+            };
+
+            var GroupListController = {
+
+                storage: {
+                    groupCreateButton: $("#common-new-group"), // button
+                    groupList: $("#search-group-list"), // div
+                    searchGroupInput: $("#search-group"),
+                    selectedGroupId: null
+                },
+
+                init: function () {
+                    CreateGroupModalController.init();
+                    GroupListController.storage.groupCreateButton.click(GroupListController.createGroupButtonClicked);
+                    GroupListController.load();
+                },
+
+                load: function () {
+                    WorkspaceController.reset();
+                    WorkspaceController.hide();
+                    APIService.getGroupList(GroupListController.reloadGroupList);
+                },
+
+                createGroupButtonClicked: function (event) {
+                    CreateGroupModalController.reset();
+                    CreateGroupModalController.show();
+                },
+
+                reloadGroupList: function (resp) {
+                    console.log(resp);
+                    GroupListController.storage.groupList.html("");
+                    var resp_group_list = resp["groupes"];
+                    for (var i in resp_group_list) {
+                        var resp_group = resp_group_list[i];
+                        var new_group_button = DOMFactory.elementWithId("group-button", resp_group["name"], "btn-default");
+                        new_group_button.attr('id', "group-button-" + resp_group['id']);
+                        new_group_button.data(resp_group);
+                        new_group_button.click(GroupListController.groupButtonClicked);
+                        GroupListController.storage.groupList.prepend(new_group_button);
+                    }
+                },
+
+                groupButtonClicked: function (event) {
+                    var sender = $(this);
+                    var data = sender.data();
+                    GroupListController.setSelectedGroup(data['id']);
+                    WorkspaceController.loadWithId(data['id']);
+                    console.log(data);
+                },
+
+                setSelectedGroup: function (group_id) {
+                    GroupListController.storage.selectedGroupId = parseInt(group_id);
+                    $(".group-button").removeClass("btn-primary");
+                    if (group_id) {
+                        $("#group-button-" + group_id.toString()).addClass("btn-primary");
+                    }
+                }
+
+            };
+
+            var CreateSessionModalController = {
+
+                storage: {
+                    modalWindow: $("#new-session-popup"),
+                    sessionNameInput: $("#new-session-name"),
+                    modalSubmitButton: $("#create-new-session")
+                },
+
+                init: function () {
+                    CreateSessionModalController.bindEvent();
+                },
+
+                bindEvent: function () {
+                    CreateSessionModalController.storage.modalWindow.on('shown.bs.modal', function () {
+                        CreateSessionModalController.storage.sessionNameInput.focus();
+                    });
+                    CreateSessionModalController.storage.sessionNameInput.on("change paste keyup", function () {
+                        CreateSessionModalController.storage.modalSubmitButton.attr('disabled', $.trim($(this).val()).length <= 0);
+                    });
+                    CreateSessionModalController.storage.sessionNameInput.on("keypress", function () {
+                        if (event.which === 13) {
+                            if ($.trim($(this).val()).length > 0) {
+                                CreateSessionModalController.storage.modalSubmitButton.click();
+                            }
+                        }
+                    });
+                    CreateSessionModalController.storage.modalSubmitButton.click(function (event) {
+                        var sender = $(this);
+                        var new_session_name = CreateSessionModalController.storage.sessionNameInput.val();
+                        var group_id = GroupListController.storage.selectedGroupId;
+                        APIService.createSession(function (resp) {
+                            if (resp["result"] === "succeed") {
+                                WorkspaceController.loadWithId(group_id);
+                                CreateSessionModalController.storage.modalWindow.modal("hide");
+                            }
+                        }, group_id, {"name": new_session_name});
+                    });
+                },
+
+                reset: function () {
+                    CreateSessionModalController.storage.sessionNameInput.val("");
+                    CreateSessionModalController.storage.modalSubmitButton.attr('disabled', true);
+                },
+
+                show: function () {
+                    CreateSessionModalController.storage.modalWindow.modal("show");
+                }
+
+            };
+
+            var EditSessionModalController = {
+
+
+
+            };
+
+            var WorkspaceController = {
+
+                storage: {
+                    workspace: $(".group-detail"), // div
+                    groupTitle: $(".group-title"), // input val()
+                    selectedStudentList: $("#search-selected-student-list"), // div
+                    sessionList: $("#search-session-list"), // div
+                    searchSelectedStudentInput: $("#search-selected-student"),
+                    searchSessionInput: $("#search-session"),
+                    createSessionPanel: $("#create-session-panel")
+                },
+
+                init: function () {
+                    CreateSessionModalController.init();
+                    WorkspaceController.bindEvent();
+                },
+
+                bindEvent: function () {
+                    WorkspaceController.storage.createSessionPanel.click(WorkspaceController.createSessionPanelClicked);
+                },
+
+                createSessionPanelClicked: function (event) {
+                    CreateSessionModalController.reset();
+                    CreateSessionModalController.show();
+                },
+
+                reset: function () {
+                    StudentListController.reloadStudentList(null);
+                    WorkspaceController.storage.selectedStudentList.html("");
+                    WorkspaceController.storage.sessionList.html("");
+                    WorkspaceController.storage.groupTitle.val("");
+                    WorkspaceController.storage.searchSelectedStudentInput.val("");
+                    WorkspaceController.storage.searchSessionInput.val("");
+                },
+
+                show: function () {
+                    WorkspaceController.storage.workspace.show();
+                },
+
+                hide: function () {
+                    WorkspaceController.storage.workspace.hide();
+                },
+
+                focusOnTitle: function () {
+                    WorkspaceController.storage.groupTitle.focus();
                 },
                 
-                setSelectedGroup: function (group_id) {
-                    Storage.selectedGroupId = group_id;
-                    if (group_id) {
+                loadWithId: function (gid) {
+                    APIService.getGroupDetail(WorkspaceController.load, gid);
+                },
+                
+                load: function (resp) {
+                    console.log(resp);
+                    WorkspaceController.reset();
+                    WorkspaceController.loadGroupTitle(resp);
+                    WorkspaceController.loadSelectedStudentList(resp);
+                    WorkspaceController.loadSessionList(resp);
+                    WorkspaceController.show();
+                },
+                
+                loadGroupTitle: function (resp) {
+                    WorkspaceController.storage.groupTitle.val(resp["name"]);
+                },
 
-                    } else {
-                        Storage.workspace.hide();
+                loadSelectedStudentList: function (resp) {
+                    StudentListController.reloadStudentList(null);
+                    WorkspaceController.storage.selectedStudentList.html("");
+                    var resp_selected_student_list = resp["groupeDetails"]["students"];
+                    for (var i in resp_selected_student_list) {
+                        var resp_selected_student = resp_selected_student_list[i];
+                        var new_student_button = DOMFactory.elementWithId("student-button", resp_selected_student["name"] + " " + resp_selected_student["first_name"], "btn-default", "glyphicon-remove");
+                        new_student_button.attr('id', "selected-student-button-" + resp_selected_student['id']);
+                        new_student_button.data(resp_selected_student);
+                        new_student_button.click(WorkspaceController.selectedStudentButtonClicked);
+                        var orig_student_button = $("#student-button-" + resp_selected_student['id']);
+                        WorkspaceController.markStudentButton(orig_student_button, true);
+                        WorkspaceController.storage.selectedStudentList.append(new_student_button);
                     }
+                },
+
+                markStudentButton: function (btn, mark) {
+                    var logo = btn.find("span");
+                    if (mark) {
+                        btn.addClass("btn-success");
+                        logo.removeClass("glyphicon-plus");
+                        logo.addClass("glyphicon-ok");
+                    } else {
+                        btn.removeClass("btn-success");
+                        logo.removeClass("glyphicon-ok");
+                        logo.addClass("glyphicon-plus");
+                    }
+                },
+
+                loadSessionList: function (resp) {
+                    WorkspaceController.storage.sessionList.html("");
+                    var resp_session_list = resp["groupeDetails"]["lectures"];
+                    for (var i in resp_session_list) {
+                        var resp_session = resp_session_list[i];
+                        var has_comment = resp_session["commetary"] && resp_session["commetary"].length !== 0;
+                        var new_session_panel;
+                        if (has_comment) {
+                            new_session_panel = DOMFactory.elementWithId("session-panel", resp_session["name"], "View Note", "panel-default", "btn-default", "glyphicon-search");
+                        } else {
+                            new_session_panel = DOMFactory.elementWithId("session-panel", resp_session["name"], "Create Note", "panel-success", "btn-success", "glyphicon-plus");
+                        }
+                        new_session_panel.data(resp_session);
+                        var remove_button = new_session_panel.find("#remove-session");
+                        remove_button.data(resp_session);
+                        remove_button.click(WorkspaceController.removeSessionButtonClicked);
+                        var select_date_input = new_session_panel.find("#select-date");
+                        select_date_input.val(resp_session['date']);
+                        select_date_input.data(resp_session);
+                        select_date_input.datepicker({
+                            format: 'yyyy-mm-dd',
+                            autoclose: true
+                        }).on("changeDate", WorkspaceController.changeSessionDateEventTriggered);
+                        var edit_session_button = new_session_panel.find("#edit-session");
+                        edit_session_button.data(resp_session);
+                        edit_session_button.click(WorkspaceController.editSessionButtonClicked);
+                        WorkspaceController.storage.sessionList.prepend(new_session_panel);
+                    }
+                },
+
+                editSessionButtonClicked: function (event) {
+                    console.log(event);
+                },
+
+                changeSessionDateEventTriggered: function (event) {
+                    var sender = $(this);
+                    var data = sender.data();
+                    console.log(data);
+                    var date = sender.val();
+                    WorkspaceController.changeSessionDate(data['id'], date);
+                },
+
+                changeSessionDate: function (sid, date) {
+                    var group_id = GroupListController.storage.selectedGroupId;
+                    APIService.modifySession(function (resp) {
+                        if (resp["result"] === "succeed") {
+                            WorkspaceController.loadWithId(group_id);
+                        }
+                    }, sid, {"date": date});
+                },
+
+                removeSessionButtonClicked: function (event) {
+                    var sender = $(this);
+                    var data = sender.data();
+                    console.log(data);
+                    swal({
+                        title: "Are you sure?",
+                        text: "The session will be deleted! \n" +
+                        "You will not be able to revoke this operation!",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Yes, delete it!",
+                        closeOnConfirm: false,
+                        html: false
+                    }, function () {
+                        WorkspaceController.removeSession(data['id']);
+                    });
+                },
+
+                removeSession: function (sid) {
+                    var group_id = GroupListController.storage.selectedGroupId;
+                    APIService.removeSession(function (resp) {
+                        if (resp["result"] === "succeed") {
+                            WorkspaceController.loadWithId(group_id);
+                            swal("Deleted!",
+                                "This session has been deleted.",
+                                "success");
+                        }
+                    }, sid);
+                },
+
+                selectedStudentButtonClicked: function (event) {
+                    var sender = $(this);
+                    var data = sender.data();
+                    console.log(data);
+                    var group_id = GroupListController.storage.selectedGroupId;
+                    APIService.removeStudentsFromGroup(function (resp) {
+                        if (resp["result"] === "succeed") {
+                            WorkspaceController.loadWithId(group_id);
+                        }
+                    }, group_id, [ data['id'] ]);
+                }
+            };
+
+            var StudentListController = {
+
+                storage: {
+                    searchStudentInput: $("#search-student"),
+                    studentList: $("#search-student-list"),
+                    dataStudentList: null // lazy load
+                },
+
+                init: function () {
+                    APIService.getStudentList(StudentListController.reloadStudentList);
+                },
+
+                reset: function () {
+                    StudentListController.storage.studentList.html("");
+                    StudentListController.storage.searchStudentInput.val("");
+                },
+
+                reloadStudentList: function (resp) {
+                    // load from cache
+                    if (resp === null) {
+                        resp = StudentListController.storage.dataStudentList;
+                    } else {
+                        console.log(resp);
+                    }
+                    // still null check
+                    if (resp === null) {
+                        return;
+                    } else {
+                        StudentListController.storage.dataStudentList = resp;
+                    }
+                    StudentListController.storage.studentList.html("");
+                    var resp_student_list = resp["students"];
+                    for (var i in resp_student_list) {
+                        var resp_student = resp_student_list[i];
+                        var new_student_button = DOMFactory.elementWithId("student-button", resp_student["name"] + " " + resp_student["first_name"], "btn-default", "glyphicon-plus");
+                        new_student_button.attr('id', "student-button-" + resp_student['id']);
+                        new_student_button.data(resp_student);
+                        new_student_button.click(StudentListController.studentButtonClicked);
+                        StudentListController.storage.studentList.append(new_student_button);
+                    }
+                },
+
+                studentButtonClicked: function (event) {
+                    var sender = $(this);
+                    if (sender.hasClass("btn-success")) {
+                        event.preventDefault();
+                        return;
+                    }
+                    var data = sender.data();
+                    console.log(data);
+                    var group_id = GroupListController.storage.selectedGroupId;
+                    APIService.selectStudentsIntoGroup(function (resp) {
+                        if (resp["result"] === "succeed") {
+                            WorkspaceController.loadWithId(group_id);
+                        }
+                    }, group_id, [ data['id'] ]);
+                }
+
+            };
+
+            var ViewController = {
+
+                storage: {
+
+                },
+
+                init: function () {
+                    ViewController.bindSearchPair();
+                    GroupListController.init();
+                    WorkspaceController.init();
+                    StudentListController.init();
+                },
+
+                bindSearchPair: function () {
+
+                    var BindSearchEventPair = function (input_s, list_s, where_s) {
+                        $(input_s).on("change keyup paste", function () {
+                            var sc = $(this).val();
+                            $(list_s).each(function () {
+                                var e = $(this);
+                                var st;
+                                if (where_s === null) {
+                                    st = e.text();
+                                }
+                                else {
+                                    st = $(this).find(where_s).text();
+                                }
+                                if (st.indexOf(sc) !== -1) {
+                                    e.show();
+                                }
+                                else {
+                                    e.hide();
+                                }
+                            });
+                        });
+                    };
+
+                    // search-group -> search-group-list -> button
+                    // search-student -> search-student-list -> button
+                    BindSearchEventPair("#search-group", "#search-group-list > button", null);
+                    BindSearchEventPair("#search-student", "#search-student-list > button", null);
+                    BindSearchEventPair("#search-selected-student", "#search-selected-student-list > button", null);
+                    BindSearchEventPair("#search-session", "#search-session-list > div", "h3");
+
                 }
 
             };
 
             {
-
-                console.log("bind search input");
-
-                var BindSearchPair = function (input_s, list_s, where_s) {
-                    $(input_s).on("change keyup paste", function () {
-                        var sc = $(this).val();
-                        $(list_s).each(function () {
-                            var e = $(this);
-                            var st;
-                            if (where_s !== null) st = e.text();
-                            else st = $(this).find(where_s).text();
-                            if (st.indexOf(sc) !== -1) e.show();
-                            else e.hide();
-                        });
-                    });
-                };
-
-                // search-group -> search-group-list -> button
-                // search-student -> search-student-list -> button
-                BindSearchPair("#search-group", "#search-group-list > button", null);
-                BindSearchPair("#search-student", "#search-student-list > button", null);
-                BindSearchPair("#search-selected-student", "#search-selected-student-list > button", null);
-                BindSearchPair("#search-session", "#search-session-list > div", "h3");
-
+                document.DOMFactory = DOMFactory;
+                document.APIService = APIService;
+                document.RootController = ViewController;
             }
 
-            {
-
-                console.log("bind modal event")
-
-                // modal-new-group
-                // modal-new-session
-
-            }
+            APIService.init();
+            ViewController.init();
 
         });
+
+    </script>
+
+    <!-- JS TEMPLATE ENGINE -->
+
+    <script id="template-group-button" language="text">
+
+        <button id="group-button" type="button" class="btn {2} btn-block group-button">
+            {1}
+        </button>
+
+    </script>
+
+    <script id="template-student-button" language="text">
+
+        <button type="button" class="btn {2} btn-block student-button">
+            {1}
+            <span class="glyphicon {3} btn-icon float-right"></span>
+        </button>
+
+    </script>
+
+    <script id="template-session-panel" language="text">
+
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="panel {3} roux-panel panel-session">
+                <div class="panel-heading">
+                    <h3 class="session-panel-title">
+                        {1}
+                    </h3>
+                    <span id="remove-session" class="glyphicon glyphicon-trash session-title-button float-right"></span>
+                </div>
+                <div class="panel-body">
+                    <div class="input-group">
+                        <input id="select-date" type="text" class="form-control select-date" readonly title="">
+                        <span class="input-group-addon">
+                        <i class="glyphicon glyphicon-calendar"></i>
+                </span>
+                    </div>
+                    <br>
+                    <button id="edit-session" type="button" class="btn {4} btn-block">
+                        <span class="glyphicon {5}"></span>
+                        {2}
+                    </button>
+                </div>
+            </div>
+        </div>
 
     </script>
 
@@ -126,22 +670,12 @@
 
                     <div class="scroll-list">
                         <div class="scroll-list-group">
-                            <button id="modal-new-group" type="button" class="btn btn-success btn-block">
+                            <button id="common-new-group" type="button" class="btn btn-success btn-block">
                                 <span class="glyphicon glyphicon-plus"></span>
                                 New
                             </button>
                             <hr>
-                            <div id="search-group-list" class="group-button-list">
-
-                                <button type="button" class="btn btn-default btn-block group-button">
-                                    N/A
-                                </button>
-
-                                <button type="button" class="btn btn-primary btn-block group-button">
-                                    N/A
-                                </button>
-
-                            </div>
+                            <div id="search-group-list" class="group-button-list"></div>
                         </div>
                     </div>
                     <br>
@@ -183,19 +717,7 @@
 
                         <div class="scroll-list">
                             <div class="scroll-list-all-student">
-                                <div id="search-student-list" class="student-button-list">
-
-                                    <button type="button" class="btn btn-default btn-block student-button">
-                                        Student 1
-                                        <span class="glyphicon glyphicon-plus btn-icon float-right"></span>
-                                    </button>
-
-                                    <button type="button" class="btn btn-success btn-block student-button">
-                                        Student 2
-                                        <span class="glyphicon glyphicon-ok btn-icon float-right"></span>
-                                    </button>
-
-                                </div>
+                                <div id="search-student-list" class="student-button-list"></div>
                             </div>
                         </div>
                         <br>
@@ -220,12 +742,7 @@
 
                         <div class="scroll-list">
                             <div class="scroll-list-selected-student">
-                                <div id="search-selected-student-list" class="selected-student-button-list">
-                                    <button type="button" class="btn btn-default btn-block student-button">
-                                        Student 1
-                                        <span class="glyphicon glyphicon-remove btn-icon float-right"></span>
-                                    </button>
-                                </div>
+                                <div id="search-selected-student-list" class="selected-student-button-list"></div>
                             </div>
                         </div>
                         <br>
@@ -257,7 +774,7 @@
 
                             <!-- Add Session Sub Panel -->
                             <div class="col-sm-6 col-md-4 col-lg-3">
-                                <div class="panel panel-default roux-panel panel-session-add">
+                                <div id="create-session-panel" class="panel panel-default roux-panel panel-session-add">
                                     <div class="panel-body">
                                         <div class="panel-session-wrap">
                                             <span class="glyphicon glyphicon-plus"></span>
@@ -267,56 +784,7 @@
                                 </div>
                             </div>
 
-                            <div id="search-session-list" class="session-panel-list">
-
-                                <div class="col-sm-6 col-md-4 col-lg-3">
-                                    <div class="panel panel-success roux-panel panel-session">
-                                        <div class="panel-heading">
-                                            <h3 class="session-panel-title">
-                                                N/A
-                                            </h3>
-                                            <span class="glyphicon glyphicon-trash session-title-button float-right"></span>
-                                        </div>
-                                        <div class="panel-body">
-                                            <div class="input-group">
-                                                <input type="text" class="form-control select-date" readonly title="">
-                                                <span class="input-group-addon">
-                                                <i class="glyphicon glyphicon-calendar"></i>
-                                        </span>
-                                            </div>
-                                            <br>
-                                            <button type="button" class="btn btn-success btn-block">
-                                                <span class="glyphicon glyphicon-plus"></span>
-                                                Create Note
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6 col-md-4 col-lg-3">
-                                    <div class="panel panel-default roux-panel panel-session">
-                                        <div class="panel-heading">
-                                            <h3 class="session-panel-title">
-                                                N/A
-                                            </h3>
-                                            <span class="glyphicon glyphicon-trash session-title-button float-right"></span>
-                                        </div>
-                                        <div class="panel-body">
-                                            <div class="input-group">
-                                                <input type="text" class="form-control select-date" readonly title="">
-                                                <span class="input-group-addon">
-                                            <i class="glyphicon glyphicon-calendar"></i>
-                                        </span>
-                                            </div>
-                                            <br>
-                                            <button type="button" class="btn btn-default btn-block">
-                                                <span class="glyphicon glyphicon-search"></span>
-                                                View Note
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
+                            <div id="search-session-list" class="session-panel-list"></div>
 
                         </div>
                         <br>
@@ -327,6 +795,36 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- Modal (Pop-up) Group Add -->
+    <div class="modal fade" id="new-group-popup" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    <h4 class="modal-title">New Group</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="input-group">
+                        <input id="new-group-name" type="text" class="form-control" placeholder="Group Name">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default" aria-label="Help"><span
+                                    class="glyphicon glyphicon-question-sign"></span></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="create-new-group" type="button" class="btn btn-success" disabled>Save
+                    </button>
+                </div>
+
+            </div>
+        </div>
     </div>
 
     <!-- Modal (Pop-up) Session Add -->
@@ -341,7 +839,7 @@
 
                 <div class="modal-body">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Session Name">
+                        <input id="new-session-name" type="text" class="form-control" placeholder="Session Name">
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default" aria-label="Help"><span
                                     class="glyphicon glyphicon-question-sign"></span></button>
@@ -351,7 +849,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" disabled>Save
+                    <button id="create-new-session" type="button" class="btn btn-success" disabled>Save
                     </button>
                 </div>
 
@@ -381,23 +879,23 @@
 
                     <div class="rate-input">
                         <div class="rate-button rate-button-r1">
-                            <input id="rate-r1" type="radio" name="rate-group" class="rate-radio" value="1"/>
+                            <input id="rate-r1" type="radio" name="rate-group" class="rate-radio" value="r1"/>
                             <label for="rate-r1">1</label>
                         </div>
                         <div class="rate-button rate-button-r2">
-                            <input id="rate-r2" type="radio" name="rate-group" class="rate-radio" value="2"/>
+                            <input id="rate-r2" type="radio" name="rate-group" class="rate-radio" value="r2"/>
                             <label for="rate-r2">2</label>
                         </div>
                         <div class="rate-button rate-button-r3">
-                            <input id="rate-r3" type="radio" name="rate-group" class="rate-radio" value="3"/>
+                            <input id="rate-r3" type="radio" name="rate-group" class="rate-radio" value="r3"/>
                             <label for="rate-r3">3</label>
                         </div>
                         <div class="rate-button rate-button-r4">
-                            <input id="rate-r4" type="radio" name="rate-group" class="rate-radio" value="4"/>
+                            <input id="rate-r4" type="radio" name="rate-group" class="rate-radio" value="r4"/>
                             <label for="rate-r4">4</label>
                         </div>
                         <div class="rate-button rate-button-r5">
-                            <input id="rate-r5" type="radio" name="rate-group" class="rate-radio" value="5"/>
+                            <input id="rate-r5" type="radio" name="rate-group" class="rate-radio" value="r5"/>
                             <label for="rate-r5">5</label>
                         </div>
                     </div>
@@ -411,7 +909,7 @@
                     </div>
 
                     <div class="comment-input">
-                        <textarea class="form-control" rows="6" title=""></textarea>
+                        <textarea name="comment-area" class="form-control" rows="6" title=""></textarea>
                     </div>
 
                 </div>
@@ -426,9 +924,6 @@
         </div>
     </div>
 
-    <!-- Ajax Overlay
-    <div class="overlay" style="z-index: 200;"></div>
-    -->
 </div>
 
 </body>
