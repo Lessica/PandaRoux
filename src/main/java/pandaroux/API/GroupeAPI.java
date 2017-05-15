@@ -18,14 +18,7 @@ public class GroupeAPI {
     private GroupeService groupeService;
 
 
-    @RequestMapping(method = RequestMethod.GET)
-    public Map<String, List<Map>> getGroupes() {
-        HashMap <String, List<Map>> result = new HashMap<>();
-        result.put("group_list", groupeService.getGroupes());
-        return result;
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public Map getGroup(@PathVariable("id") int id) {
         return groupeService.getGroup(id);
     }
@@ -33,5 +26,10 @@ public class GroupeAPI {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public void add(@RequestBody Groupe groupe) {
         groupeService.save(groupe);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public Map getGroupes() {
+        return groupeService.getGroupes();
     }
 }

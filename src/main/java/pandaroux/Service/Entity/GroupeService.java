@@ -4,6 +4,7 @@ import pandaroux.Entity.Groupe;
 import pandaroux.Repository.GroupeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pandaroux.Repository.UserRepository;
 
 import java.util.*;
 
@@ -13,22 +14,36 @@ public class GroupeService {
     @Autowired
     private GroupeRepository groupeRepository;
 
+    @Autowired
+    private UserRepository userRepository;
 
-    public List<Map> getGroupes() {
-        return groupeRepository.getGroupes(1);
+
+    public Map getGroupes() {
+
+        Map groupesData = new HashMap();
+
+        groupesData.put("result", "succeed");
+        groupesData.put("groupes", groupeRepository.getGroupes(1));
+
+        return groupesData;
     }
 
     public Map getGroup(int groupeId) {
 
         Map groupeData = new HashMap();
+        Map groupeDetails = new HashMap();
 
-        groupeData.put("students", groupeRepository.getGroupSudents(groupeId));
-        groupeData.put("lectures", groupeRepository.getGroupLectures(groupeId));
+        groupeDetails.put("students", groupeRepository.getGroupSudents(groupeId));
+        groupeDetails.put("lectures", groupeRepository.getGroupLectures(groupeId));
+
+        groupeData.put("result", "succeed");
+        groupeData.put("groupeDetails", groupeDetails);
 
         return groupeData;
     }
 
     public void save(Groupe groupe) {
+        groupe.setTeacher(userRepository.findOne(1));
         groupeRepository.save(groupe);
     }
 }
