@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table
-public class Options {
+public class Option {
 
     @Id
     @GeneratedValue
@@ -27,7 +27,7 @@ public class Options {
     private int rate;
 
 
-    public Options() {}
+    public Option() {}
 
 
     public Question getQuestion() {
