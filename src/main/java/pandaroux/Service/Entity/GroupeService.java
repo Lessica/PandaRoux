@@ -42,8 +42,14 @@ public class GroupeService {
         return groupeData;
     }
 
-    public void save(Groupe groupe) {
+    public Map save(Groupe groupe) {
         groupe.setTeacher(userRepository.findOne(1));
         groupeRepository.save(groupe);
+
+        Map data = new HashMap();
+
+        data.put("result", "succeed");
+
+        return data;
     }
 }
