@@ -27,6 +27,9 @@ public class Answer {
     private String text;
 
     @Column
+    private int code_answer;
+
+    @Column
     @Type(type = "date")
     private Date date;
 

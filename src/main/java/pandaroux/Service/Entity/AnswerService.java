@@ -35,10 +35,18 @@ public class AnswerService {
 
 
     public Map getAnswer(int id) {
-        return answerRepository.getAnswer(id);
+        Map answerData = new HashMap();
+        answerData.put("result", "succeed");
+        answerData.put("getAnswerDetails", answerRepository.getAnswer(id));
+        return answerData;
     }
 
-    public void save(Answer answer) {
+    public Map save(Answer answer) {
         answerRepository.save(answer);
+
+        Map data = new HashMap();
+        data.put("result", "succeed");
+
+        return data;
     }
 }

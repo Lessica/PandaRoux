@@ -435,23 +435,3 @@ code {
 .roux-panel .multi-select {
     padding: 12px;
 }
-
-#pt-course-panel {
-    text-align: center;
-}
-
-#pt-ques-panel {
-    text-align: center;
-}
-
-#left {
-    text-align: left;
-}
-
-#img_new {
-    position: absolute;
-    left: 65%;
-    top: 42%;
-    width: 10px;
-    height: 10px;
-}

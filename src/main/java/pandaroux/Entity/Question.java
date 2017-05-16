@@ -32,6 +32,9 @@ public class Question {
     @JoinColumn(name = "id_teacher")
     private User teacher;
 
+    @OneToMany(mappedBy = "question")
+    private List<Option> options;
+
     public Question() {}
 
 
@@ -51,8 +54,8 @@ public class Question {
         this.name = name;
     }
 
-    public boolean isHas_commentary() {
-        return has_commentary;
+    public boolean isHas_commentary(Boolean has_commentary) {
+        return this.has_commentary;
     }
 
     public void setHas_commentary(boolean has_commentary) {

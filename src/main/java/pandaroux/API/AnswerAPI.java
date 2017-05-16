@@ -18,14 +18,14 @@ public class AnswerAPI {
         return null;
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public Map getAnswer(@PathVariable("id") int id) {
         return answerService.getAnswer(id);
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    private  void add(@RequestBody Answer answer) {
-        answerService.save(answer);
+    private Map add(@RequestBody Answer answer) {
+        return answerService.save(answer);
     }
 
 }
