@@ -9,7 +9,7 @@ public class DefaultController {
 
     @RequestMapping(value = "/")
     public String index() {
-        return "index";
+        return "redirect:/login";
     }
 
     @RequestMapping(value = "/login")
@@ -56,5 +56,8 @@ public class DefaultController {
     public String studentCourse() {
         return "student/course";
     }
+
+    @RequestMapping(value = "/teacher/statistics")
+    public String teacherStatistics() { return "teacher/statistics"; }
 
 }
