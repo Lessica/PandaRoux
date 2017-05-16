@@ -270,7 +270,53 @@
 
             var EditSessionModalController = {
 
+                storage: {
+                    modalWindow: $("#evaluation-popup"),
+                    rateBoxGroup: $("input[name=rate-group]"),
+                    commentTextarea: $("#session-comment-input"),
+                    modalSubmitButton: $("#save-session"),
+                    modalTitle: $("#edit-session-title")
+                },
 
+                init: function () {
+                    EditSessionModalController.bindEvent();
+                },
+
+                bindEvent: function () {
+                    EditSessionModalController.storage.modalWindow.on('shown.bs.modal', function () {
+                        EditSessionModalController.storage.commentTextarea.focus();
+                    });
+                    EditSessionModalController.storage.modalSubmitButton.click(function (event) {
+                        var sender = $(this);
+                        var data = sender.data();
+                        var rate = EditSessionModalController.storage.rateBoxGroup.parent().find(":checked").val();
+                        var commentary = EditSessionModalController.storage.commentTextarea.val();
+                        var group_id = GroupListController.storage.selectedGroupId;
+                        APIService.modifySession(function (resp) {
+                            if (resp["result"] === "succeed") {
+                                WorkspaceController.loadWithId(group_id);
+                                EditSessionModalController.storage.modalWindow.modal("hide");
+                            }
+                        }, data['id'], { "rate": parseInt(rate), "commentary": commentary });
+                    });
+                },
+
+                reset: function () {
+                    EditSessionModalController.storage.rateBoxGroup.parent().find(":checked").prop('checked', false);
+                    EditSessionModalController.storage.commentTextarea.val("");
+                },
+
+                show: function () {
+                    EditSessionModalController.storage.modalWindow.modal("show");
+                },
+
+                data: function (data) {
+                    var rate_option = EditSessionModalController.storage.rateBoxGroup.parent().find("#rate-r" + data["rate"]);
+                    rate_option.prop('checked', true);
+                    EditSessionModalController.storage.modalTitle.text("Edit Session: " + data["name"]);
+                    EditSessionModalController.storage.commentTextarea.val(data["commentary"]);
+                    EditSessionModalController.storage.modalSubmitButton.data(data);
+                }
 
             };
 
@@ -288,6 +334,7 @@
 
                 init: function () {
                     CreateSessionModalController.init();
+                    EditSessionModalController.init();
                     WorkspaceController.bindEvent();
                 },
 
@@ -372,7 +419,7 @@
                     var resp_session_list = resp["groupeDetails"]["lectures"];
                     for (var i in resp_session_list) {
                         var resp_session = resp_session_list[i];
-                        var has_comment = resp_session["commetary"] && resp_session["commetary"].length !== 0;
+                        var has_comment = resp_session["commentary"] && resp_session["commentary"].length !== 0;
                         var new_session_panel;
                         if (has_comment) {
                             new_session_panel = DOMFactory.elementWithId("session-panel", resp_session["name"], "View Note", "panel-default", "btn-default", "glyphicon-search");
@@ -398,7 +445,12 @@
                 },
 
                 editSessionButtonClicked: function (event) {
-                    console.log(event);
+                    var sender = $(this);
+                    var data = sender.data();
+                    console.log(data);
+                    EditSessionModalController.reset();
+                    EditSessionModalController.data(data);
+                    EditSessionModalController.show();
                 },
 
                 changeSessionDateEventTriggered: function (event) {
@@ -864,7 +916,7 @@
 
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                    <h4 class="modal-title">Evaluation Pop-up</h4>
+                    <h4 id="edit-session-title" class="modal-title">Evaluation Pop-up</h4>
                 </div>
 
                 <div class="modal-body">
@@ -879,23 +931,23 @@
 
                     <div class="rate-input">
                         <div class="rate-button rate-button-r1">
-                            <input id="rate-r1" type="radio" name="rate-group" class="rate-radio" value="r1"/>
+                            <input id="rate-r1" type="radio" name="rate-group" class="rate-radio" value="1"/>
                             <label for="rate-r1">1</label>
                         </div>
                         <div class="rate-button rate-button-r2">
-                            <input id="rate-r2" type="radio" name="rate-group" class="rate-radio" value="r2"/>
+                            <input id="rate-r2" type="radio" name="rate-group" class="rate-radio" value="2"/>
                             <label for="rate-r2">2</label>
                         </div>
                         <div class="rate-button rate-button-r3">
-                            <input id="rate-r3" type="radio" name="rate-group" class="rate-radio" value="r3"/>
+                            <input id="rate-r3" type="radio" name="rate-group" class="rate-radio" value="3"/>
                             <label for="rate-r3">3</label>
                         </div>
                         <div class="rate-button rate-button-r4">
-                            <input id="rate-r4" type="radio" name="rate-group" class="rate-radio" value="r4"/>
+                            <input id="rate-r4" type="radio" name="rate-group" class="rate-radio" value="4"/>
                             <label for="rate-r4">4</label>
                         </div>
                         <div class="rate-button rate-button-r5">
-                            <input id="rate-r5" type="radio" name="rate-group" class="rate-radio" value="r5"/>
+                            <input id="rate-r5" type="radio" name="rate-group" class="rate-radio" value="5"/>
                             <label for="rate-r5">5</label>
                         </div>
                     </div>
@@ -909,14 +961,14 @@
                     </div>
 
                     <div class="comment-input">
-                        <textarea name="comment-area" class="form-control" rows="6" title=""></textarea>
+                        <textarea id="session-comment-input" name="comment-area" class="form-control" rows="6" title=""></textarea>
                     </div>
 
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes
+                    <button id="save-session" type="button" class="btn btn-primary">Save changes
                     </button>
                 </div>
 
