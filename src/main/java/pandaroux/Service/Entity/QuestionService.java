@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pandaroux.Entity.Option;
 import pandaroux.Entity.Question;
+import pandaroux.Entity.QuestionType;
+import pandaroux.Entity.User;
 import pandaroux.Repository.OptionRepository;
 import pandaroux.Repository.QuestionRepository;
 
@@ -17,7 +19,7 @@ public class QuestionService {
     @Autowired
     private QuestionRepository questionRepository;
 
-    public void save(Question question, List<Option> options) {
+    public void save(Question question) {
         questionRepository.save(question);
 
     }
@@ -26,8 +28,30 @@ public class QuestionService {
         return questionRepository.getQuestions();
     }
 
-    public void handleOptions(List<Options> options){
-         OptionRepository optionRepository;
+    public List<Map> getTeacherQuestions(int id) {
+        return questionRepository.getTeacherQuestions(id);
+    }
 
+    public void create(QuestionType type, String name, User teacher, boolean has_commentary, String option_text, int rate, boolean mandatory){
+        Question question = new Question();
+
+        question.setName(name);
+        question.setQuestionType(type);
+        question.setTeacher(teacher);
+
+        save(question);
+
+        OptionService optionService = new OptionService();
+        Option option = new Option();
+        option.setOption_text(option_text);
+        option.setHas_commentary(has_commentary);
+        option.setRate(rate);
+        option.setQuestion(question);
+
+        optionService.save(option);
+    }
+    public void alter(int id, QuestionType type, String name, User teacher, boolean has_commentary, String option_text, int rate, boolean mandatory){
+        questionRepository.delete(id);
+        create(type, name, teacher, has_commentary, option_text, rate, mandatory);
     }
 }

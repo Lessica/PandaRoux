@@ -3,6 +3,7 @@ package pandaroux.API;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pandaroux.Entity.Groupe;
+import pandaroux.Entity.User;
 import pandaroux.Service.Entity.GroupeService;
 
 import java.util.HashMap;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 
-@RestController
+@RestController()
 @RequestMapping("api/groupe")
 public class GroupeAPI {
 
@@ -18,20 +19,30 @@ public class GroupeAPI {
     private GroupeService groupeService;
 
 
-    @RequestMapping(method = RequestMethod.GET)
-    public Map<String, List<Map>> getGroupes() {
-        HashMap <String, List<Map>> result = new HashMap<>();
-        result.put("group_list", groupeService.getGroupes());
-        return result;
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public Map getGroup(@PathVariable("id") int id) {
         return groupeService.getGroup(id);
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public void add(@RequestBody Groupe groupe) {
-        groupeService.save(groupe);
+    public Map add(@RequestBody Groupe groupe) {
+        return groupeService.save(groupe);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public Map getGroupes() {
+        return groupeService.getGroupes();
+    }
+
+    @RequestMapping(value = "/{id}/add/students", method = RequestMethod.POST)
+    public Map addStudentsFromGroupe(@PathVariable("id") int id_groupe,
+                                     @RequestBody Map map) {
+        return groupeService.addStudentsToGroupe(id_groupe, (List<Integer>) map.get("id_students"));
+    }
+
+    @RequestMapping(value = "/{id}/remove/students", method = RequestMethod.POST)
+    public Map removeStudentsFromGroupe(@PathVariable("id") int id_groupe,
+                                        @RequestBody Map map) {
+        return groupeService.removeStudentsFromGroupe(id_groupe, (List<Integer>) map.get("id_students"));
     }
 }

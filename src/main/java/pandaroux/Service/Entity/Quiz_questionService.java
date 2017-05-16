@@ -14,4 +14,5 @@ public class Quiz_questionService {
     public void save(Quiz_question quiz_question) {
         quiz_questionRepository.save(quiz_question);
     }
+
 }

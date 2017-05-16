@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pandaroux.Repository.UserRepository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,5 +21,15 @@ public class    UserService {
 
     public Map findOneById(int id) {
         return userRepository.findOneById(id);
+    }
+
+    public Map getStudents() {
+
+        Map studentData = new HashMap();
+
+        studentData.put("result", "succeed");
+        studentData.put("students", userRepository.getStudents());
+
+        return studentData;
     }
 }

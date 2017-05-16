@@ -5,40 +5,6 @@
       layout:decorate="site-base">
 <head>
     <title>Questionnaire</title>
-    <link th:href="@{/css/sweetalert.css}" rel="stylesheet">
-    <link th:href="@{/css/bootstrap-datetimepicker.css}" rel="stylesheet">
-    <script th:src="@{/js/sweetalert.min.js}"></script>
-    <script th:src="@{/js/bootstrap-notify.js}"></script>
-    <script th:src="@{/js/bootstrap-datetimepicker.js}"></script>
-    <script th:src="@{/js/multiselect.js}"></script>
-    <script th:src="@{/js/roux-api.js}"></script>
-    <script>
-
-        $(function () {
-
-            // DOM Binding
-            {
-                var registerDatetimePicker = function () {
-                    $(".select-date").datetimepicker({
-                        format: 'dd/mm/yyyy hh:ii',
-                        initialDate: new Date()
-                    }).on("changeDate", changeDateCallback);
-                };
-                var changeDateCallback = function () {
-
-                };
-                var registerMultiSelect = function() {
-                    $('#question-selection').multiselect();
-                }
-            }
-
-            registerDatetimePicker();
-            registerMultiSelect();
-
-        });
-
-    </script>
-
 </head>
 <body>
 
@@ -49,12 +15,12 @@
                 <img class="header-icon" th:src="@{/img/roux.png}" src="">
             </a>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
+        <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav" layout:fragment="nav-content">
-                <li id="nav_sect_group"><a th:href="@{/teacher/group}">Group</a></li>
-                <li id="nav_sect_question"><a th:href="@{/teacher/question}">Question</a></li>
-                <li class="active" id="nav_sect_questionnaire"><a th:href="@{/teacher/questionnaire}">Questionnaire</a></li>
-                <li id="nav_sect_statistics"><a th:href="@{/teacher/statistics}">Statistics</a></li>
+                <li><a th:href="@{/teacher/group}">Group</a></li>
+                <li><a th:href="@{/teacher/question}">Question</a></li>
+                <li class="active"><a th:href="@{/teacher/questionnaire}">Questionnaire</a></li>
+                <li><a th:href="@{/teacher/statistics}">Statistics</a></li>
             </ul>
         </div>
     </div>
@@ -556,6 +522,10 @@
         </div>
 
     </div>
+
+    <!-- Ajax Overlay
+    <div class="overlay" style="z-index: 200;"></div>
+     -->
 
 </div>
 
