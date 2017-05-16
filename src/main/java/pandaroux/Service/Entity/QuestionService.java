@@ -33,8 +33,15 @@ public class QuestionService {
         return questionRepository.getQuestions();
     }
 
-    public List<Map> getTeacherQuestions(int id) {
-        return questionRepository.getTeacherQuestions(id);
+    public Map getTeacherQuestions() {
+
+        Map data = new HashMap();
+
+        data.put("result", "succeed");
+        data.put("teacher_questions", questionRepository.getTeacherQuestions(1));
+
+        return data;
+
     }
 
     public Map add(Map question) {

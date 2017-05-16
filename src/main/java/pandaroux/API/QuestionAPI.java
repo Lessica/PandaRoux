@@ -20,17 +20,17 @@ public class QuestionAPI {
 
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public Map add2(@RequestBody Map question) {
+    public Map add(@RequestBody Map question) {
         return questionService.add(question);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.POST)
     public List<Map> getQuestions() {
         return questionService.getQuestions();
     }
 
-    @RequestMapping(value = "/teacher/{id}", method = RequestMethod.GET)
-    public List<Map> getTeacherQuestions(@PathVariable("id") int id) {
-        return questionService.getTeacherQuestions(id);
+    @RequestMapping(value = "/teacher", method = RequestMethod.POST)
+    public Map getTeacherQuestions() {
+        return questionService.getTeacherQuestions();
     }
 }
