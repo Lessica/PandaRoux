@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import pandaroux.Entity.Answer;
 import pandaroux.Service.Entity.AnswerService;
 
-import java.text.ParseException;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -20,7 +18,7 @@ public class AnswerAPI {
         return null;
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public Map getAnswer(@PathVariable("id") int id) {
         return answerService.getAnswer(id);
     }

@@ -3,10 +3,8 @@ package pandaroux.API;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pandaroux.Entity.Groupe;
-import pandaroux.Entity.User;
 import pandaroux.Service.Entity.GroupeService;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,5 +42,11 @@ public class GroupeAPI {
     public Map removeStudentsFromGroupe(@PathVariable("id") int id_groupe,
                                         @RequestBody Map map) {
         return groupeService.removeStudentsFromGroupe(id_groupe, (List<Integer>) map.get("id_students"));
+    }
+
+    @RequestMapping(value = "{id}/modify", method = RequestMethod.POST)
+    private Map modifyGroupe(@PathVariable("id") int id_groupe,
+                           @RequestBody Map groupe) {
+        return groupeService.modifyGroupe(id_groupe, groupe);
     }
 }

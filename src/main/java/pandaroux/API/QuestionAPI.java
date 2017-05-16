@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pandaroux.Entity.*;
 import pandaroux.Service.Entity.OptionService;
+import pandaroux.Entity.Question;
 import pandaroux.Service.Entity.QuestionService;
 
 import java.util.List;
