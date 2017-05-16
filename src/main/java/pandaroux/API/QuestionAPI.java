@@ -2,7 +2,6 @@ package pandaroux.API;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import pandaroux.Entity.Lecture;
 import pandaroux.Entity.Question;
 import pandaroux.Service.Entity.QuestionService;
 
