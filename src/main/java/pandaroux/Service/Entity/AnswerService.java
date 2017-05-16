@@ -38,7 +38,6 @@ public class AnswerService {
         Map answerData = new HashMap();
         answerData.put("result", "succeed");
         answerData.put("getAnswerDetails", answerRepository.getAnswer(id));
-
         return answerData;
     }
 
