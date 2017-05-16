@@ -2,6 +2,8 @@ package pandaroux.API;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import pandaroux.Entity.*;
+import pandaroux.Service.Entity.OptionService;
 import pandaroux.Entity.Question;
 import pandaroux.Service.Entity.QuestionService;
 
@@ -16,8 +18,18 @@ public class QuestionAPI {
     private QuestionService questionService;
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public void add(@RequestBody Question question) {
-        questionService.save(question);
+    public void add(@RequestBody int id,
+                    @RequestBody QuestionType type,
+                    @RequestBody String name,
+                    @RequestBody User teacher,
+                    @RequestBody boolean has_commentary,
+                    @RequestBody String option_text,
+                    @RequestBody int rate,
+                    @RequestBody boolean mandatory) {
+        if(id==0)
+            questionService.create(type, name, teacher, has_commentary, option_text, rate, mandatory);
+        else
+            questionService.alter(id, type, name, teacher, has_commentary, option_text, rate, mandatory);
     }
 
     @RequestMapping(method = RequestMethod.GET)
