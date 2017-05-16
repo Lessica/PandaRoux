@@ -5,29 +5,6 @@
       layout:decorate="site-base">
 <head>
     <title>Login</title>
-    <script th:src="@{/js/roux-api.js}"></script>
-    <script>
-        $(function () {
-            $("button[name=submit]").click(function (e) {
-                var username = $("#username").val();
-                var password = $("#password").val();
-                if (
-                    username.length !== 0 &&
-                    password.length !== 0
-                ) {
-                    API.loginCheck(function (data) {
-                        if (data['result'] === 'success') {
-                            if (data['role'] === 'eleve') {
-                                window.location.href = '/student';
-                            } else if (data['role'] === 'prof') {
-                                window.location.href = '/teacher';
-                            }
-                        }
-                    }, username, password);
-                }
-            });
-        });
-    </script>
 </head>
 <body>
 <div layout:fragment="container">

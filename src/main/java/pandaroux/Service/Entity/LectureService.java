@@ -44,7 +44,7 @@ public class LectureService {
         }
 
         if (lecture.containsKey("date")) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             lectureDB.setDate(sdf.parse((String) lecture.get("date")));
         }
 

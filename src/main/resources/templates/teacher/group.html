@@ -5,528 +5,631 @@
       layout:decorate="site-base">
 <head>
     <title>Group</title>
-    <link th:href="@{/css/sweetalert.css}" rel="stylesheet">
-    <link th:href="@{/css/bootstrap-datepicker.css}" rel="stylesheet">
-    <script th:src="@{/js/sweetalert.min.js}"></script>
-    <script th:src="@{/js/bootstrap-notify.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-datepicker.css}">
+    <link rel="stylesheet" th:href="@{/css/sweetalert.css}">
     <script th:src="@{/js/bootstrap-datepicker.js}"></script>
-    <script th:src="@{/js/roux-api.js}"></script>
+    <script th:src="@{/js/sweetalert.min.js}"></script>
     <script>
 
-        $(function () {
+        $(document).ready(function () {
 
-            // DOM Binding
-            {
-                var registerDatepicker = function () {
-                    $(".select-date").datepicker({
-                        format: 'dd/mm/yyyy'
-                    }).on("changeDate", changeDateCallback);
-                };
-                var changeDateCallback = function () {
+            'use strict';
 
-                    var input = $(this);
-                    input.datepicker('hide');
+            console.log("document ready");
 
-                    var session_id = input.data('id');
-                    var date_string = input.val();
-
-                    // var notify = $.notify('<strong>Saving...</strong>', {allow_dismiss: false});
-
-                    UI.allowsUserInteraction(false);
-
-                    API.changeSessionDate(function (data) {
-                        if (data['result'] !== 'succeed') {
-                            swal("Oops...", data['error'], "error");
-                        }
-                    }, session_id, date_string);
-
-                    UI.allowsUserInteraction(true);
-                };
-                var createSessionElement = function (sessionObj) {
-                    var prototype;
-                    var session_panel_list = $(".session-panel-list");
-                    if (sessionObj['comment'].length) {
-                        prototype = UI.prototype('pt-session-panel-with-note').clone(true, true);
-                    } else {
-                        prototype = UI.prototype('pt-session-panel').clone(true, true);
+            var DOMFactory = {
+                elementWithId: function () {
+                    if (arguments.length === 0)
+                        return null;
+                    var elem_id = arguments[0];
+                    var result = $("#template-" + elem_id).html();
+                    for (var i = 1; i < arguments.length; i++) {
+                        var re = new RegExp('\\{' + (i) + '\\}', 'gm');
+                        result = result.replace(re, arguments[i]);
                     }
-                    prototype.data('id', sessionObj['id']);
-                    prototype.find('.session-panel-title').text(sessionObj['name']);
-                    prototype.find('.select-date').val(sessionObj['date']);
-                    prototype.find('.select-date').data('id', sessionObj['id']);
-                    var prototype_button = prototype.find('[name=view-session-note], [name=create-session-note]');
-                    prototype_button.data('id', sessionObj['id']);
-                    prototype_button.data('title', sessionObj['name']);
-                    var delete_button = prototype.find('.session-title-button');
-                    delete_button.data('id', sessionObj['id']);
-                    session_panel_list.prepend(prototype);
-                };
-                var loadGroupData = function (data) {
-                    var selected_student_button_list = $(".selected-student-button-list");
-                    selected_student_button_list.empty();
-                    var selected_ids = [];
-                    $(".group-title").data('id', data['id']);
-                    data['selected_student'].forEach(function (studentObj) {
-                        var prototype = UI.prototype('pt-selected-student-button').clone(true, true);
-                        prototype.text(studentObj['name']);
-                        prototype.data('id', studentObj['id']);
-                        prototype.data('action', 'unselect');
-                        prototype.append('<span class="glyphicon glyphicon-remove btn-icon float-right"></span>');
-                        selected_student_button_list.append(prototype);
-                        selected_ids.push(studentObj['id']);
+                    return $(result);
+                }
+            };
+
+            var APIService = {
+                init: function () {
+                    $.ajaxSetup({
+                        method: "POST",
+                        dataType: "json",
+                        contentType: "application/json; charset=UTF-8",
+                        timeout: 10000,
+                        error: APIService.errorHandler,
+                        async: true
                     });
-                    $(".student-button-list .student-button").each(function () {
-                        var selectStudentButton = function (button, select) {
-                            if (select) {
-                                button.removeClass("btn-default");
-                                button.find("span").remove();
-                                button.addClass("btn-success");
-                                button.append('<span class="glyphicon glyphicon-ok btn-icon float-right"></span>');
-                            } else {
-                                button.removeClass("btn-success");
-                                button.find("span").remove();
-                                button.addClass("btn-default");
-                                button.append('<span class="glyphicon glyphicon-plus btn-icon float-right"></span>');
-                            }
-                        };
-                        if (selected_ids.indexOf($(this).data('id')) >= 0) {
-                            selectStudentButton($(this), true);
-                        } else {
-                            selectStudentButton($(this), false);
-                        }
-                    });
-                    var session_panel_list = $(".session-panel-list");
-                    session_panel_list.empty();
-                    data['session_list'].forEach(function (sessionObj) {
-                        createSessionElement(sessionObj);
-                    });
-                    registerDatepicker();
-                };
-                var loadGroupList = function (data) {
-                    var group_button_list = $(".group-button-list");
-                    group_button_list.empty();
-                    data['group_list'].forEach(function (groupObj) {
-                        var prototype = UI.prototype('pt-group-button').clone(true, true);
-                        prototype.text(groupObj['name']);
-                        prototype.data('id', groupObj['id']);
-                        group_button_list.append(prototype);
-                    });
-                    if (data['group_list'].length) {
-                        selectGroup(data['group_list'][0]['id']);
+                },
+                errorHandler: function (xmlHTTP, status, httperror) {
+                    var resp = $.parseJSON(xmlHTTP.responseText);
+                    if (resp && resp["error"]) {
+                        swal("Oops...", resp['error'], "error");
                     }
-                };
-                var selectGroup = function (group_id) {
-                    $(".group-button-list .group-button").each(function () {
-                        if ($(this).data('id') === group_id) {
-                            $(this).click();
-                        }
+                },
+                getGroupList: function (callback) {
+                    $.ajax("/api/groupe", {
+                        success: callback
                     });
-                };
-                var deleteGroup = function (group_id) {
-                    $(".group-button-list").children().each(function () {
-                        if ($(this).data('id') === group_id) {
-                            $(this).remove();
-                        }
+                },
+                getGroupDetail: function (callback, gid) {
+                    $.ajax("/api/groupe/" + gid.toString(), {
+                        success: callback
                     });
-                };
-                var deleteSession = function (session_id) {
-                    $(".session-panel-list").children().each(function () {
-                        if ($(this).data('id') === session_id) {
-                            $(this).remove();
-                        }
+                },
+                getStudentList: function (callback) {
+                    $.ajax("/api/user/students", {
+                        success: callback
                     });
-                };
-
-                // Search TextField Event
-                {
-                    var search_events = "change paste keyup";
-
-                    // Search Group
-                    $("#input-group-search").on(search_events, function () {
-                        var list = $(".group-button-list .group-button");
-                        var search_substring = $(this).val();
-                        $.each(list, function (index, button) {
-                            if ($(button).text().indexOf(search_substring) >= 0) {
-                                $(button).show();
-                            } else {
-                                $(button).hide();
+                },
+                selectStudentsIntoGroup: function (callback, gid, sid_list) {
+                    $.ajax("/api/groupe/" + gid.toString() + "/add/students", {
+                        data: JSON.stringify({
+                            "id_students": sid_list
+                        }),
+                        success: callback
+                    });
+                },
+                removeStudentsFromGroup: function (callback, gid, sid_list) {
+                    $.ajax("/api/groupe/" + gid.toString() + "/remove/students", {
+                        data: JSON.stringify({
+                            "id_students": sid_list
+                        }),
+                        success: callback
+                    });
+                },
+                createGroup: function (callback, form_data) {
+                    $.ajax("/api/groupe/add", {
+                        data: JSON.stringify({
+                            "name": form_data["name"]
+                        }),
+                        success: callback
+                    });
+                },
+                createSession: function (callback, gid, form_data) {
+                    $.ajax("/api/lecture/add", {
+                        data: JSON.stringify({
+                            "name": form_data["name"],
+                            "groupe": {
+                                "id": parseInt(gid)
                             }
-                        });
+                        }),
+                        success: callback
                     });
-
-                    // Search All Students
-                    $("#input-all-student-search").on(search_events, function () {
-                        var list = $(".student-button-list .student-button");
-                        var search_substring = $(this).val();
-                        $.each(list, function (index, button) {
-                            if ($(button).text().indexOf(search_substring) >= 0) {
-                                $(button).show();
-                            } else {
-                                $(button).hide();
-                            }
-                        });
+                },
+                removeSession: function (callback, sid) {
+                    $.ajax("/api/lecture/" + sid.toString() + "/delete", {
+                        success: callback
                     });
-
-                    // Search Selected Students
-                    $("#input-selected-student-search").on(search_events, function () {
-                        var list = $(".selected-student-button-list .student-button");
-                        var search_substring = $(this).val();
-                        $.each(list, function (index, button) {
-                            if ($(button).text().indexOf(search_substring) >= 0) {
-                                $(button).show();
-                            } else {
-                                $(button).hide();
-                            }
-                        });
-                    });
-
-                    // Search Sessions
-                    $("#input-session-search").on(search_events, function () {
-                        var list = $(".panel-session");
-                        var search_substring = $(this).val();
-                        $.each(list, function (index, panel) {
-                            if ($.trim($(panel).find(".session-panel-title").text()).indexOf(search_substring) >= 0) {
-                                $(panel).parent().css("display", "");
-                            } else {
-                                $(panel).parent().css("display", "none");
-                            }
-                        });
+                },
+                modifySession: function (callback, sid, form_data) {
+                    $.ajax("/api/lecture/" + sid.toString() + "/modify", {
+                        data: JSON.stringify(form_data),
+                        success: callback
                     });
                 }
+            };
 
-                // New Group Pop-up
-                $('[name=create-new-group]').click(function (e) {
+            var CreateGroupModalController = {
 
-                    var group_name_field = $("input[name=group-name]");
-                    var new_group_name = group_name_field.val();
-                    if (new_group_name.length <= 0) {
-                        e.preventDefault();
-                        return;
-                    }
+                storage: {
+                    modalWindow: $("#new-group-popup"),
+                    groupNameInput: $("#new-group-name"),
+                    modalSubmitButton: $("#create-new-group")
+                },
 
-                    $('#new-group-popup').modal('hide');
-                    group_name_field.val("");
+                init: function () {
+                    CreateGroupModalController.bindEvent();
+                },
 
-                    var notify = $.notify('<strong>Saving...</strong>', {allow_dismiss: false});
-
-                    UI.allowsUserInteraction(false);
-
-                    API.createGroup(function (data) {
-                        if (data['result'] === 'succeed') {
-                            var group_button_list = $(".group-button-list");
-                            var prototype = UI.prototype('pt-group-button').clone(true, true);
-                            prototype.text(data['group']['name']);
-                            prototype.data('id', data['group']['id']);
-                            group_button_list.prepend(prototype);
-
-                            notify.update({
-                                type: 'success',
-                                message: '<strong>Succeed!</strong> New group has been created!'
-                            });
-                        } else {
-                            swal("Oops...", data['error'], "error");
-                        }
-                        selectGroup(data['group']['id']);
-                    }, new_group_name);
-
-                    UI.allowsUserInteraction(true);
-
-                });
-                $('#new-group-popup').on('shown.bs.modal', function () {
-                    // Auto Focus
-                    $(this).find("input[name=group-name]").focus();
-                });
-                {
-                    var group_name_field = $("input[name=group-name]");
-                    group_name_field.on("change paste keyup", function () {
-                        $("[name=create-new-group]").attr('disabled', $.trim($(this).val()).length <= 0);
+                bindEvent: function () {
+                    CreateGroupModalController.storage.modalWindow.on('shown.bs.modal', function () {
+                        CreateGroupModalController.storage.groupNameInput.focus();
                     });
-                    group_name_field.on("keypress", function () {
+                    CreateGroupModalController.storage.groupNameInput.on("change paste keyup", function () {
+                        CreateGroupModalController.storage.modalSubmitButton.attr('disabled', $.trim($(this).val()).length <= 0);
+                    });
+                    CreateGroupModalController.storage.groupNameInput.on("keypress", function () {
                         if (event.which === 13) {
                             if ($.trim($(this).val()).length > 0) {
-                                $("[name=create-new-group]").click();
+                                CreateGroupModalController.storage.modalSubmitButton.click();
                             }
                         }
                     });
+                    CreateGroupModalController.storage.modalSubmitButton.click(function (event) {
+                        var sender = $(this);
+                        var new_group_name = CreateGroupModalController.storage.groupNameInput.val();
+                        APIService.createGroup(function (resp) {
+                            if (resp["result"] === "succeed") {
+                                GroupListController.load();
+                                CreateGroupModalController.storage.modalWindow.modal("hide");
+                            }
+                        }, {"name": new_group_name});
+                    });
+                },
+
+                reset: function () {
+                    CreateGroupModalController.storage.groupNameInput.val("");
+                    CreateGroupModalController.storage.modalSubmitButton.attr('disabled', true);
+                },
+
+                show: function () {
+                    CreateGroupModalController.storage.modalWindow.modal("show");
                 }
 
-                // Select Group
-                $(".group-button").click(function () {
-                    var selectGroupButton = function (button, select) {
-                        if (select) {
-                            var allButtons = $(".group-button");
-                            allButtons.removeClass("btn-primary");
-                            allButtons.addClass("btn-default");
-                            button.addClass("btn-primary");
+            };
+
+            var GroupListController = {
+
+                storage: {
+                    groupCreateButton: $("#common-new-group"), // button
+                    groupList: $("#search-group-list"), // div
+                    searchGroupInput: $("#search-group"),
+                    selectedGroupId: null
+                },
+
+                init: function () {
+                    CreateGroupModalController.init();
+                    GroupListController.storage.groupCreateButton.click(GroupListController.createGroupButtonClicked);
+                    GroupListController.load();
+                },
+
+                load: function () {
+                    WorkspaceController.reset();
+                    WorkspaceController.hide();
+                    APIService.getGroupList(GroupListController.reloadGroupList);
+                },
+
+                createGroupButtonClicked: function (event) {
+                    CreateGroupModalController.reset();
+                    CreateGroupModalController.show();
+                },
+
+                reloadGroupList: function (resp) {
+                    console.log(resp);
+                    GroupListController.storage.groupList.html("");
+                    var resp_group_list = resp["groupes"];
+                    for (var i in resp_group_list) {
+                        var resp_group = resp_group_list[i];
+                        var new_group_button = DOMFactory.elementWithId("group-button", resp_group["name"], "btn-default");
+                        new_group_button.attr('id', "group-button-" + resp_group['id']);
+                        new_group_button.data(resp_group);
+                        new_group_button.click(GroupListController.groupButtonClicked);
+                        GroupListController.storage.groupList.prepend(new_group_button);
+                    }
+                },
+
+                groupButtonClicked: function (event) {
+                    var sender = $(this);
+                    var data = sender.data();
+                    GroupListController.setSelectedGroup(data['id']);
+                    WorkspaceController.loadWithId(data['id']);
+                    console.log(data);
+                },
+
+                setSelectedGroup: function (group_id) {
+                    GroupListController.storage.selectedGroupId = parseInt(group_id);
+                    $(".group-button").removeClass("btn-primary");
+                    if (group_id) {
+                        $("#group-button-" + group_id.toString()).addClass("btn-primary");
+                    }
+                }
+
+            };
+
+            var CreateSessionModalController = {
+
+                storage: {
+                    modalWindow: $("#new-session-popup"),
+                    sessionNameInput: $("#new-session-name"),
+                    modalSubmitButton: $("#create-new-session")
+                },
+
+                init: function () {
+                    CreateSessionModalController.bindEvent();
+                },
+
+                bindEvent: function () {
+                    CreateSessionModalController.storage.modalWindow.on('shown.bs.modal', function () {
+                        CreateSessionModalController.storage.sessionNameInput.focus();
+                    });
+                    CreateSessionModalController.storage.sessionNameInput.on("change paste keyup", function () {
+                        CreateSessionModalController.storage.modalSubmitButton.attr('disabled', $.trim($(this).val()).length <= 0);
+                    });
+                    CreateSessionModalController.storage.sessionNameInput.on("keypress", function () {
+                        if (event.which === 13) {
+                            if ($.trim($(this).val()).length > 0) {
+                                CreateSessionModalController.storage.modalSubmitButton.click();
+                            }
                         }
+                    });
+                    CreateSessionModalController.storage.modalSubmitButton.click(function (event) {
+                        var sender = $(this);
+                        var new_session_name = CreateSessionModalController.storage.sessionNameInput.val();
+                        var group_id = GroupListController.storage.selectedGroupId;
+                        APIService.createSession(function (resp) {
+                            if (resp["result"] === "succeed") {
+                                WorkspaceController.loadWithId(group_id);
+                                CreateSessionModalController.storage.modalWindow.modal("hide");
+                            }
+                        }, group_id, {"name": new_session_name});
+                    });
+                },
+
+                reset: function () {
+                    CreateSessionModalController.storage.sessionNameInput.val("");
+                    CreateSessionModalController.storage.modalSubmitButton.attr('disabled', true);
+                },
+
+                show: function () {
+                    CreateSessionModalController.storage.modalWindow.modal("show");
+                }
+
+            };
+
+            var EditSessionModalController = {
+
+
+
+            };
+
+            var WorkspaceController = {
+
+                storage: {
+                    workspace: $(".group-detail"), // div
+                    groupTitle: $(".group-title"), // input val()
+                    selectedStudentList: $("#search-selected-student-list"), // div
+                    sessionList: $("#search-session-list"), // div
+                    searchSelectedStudentInput: $("#search-selected-student"),
+                    searchSessionInput: $("#search-session"),
+                    createSessionPanel: $("#create-session-panel")
+                },
+
+                init: function () {
+                    CreateSessionModalController.init();
+                    WorkspaceController.bindEvent();
+                },
+
+                bindEvent: function () {
+                    WorkspaceController.storage.createSessionPanel.click(WorkspaceController.createSessionPanelClicked);
+                },
+
+                createSessionPanelClicked: function (event) {
+                    CreateSessionModalController.reset();
+                    CreateSessionModalController.show();
+                },
+
+                reset: function () {
+                    StudentListController.reloadStudentList(null);
+                    WorkspaceController.storage.selectedStudentList.html("");
+                    WorkspaceController.storage.sessionList.html("");
+                    WorkspaceController.storage.groupTitle.val("");
+                    WorkspaceController.storage.searchSelectedStudentInput.val("");
+                    WorkspaceController.storage.searchSessionInput.val("");
+                },
+
+                show: function () {
+                    WorkspaceController.storage.workspace.show();
+                },
+
+                hide: function () {
+                    WorkspaceController.storage.workspace.hide();
+                },
+
+                focusOnTitle: function () {
+                    WorkspaceController.storage.groupTitle.focus();
+                },
+                
+                loadWithId: function (gid) {
+                    APIService.getGroupDetail(WorkspaceController.load, gid);
+                },
+                
+                load: function (resp) {
+                    console.log(resp);
+                    WorkspaceController.reset();
+                    WorkspaceController.loadGroupTitle(resp);
+                    WorkspaceController.loadSelectedStudentList(resp);
+                    WorkspaceController.loadSessionList(resp);
+                    WorkspaceController.show();
+                },
+                
+                loadGroupTitle: function (resp) {
+                    WorkspaceController.storage.groupTitle.val(resp["name"]);
+                },
+
+                loadSelectedStudentList: function (resp) {
+                    StudentListController.reloadStudentList(null);
+                    WorkspaceController.storage.selectedStudentList.html("");
+                    var resp_selected_student_list = resp["groupeDetails"]["students"];
+                    for (var i in resp_selected_student_list) {
+                        var resp_selected_student = resp_selected_student_list[i];
+                        var new_student_button = DOMFactory.elementWithId("student-button", resp_selected_student["name"] + " " + resp_selected_student["first_name"], "btn-default", "glyphicon-remove");
+                        new_student_button.attr('id', "selected-student-button-" + resp_selected_student['id']);
+                        new_student_button.data(resp_selected_student);
+                        new_student_button.click(WorkspaceController.selectedStudentButtonClicked);
+                        var orig_student_button = $("#student-button-" + resp_selected_student['id']);
+                        WorkspaceController.markStudentButton(orig_student_button, true);
+                        WorkspaceController.storage.selectedStudentList.append(new_student_button);
+                    }
+                },
+
+                markStudentButton: function (btn, mark) {
+                    var logo = btn.find("span");
+                    if (mark) {
+                        btn.addClass("btn-success");
+                        logo.removeClass("glyphicon-plus");
+                        logo.addClass("glyphicon-ok");
+                    } else {
+                        btn.removeClass("btn-success");
+                        logo.removeClass("glyphicon-ok");
+                        logo.addClass("glyphicon-plus");
+                    }
+                },
+
+                loadSessionList: function (resp) {
+                    WorkspaceController.storage.sessionList.html("");
+                    var resp_session_list = resp["groupeDetails"]["lectures"];
+                    for (var i in resp_session_list) {
+                        var resp_session = resp_session_list[i];
+                        var has_comment = resp_session["commetary"] && resp_session["commetary"].length !== 0;
+                        var new_session_panel;
+                        if (has_comment) {
+                            new_session_panel = DOMFactory.elementWithId("session-panel", resp_session["name"], "View Note", "panel-default", "btn-default", "glyphicon-search");
+                        } else {
+                            new_session_panel = DOMFactory.elementWithId("session-panel", resp_session["name"], "Create Note", "panel-success", "btn-success", "glyphicon-plus");
+                        }
+                        new_session_panel.data(resp_session);
+                        var remove_button = new_session_panel.find("#remove-session");
+                        remove_button.data(resp_session);
+                        remove_button.click(WorkspaceController.removeSessionButtonClicked);
+                        var select_date_input = new_session_panel.find("#select-date");
+                        select_date_input.val(resp_session['date']);
+                        select_date_input.data(resp_session);
+                        select_date_input.datepicker({
+                            format: 'yyyy-mm-dd',
+                            autoclose: true
+                        }).on("changeDate", WorkspaceController.changeSessionDateEventTriggered);
+                        var edit_session_button = new_session_panel.find("#edit-session");
+                        edit_session_button.data(resp_session);
+                        edit_session_button.click(WorkspaceController.editSessionButtonClicked);
+                        WorkspaceController.storage.sessionList.prepend(new_session_panel);
+                    }
+                },
+
+                editSessionButtonClicked: function (event) {
+                    console.log(event);
+                },
+
+                changeSessionDateEventTriggered: function (event) {
+                    var sender = $(this);
+                    var data = sender.data();
+                    console.log(data);
+                    var date = sender.val();
+                    WorkspaceController.changeSessionDate(data['id'], date);
+                },
+
+                changeSessionDate: function (sid, date) {
+                    var group_id = GroupListController.storage.selectedGroupId;
+                    APIService.modifySession(function (resp) {
+                        if (resp["result"] === "succeed") {
+                            WorkspaceController.loadWithId(group_id);
+                        }
+                    }, sid, {"date": date});
+                },
+
+                removeSessionButtonClicked: function (event) {
+                    var sender = $(this);
+                    var data = sender.data();
+                    console.log(data);
+                    swal({
+                        title: "Are you sure?",
+                        text: "The session will be deleted! \n" +
+                        "You will not be able to revoke this operation!",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Yes, delete it!",
+                        closeOnConfirm: false,
+                        html: false
+                    }, function () {
+                        WorkspaceController.removeSession(data['id']);
+                    });
+                },
+
+                removeSession: function (sid) {
+                    var group_id = GroupListController.storage.selectedGroupId;
+                    APIService.removeSession(function (resp) {
+                        if (resp["result"] === "succeed") {
+                            WorkspaceController.loadWithId(group_id);
+                            swal("Deleted!",
+                                "This session has been deleted.",
+                                "success");
+                        }
+                    }, sid);
+                },
+
+                selectedStudentButtonClicked: function (event) {
+                    var sender = $(this);
+                    var data = sender.data();
+                    console.log(data);
+                    var group_id = GroupListController.storage.selectedGroupId;
+                    APIService.removeStudentsFromGroup(function (resp) {
+                        if (resp["result"] === "succeed") {
+                            WorkspaceController.loadWithId(group_id);
+                        }
+                    }, group_id, [ data['id'] ]);
+                }
+            };
+
+            var StudentListController = {
+
+                storage: {
+                    searchStudentInput: $("#search-student"),
+                    studentList: $("#search-student-list"),
+                    dataStudentList: null // lazy load
+                },
+
+                init: function () {
+                    APIService.getStudentList(StudentListController.reloadStudentList);
+                },
+
+                reset: function () {
+                    StudentListController.storage.studentList.html("");
+                    StudentListController.storage.searchStudentInput.val("");
+                },
+
+                reloadStudentList: function (resp) {
+                    // load from cache
+                    if (resp === null) {
+                        resp = StudentListController.storage.dataStudentList;
+                    } else {
+                        console.log(resp);
+                    }
+                    // still null check
+                    if (resp === null) {
+                        return;
+                    } else {
+                        StudentListController.storage.dataStudentList = resp;
+                    }
+                    StudentListController.storage.studentList.html("");
+                    var resp_student_list = resp["students"];
+                    for (var i in resp_student_list) {
+                        var resp_student = resp_student_list[i];
+                        var new_student_button = DOMFactory.elementWithId("student-button", resp_student["name"] + " " + resp_student["first_name"], "btn-default", "glyphicon-plus");
+                        new_student_button.attr('id', "student-button-" + resp_student['id']);
+                        new_student_button.data(resp_student);
+                        new_student_button.click(StudentListController.studentButtonClicked);
+                        StudentListController.storage.studentList.append(new_student_button);
+                    }
+                },
+
+                studentButtonClicked: function (event) {
+                    var sender = $(this);
+                    if (sender.hasClass("btn-success")) {
+                        event.preventDefault();
+                        return;
+                    }
+                    var data = sender.data();
+                    console.log(data);
+                    var group_id = GroupListController.storage.selectedGroupId;
+                    APIService.selectStudentsIntoGroup(function (resp) {
+                        if (resp["result"] === "succeed") {
+                            WorkspaceController.loadWithId(group_id);
+                        }
+                    }, group_id, [ data['id'] ]);
+                }
+
+            };
+
+            var ViewController = {
+
+                storage: {
+
+                },
+
+                init: function () {
+                    ViewController.bindSearchPair();
+                    GroupListController.init();
+                    WorkspaceController.init();
+                    StudentListController.init();
+                },
+
+                bindSearchPair: function () {
+
+                    var BindSearchEventPair = function (input_s, list_s, where_s) {
+                        $(input_s).on("change keyup paste", function () {
+                            var sc = $(this).val();
+                            $(list_s).each(function () {
+                                var e = $(this);
+                                var st;
+                                if (where_s === null) {
+                                    st = e.text();
+                                }
+                                else {
+                                    st = $(this).find(where_s).text();
+                                }
+                                if (st.indexOf(sc) !== -1) {
+                                    e.show();
+                                }
+                                else {
+                                    e.hide();
+                                }
+                            });
+                        });
                     };
 
-                    var button = $(this);
-                    if (button.hasClass("btn-primary")) {
-                        return;
-                    } else {
-                        selectGroupButton(button, true);
-                        $(".group-title").val(button.text());
-                    }
+                    // search-group -> search-group-list -> button
+                    // search-student -> search-student-list -> button
+                    BindSearchEventPair("#search-group", "#search-group-list > button", null);
+                    BindSearchEventPair("#search-student", "#search-student-list > button", null);
+                    BindSearchEventPair("#search-selected-student", "#search-selected-student-list > button", null);
+                    BindSearchEventPair("#search-session", "#search-session-list > div", "h3");
 
-                    var action = button.data('action');
-                    var group_id = button.data('id');
-
-                    // var notify = $.notify('<strong>Loading...</strong>', {allow_dismiss: false});
-
-                    UI.allowsUserInteraction(false);
-
-                    if (action === 'select') {
-                        API.getGroupData(loadGroupData, group_id);
-                    }
-
-                    UI.allowsUserInteraction(true);
-
-                });
-
-                // Select & Unselect Student
-                $('.student-button').click(function () {
-
-                    var button = $(this);
-
-                    var action = button.data('action');
-                    if (!action) {
-                        return;
-                    }
-
-                    var student_id = button.data('id');
-                    var group_id = $(".group-title").data('id');
-
-                    // var notify = $.notify('<strong>Saving...</strong>', {allow_dismiss: false});
-
-                    UI.allowsUserInteraction(false);
-
-                    API.selectStudent(function (data) {
-                        if (data['result'] !== 'succeed') {
-                            swal("Oops...", data['error'], "error");
-                        }
-                    }, group_id, student_id, action === 'select');
-                    API.getGroupData(loadGroupData, group_id);
-
-                    UI.allowsUserInteraction(true);
-
-                });
-
-                // New Session Pop-up
-                $(".panel-session-add").click(function () {
-                    $("#new-session-popup").modal('show');
-                });
-                $('#new-session-popup').on('shown.bs.modal', function () {
-                    $(this).find("input[name=session-name]").focus();
-                });
-                $("[name=create-new-session]").click(function (e) {
-
-                    var new_session_name = $("input[name=session-name]").val();
-                    if (new_session_name.length <= 0) {
-                        e.preventDefault();
-                        return;
-                    }
-
-                    $('#new-session-popup').modal('hide');
-
-                    var group_id = $(".group-title").data('id');
-                    var notify = $.notify('<strong>Saving...</strong>', {allow_dismiss: false});
-
-                    UI.allowsUserInteraction(false);
-
-                    API.createSession(function (data) {
-                        if (data['result'] === 'succeed') {
-                            createSessionElement(data['session']);
-                        }
-                        registerDatepicker();
-                    }, group_id, new_session_name);
-
-                    // TEST
-                    window.setTimeout(
-                        function () {
-                            // Perform UI updates
-                            notify.update({
-                                type: 'success',
-                                message: '<strong>Succeed!</strong> New session has been created!'
-                            });
-                            UI.allowsUserInteraction(true);
-                        }, 200);
-
-                });
-                {
-                    var session_name_field = $("input[name=session-name]");
-                    session_name_field.on("change paste keyup", function () {
-                        $("[name=create-new-session]").attr('disabled', $(this).val().length <= 0);
-                    });
-                    session_name_field.on("keypress", function () {
-                        if (event.which === 13) {
-                            if ($.trim($(this).val()).length > 0) {
-                                $("[name=create-new-session]").click();
-                            }
-                        }
-                    });
                 }
 
-                // Evaluation Pop-up
-                $('[name=view-session-note], [name=create-session-note]').click(function () {
+            };
 
-                    // Button that triggered the modal
-                    var button = $(this);
-                    // Extract info from data-* attributes
-                    var action = button.data('action');
-                    var session_id = button.data('id');
-                    var session_title = button.data('title');
-                    // Update modal content
-                    var text_action;
-                    if (action === 'create') {
-                        text_action = 'Create';
-                    } else if (action === 'view') {
-                        text_action = 'View';
-                    }
-                    var modal = $('#evaluation-popup');
-                    modal.find('#session-title').text(text_action + ' Evaluation for ' + session_title);
-                    modal.find('[name=session-save-changes]').data('id', session_id);
-
-                    if (action === 'view') {
-                        // var notify = $.notify('<strong>Loading...</strong>', {allow_dismiss: false});
-
-                        UI.allowsUserInteraction(false);
-
-                        API.getSessionDetail(function (data) {
-                            modal.find("#rate-r" + data['rate']).prop('checked', true);
-                            modal.find("textarea[name=comment-area]").text(data['comment']);
-                            modal.modal('show');
-                        }, session_id);
-
-                        UI.allowsUserInteraction(true);
-
-                    } else {
-                        // Reset modal content
-                        modal.find("#rate-r5").prop('checked', true);
-                        modal.find("textarea[name=comment-area]").text('');
-                        modal.modal('show');
-                    }
-                });
-                $('[name=session-save-changes]').click(function () {
-                    $('#evaluation-popup').modal('hide');
-
-                    var session_id = $(this).data('id');
-                    var selected_rate = $("input[name=rate-group]:checked").val();
-                    var comment_content = $("textarea[name=comment-area]").text();
-                    // alert(comment_content);
-
-                    var notify = $.notify('<strong>Saving...</strong>', {allow_dismiss: false});
-
-                    UI.allowsUserInteraction(false);
-
-                    API.editSessionDetail(function (data) {
-                        if (data['result'] === 'succeed') {
-                            notify.update({
-                                type: 'success',
-                                message: '<strong>Succeed!</strong> Your changes has been saved!'
-                            });
-                        } else {
-                            swal("Oops...", data['error'], "error");
-                        }
-                    }, session_id, selected_rate, comment_content);
-
-                    UI.allowsUserInteraction(true);
-
-                });
-                $('#evaluation-popup').on('shown.bs.modal', function () {
-                    // Auto Focus
-                    $(this).find("textarea[name=comment-area]").focus();
-                });
-
-                // Delete Group
-                $(".title-button").click(function () {
-                    swal({
-                        title: "Are you sure?",
-                        text: "All selected students and sessions will be deleted! \n" +
-                        "You will not be able to revoke this operation!",
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#DD6B55",
-                        confirmButtonText: "Yes, delete it!",
-                        closeOnConfirm: false,
-                        html: false
-                    }, function () {
-                        var group_id = $(".group-title").data('id');
-
-                        UI.allowsUserInteraction(false);
-
-                        API.deleteGroup(function (data) {
-                            if (data['result'] === 'succeed') {
-                                deleteGroup(data['group']['id']);
-                                swal("Deleted!",
-                                    "This group has been deleted.",
-                                    "success");
-                                API.getGroupList(loadGroupList);
-                            }
-                        }, group_id);
-
-                        UI.allowsUserInteraction(true);
-                    });
-                });
-
-                // Delete Session
-                $(".session-title-button").click(function () {
-                    var session_id = $(this).data('id');
-                    swal({
-                        title: "Are you sure?",
-                        text: "The session and its evaluation will be deleted! \n" +
-                        "You will not be able to revoke this operation!",
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#DD6B55",
-                        confirmButtonText: "Yes, delete it!",
-                        closeOnConfirm: false,
-                        html: false
-                    }, function () {
-
-                        UI.allowsUserInteraction(false);
-
-                        API.deleteSession(function (data) {
-                            if (data['result'] === 'succeed') {
-                                deleteSession(session_id);
-                                swal("Deleted!",
-                                    "This session has been deleted.",
-                                    "success");
-                            }
-                        }, session_id);
-
-                        UI.allowsUserInteraction(true);
-
-                    });
-                });
-
+            {
+                document.DOMFactory = DOMFactory;
+                document.APIService = APIService;
+                document.RootController = ViewController;
             }
 
-            // Init new UI
-            UI.init();
-
-//            UI.allowsUserInteraction(false);
-
-            // Page initial load
-            API.getStudentList(function (data) {
-                var student_button_list = $(".student-button-list");
-                student_button_list.empty();
-                data['student_list'].forEach(function (studentObj) {
-                    var prototype = UI.prototype('pt-student-button').clone(true, true);
-                    prototype.text(studentObj['name']);
-                    prototype.data('id', studentObj['id']);
-                    prototype.data('action', 'select');
-                    prototype.append('<span class="glyphicon glyphicon-plus btn-icon float-right"></span>');
-                    student_button_list.append(prototype);
-                });
-            });
-            API.getGroupList(loadGroupList);
-
-//            UI.allowsUserInteraction(true);
+            APIService.init();
+            ViewController.init();
 
         });
 
     </script>
+
+    <!-- JS TEMPLATE ENGINE -->
+
+    <script id="template-group-button" language="text">
+
+        <button id="group-button" type="button" class="btn {2} btn-block group-button">
+            {1}
+        </button>
+
+    </script>
+
+    <script id="template-student-button" language="text">
+
+        <button type="button" class="btn {2} btn-block student-button">
+            {1}
+            <span class="glyphicon {3} btn-icon float-right"></span>
+        </button>
+
+    </script>
+
+    <script id="template-session-panel" language="text">
+
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="panel {3} roux-panel panel-session">
+                <div class="panel-heading">
+                    <h3 class="session-panel-title">
+                        {1}
+                    </h3>
+                    <span id="remove-session" class="glyphicon glyphicon-trash session-title-button float-right"></span>
+                </div>
+                <div class="panel-body">
+                    <div class="input-group">
+                        <input id="select-date" type="text" class="form-control select-date" readonly title="">
+                        <span class="input-group-addon">
+                        <i class="glyphicon glyphicon-calendar"></i>
+                </span>
+                    </div>
+                    <br>
+                    <button id="edit-session" type="button" class="btn {4} btn-block">
+                        <span class="glyphicon {5}"></span>
+                        {2}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </script>
+
 </head>
 <body>
 
@@ -537,12 +640,12 @@
                 <img class="header-icon" th:src="@{/img/roux.png}" src="">
             </a>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
+        <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav" layout:fragment="nav-content">
-                <li class="active" id="nav_sect_group"><a th:href="@{/teacher/group}">Group</a></li>
-                <li id="nav_sect_question"><a th:href="@{/teacher/question}">Question</a></li>
-                <li id="nav_sect_questionnaire"><a th:href="@{/teacher/questionnaire}">Questionnaire</a></li>
-                <li id="nav_sect_statistics"><a th:href="@{/teacher/statistics}">Statistics</a></li>
+                <li class="active"><a th:href="@{/teacher/group}">Group</a></li>
+                <li><a th:href="@{/teacher/question}">Question</a></li>
+                <li><a th:href="@{/teacher/questionnaire}">Questionnaire</a></li>
+                <li><a th:href="@{/teacher/statistics}">Statistics</a></li>
             </ul>
         </div>
     </div>
@@ -561,27 +664,18 @@
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-search"></span>
                         </span>
-                        <input type="text" id="input-group-search" class="form-control"
-                               placeholder="Search group"
-                        >
+                        <input id="search-group" type="text" class="form-control" placeholder="Search group">
                     </div>
                     <br>
 
                     <div class="scroll-list">
                         <div class="scroll-list-group">
-                            <button type="button" class="btn btn-success btn-block"
-                                    data-toggle="modal" data-target="#new-group-popup">
+                            <button id="common-new-group" type="button" class="btn btn-success btn-block">
                                 <span class="glyphicon glyphicon-plus"></span>
                                 New
                             </button>
                             <hr>
-                            <button type="button" class="prototype btn btn-default btn-block group-button"
-                                    id="pt-group-button"
-                                    data-id="1"
-                                    data-action="select">
-                                N/A
-                            </button>
-                            <div class="group-button-list"></div>
+                            <div id="search-group-list" class="group-button-list"></div>
                         </div>
                     </div>
                     <br>
@@ -590,188 +684,143 @@
             </div>
         </div>
 
-        <!-- Group Title -->
-        <div class="col-sm-8">
-            <div class="panel panel-default roux-panel">
-                <div class="panel-body group-header">
+        <div class="group-detail" style="display: none;">
 
-                    <div class="row">
+            <!-- Group Title -->
+            <div class="col-sm-8">
+                <div class="panel panel-default roux-panel">
+                    <div class="panel-body group-header">
+
+                        <div class="row">
+
+                        </div>
+
+                        <input class="group-title" type="text" placeholder="Untitled Group">
+                        <span class="glyphicon glyphicon-trash title-button float-right"></span>
 
                     </div>
-
-                    <input class="group-title" type="text" placeholder="Untitled Group" data-id="" value="" title="">
-                    <span class="glyphicon glyphicon-trash title-button float-right"></span>
-
                 </div>
             </div>
-        </div>
 
-        <!-- All Students Panel -->
-        <div class="col-sm-4">
-            <div class="panel panel-default roux-panel">
-                <div class="panel-body">
+            <!-- All Students Panel -->
+            <div class="col-sm-4">
+                <div class="panel panel-default roux-panel">
+                    <div class="panel-body">
 
-                    <div class="input-group">
+                        <div class="input-group">
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-search"></span>
                         </span>
-                        <input type="text" id="input-all-student-search" class="form-control"
-                               placeholder="All students">
-                    </div>
-                    <br>
-
-                    <div class="scroll-list">
-                        <div class="scroll-list-all-student">
-                            <button type="button" class="prototype btn btn-default btn-block student-button"
-                                    id="pt-student-button"
-                                    data-id="1">
-                                Student 1
-                                <span class="glyphicon glyphicon-ok btn-icon float-right"></span>
-                            </button>
-                            <div class="student-button-list"></div>
+                            <input id="search-student" type="text" class="form-control" placeholder="All students">
                         </div>
+                        <br>
+
+                        <div class="scroll-list">
+                            <div class="scroll-list-all-student">
+                                <div id="search-student-list" class="student-button-list"></div>
+                            </div>
+                        </div>
+                        <br>
+
                     </div>
-                    <br>
+                </div>
+            </div>
+
+            <!-- Selected Students Panel -->
+            <div class="col-sm-4">
+                <div class="panel panel-default roux-panel">
+                    <div class="panel-body">
+
+                        <div class="input-group">
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </span>
+                            <input id="search-selected-student" type="text" class="form-control"
+                                   placeholder="Selected students">
+                        </div>
+                        <br>
+
+                        <div class="scroll-list">
+                            <div class="scroll-list-selected-student">
+                                <div id="search-selected-student-list" class="selected-student-button-list"></div>
+                            </div>
+                        </div>
+                        <br>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Session Panel -->
+            <div class="col-sm-8">
+                <div class="panel panel-default roux-panel">
+
+                    <div class="panel-heading">
+                        <h3 class="session-panel-title">Session</h3>
+                    </div>
+
+                    <div class="panel-body">
+
+                        <div class="input-group">
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </span>
+                            <input id="search-session" type="text" class="form-control"
+                                   placeholder="Search session">
+                        </div>
+                        <br>
+
+                        <div class="row session-row">
+
+                            <!-- Add Session Sub Panel -->
+                            <div class="col-sm-6 col-md-4 col-lg-3">
+                                <div id="create-session-panel" class="panel panel-default roux-panel panel-session-add">
+                                    <div class="panel-body">
+                                        <div class="panel-session-wrap">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <br>Add session
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="search-session-list" class="session-panel-list"></div>
+
+                        </div>
+                        <br>
+
+                    </div>
 
                 </div>
             </div>
         </div>
 
-        <!-- Selected Students Panel -->
-        <div class="col-sm-4">
-            <div class="panel panel-default roux-panel">
-                <div class="panel-body">
+    </div>
 
-                    <div class="input-group">
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-search"></span>
-                        </span>
-                        <input type="text" id="input-selected-student-search" class="form-control"
-                               placeholder="Selected students">
-                    </div>
-                    <br>
+    <!-- Modal (Pop-up) Group Add -->
+    <div class="modal fade" id="new-group-popup" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
 
-                    <div class="scroll-list">
-                        <div class="scroll-list-selected-student">
-                            <button type="button" class="prototype btn btn-default btn-block student-button"
-                                    id="pt-selected-student-button"
-                                    data-id="1"
-                                    data-action="unselect">
-                                Student 1
-                                <span class="glyphicon glyphicon-remove btn-icon float-right"></span>
-                            </button>
-                            <div class="selected-student-button-list"></div>
-                        </div>
-                    </div>
-                    <br>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- Session Panel -->
-        <div class="col-sm-8">
-            <div class="panel panel-default roux-panel">
-
-                <div class="panel-heading">
-                    <h3 class="session-panel-title">Session</h3>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    <h4 class="modal-title">New Group</h4>
                 </div>
 
-                <div class="panel-body">
-
+                <div class="modal-body">
                     <div class="input-group">
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-search"></span>
-                        </span>
-                        <input type="text" id="input-session-search" class="form-control"
-                               placeholder="Search session">
+                        <input id="new-group-name" type="text" class="form-control" placeholder="Group Name">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default" aria-label="Help"><span
+                                    class="glyphicon glyphicon-question-sign"></span></button>
+                        </div>
                     </div>
-                    <br>
+                </div>
 
-                    <div class="row session-row">
-
-                        <!-- Add Session Sub Panel -->
-                        <div class="col-sm-6 col-md-4">
-                            <div class="panel panel-default roux-panel panel-session-add">
-                                <div class="panel-body">
-                                    <div class="panel-session-wrap">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                        <br>Add session
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6 col-md-4 prototype"
-                             id="pt-session-panel"
-                             data-id="">
-                            <div class="panel panel-success roux-panel panel-session">
-                                <div class="panel-heading">
-                                    <h3 class="session-panel-title">
-                                        N/A
-                                    </h3>
-                                    <span class="glyphicon glyphicon-trash session-title-button float-right"></span>
-                                </div>
-                                <div class="panel-body">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control select-date"
-                                               title=""
-                                               data-id=""
-                                               readonly>
-                                        <span class="input-group-addon">
-                                                <i class="glyphicon glyphicon-calendar"></i>
-                                        </span>
-                                    </div>
-                                    <br>
-                                    <button type="button" class="btn btn-success btn-block"
-                                            name="create-session-note"
-                                            data-action="create"
-                                            data-id=""
-                                            data-title="">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                        Create Note
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 prototype"
-                             id="pt-session-panel-with-note"
-                             data-id="">
-                            <div class="panel panel-default roux-panel panel-session">
-                                <div class="panel-heading">
-                                    <h3 class="session-panel-title">
-                                        N/A
-                                    </h3>
-                                    <span class="glyphicon glyphicon-trash session-title-button float-right"></span>
-                                </div>
-                                <div class="panel-body">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control select-date"
-                                               title=""
-                                               data-id=""
-                                               readonly>
-                                        <span class="input-group-addon">
-                                                <i class="glyphicon glyphicon-calendar"></i>
-                                            </span>
-                                    </div>
-                                    <br>
-                                    <button type="button" class="btn btn-default btn-block"
-                                            name="view-session-note"
-                                            data-action="view"
-                                            data-id=""
-                                            data-title="">
-                                        <span class="glyphicon glyphicon-search"></span>
-                                        View Note
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="session-panel-list"></div>
-
-                    </div>
-                    <br>
-
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="create-new-group" type="button" class="btn btn-success" disabled>Save
+                    </button>
                 </div>
 
             </div>
@@ -790,7 +839,7 @@
 
                 <div class="modal-body">
                     <div class="input-group">
-                        <input type="text" class="form-control" name="session-name" placeholder="Session Name">
+                        <input id="new-session-name" type="text" class="form-control" placeholder="Session Name">
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default" aria-label="Help"><span
                                     class="glyphicon glyphicon-question-sign"></span></button>
@@ -800,39 +849,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success"
-                            name="create-new-session" disabled>Save
-                    </button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal (Pop-up) Group Add -->
-    <div class="modal fade" id="new-group-popup" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                    <h4 class="modal-title">New Group</h4>
-                </div>
-
-                <div class="modal-body">
-                    <div class="input-group">
-                        <input type="text" class="form-control" name="group-name" placeholder="Group Name">
-                        <div class="input-group-btn">
-                            <button type="button" class="btn btn-default" aria-label="Help"><span
-                                    class="glyphicon glyphicon-question-sign"></span></button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success"
-                            name="create-new-group" disabled>Save
+                    <button id="create-new-session" type="button" class="btn btn-success" disabled>Save
                     </button>
                 </div>
 
@@ -847,7 +864,7 @@
 
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                    <h4 class="modal-title" id="session-title">Evaluation Pop-up</h4>
+                    <h4 class="modal-title">Evaluation Pop-up</h4>
                 </div>
 
                 <div class="modal-body">
@@ -899,18 +916,13 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary"
-                            name="session-save-changes"
-                            data-id="">Save changes
+                    <button type="button" class="btn btn-primary">Save changes
                     </button>
                 </div>
 
             </div>
         </div>
     </div>
-
-    <!-- Ajax Overlay -->
-    <div class="overlay" style="z-index: 200;"></div>
 
 </div>
 
