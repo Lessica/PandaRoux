@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import pandaroux.Entity.Answer;
 import pandaroux.Service.Entity.AnswerService;
 
-import java.text.ParseException;
-import java.util.List;
 import java.util.Map;
 
 @RestController
