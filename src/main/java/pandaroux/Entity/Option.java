@@ -15,8 +15,6 @@ public class Option {
     @JoinColumn(name = "id_question")
     private Question question;
 
-
-
     @Column
     private String option_text;
 
@@ -29,6 +27,14 @@ public class Option {
 
     public Option() {}
 
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public Question getQuestion() {
         return question;

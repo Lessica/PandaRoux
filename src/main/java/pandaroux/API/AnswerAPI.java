@@ -24,8 +24,8 @@ public class AnswerAPI {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    private  void add(@RequestBody Answer answer) {
-        answerService.save(answer);
+    private Map add(@RequestBody Answer answer) {
+        return answerService.save(answer);
     }
 
 }

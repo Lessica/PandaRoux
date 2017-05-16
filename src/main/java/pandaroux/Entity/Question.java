@@ -32,6 +32,9 @@ public class Question {
     @JoinColumn(name = "id_teacher")
     private User teacher;
 
+    @OneToMany(mappedBy = "question")
+    private List<Option> options;
+
     public Question() {}
 
 

@@ -41,7 +41,12 @@ public class AnswerService {
         return answerData;
     }
 
-    public void save(Answer answer) {
+    public Map save(Answer answer) {
         answerRepository.save(answer);
+
+        Map data = new HashMap();
+        data.put("result", "succeed");
+
+        return data;
     }
 }

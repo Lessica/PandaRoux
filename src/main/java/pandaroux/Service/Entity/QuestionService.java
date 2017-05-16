@@ -10,6 +10,7 @@ import pandaroux.Entity.User;
 import pandaroux.Repository.OptionRepository;
 import pandaroux.Repository.QuestionRepository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,9 +20,13 @@ public class QuestionService {
     @Autowired
     private QuestionRepository questionRepository;
 
-    public void save(Question question) {
+    public Map save(Question question) {
         questionRepository.save(question);
 
+        Map data = new HashMap();
+        data.put("result", "succeed");
+
+        return data;
     }
 
     public List<Map> getQuestions() {
