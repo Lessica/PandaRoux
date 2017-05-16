@@ -108,6 +108,12 @@
                         data: JSON.stringify(form_data),
                         success: callback
                     });
+                },
+                modifyGroup: function (callback, gid, form_data) {
+                    $.ajax("/api/groupe/" + gid.toString() + "/modify", {
+                        data: JSON.stringify(form_data),
+                        success: callback
+                    });
                 }
             };
 
@@ -213,6 +219,14 @@
                     $(".group-button").removeClass("btn-primary");
                     if (group_id) {
                         $("#group-button-" + group_id.toString()).addClass("btn-primary");
+                    }
+                },
+
+                setGroupName: function(group_id, group_name) {
+                    if (group_id && group_name) {
+                        var new_group_button = DOMFactory.elementWithId("group-button", group_name, "btn-default");
+                        $("#group-button-" + group_id.toString()).html(new_group_button.html());
+                        console.log(group_name);
                     }
                 }
 
@@ -339,7 +353,32 @@
                 },
 
                 bindEvent: function () {
+                    WorkspaceController.storage.groupTitle.blur(WorkspaceController.groupTitleInputBlured);
+                    WorkspaceController.storage.groupTitle.on("keypress", function (event) {
+                        if (event.which === 13) {
+                            if ($.trim($(this).val()).length > 0) {
+                                WorkspaceController.storage.groupTitle.blur();
+                            }
+                        }
+                    });
                     WorkspaceController.storage.createSessionPanel.click(WorkspaceController.createSessionPanelClicked);
+                },
+
+                groupTitleInputBlured: function (event) {
+                    var sender = $(this);
+                    var data = sender.data();
+                    var group_name = sender.val();
+                    if (data && group_name.length <= 0) {
+                        sender.val(data["name"]);
+                    } else {
+                        var group_id = data["id"];
+                        APIService.modifyGroup(function (resp) {
+                            if (resp["result"] === "succeed") {
+                                GroupListController.setGroupName(group_id, group_name);
+                                WorkspaceController.loadWithId(group_id);
+                            }
+                        }, group_id, {"name": group_name});
+                    }
                 },
 
                 createSessionPanelClicked: function (event) {
@@ -357,11 +396,11 @@
                 },
 
                 show: function () {
-                    WorkspaceController.storage.workspace.show();
+                    WorkspaceController.storage.workspace.fadeIn(200);
                 },
 
                 hide: function () {
-                    WorkspaceController.storage.workspace.hide();
+                    WorkspaceController.storage.workspace.fadeOut(200);
                 },
 
                 focusOnTitle: function () {
@@ -383,6 +422,7 @@
                 
                 loadGroupTitle: function (resp) {
                     WorkspaceController.storage.groupTitle.val(resp["name"]);
+                    WorkspaceController.storage.groupTitle.data(resp);
                 },
 
                 loadSelectedStudentList: function (resp) {
@@ -641,6 +681,7 @@
 
         <button id="group-button" type="button" class="btn {2} btn-block group-button">
             {1}
+            <span class="glyphicon glyphicon-chevron-right btn-icon float-right"></span>
         </button>
 
     </script>
@@ -738,113 +779,122 @@
 
         <div class="group-detail" style="display: none;">
 
-            <!-- Group Title -->
             <div class="col-sm-8">
-                <div class="panel panel-default roux-panel">
-                    <div class="panel-body group-header">
 
-                        <div class="row">
+                <div class="row">
 
-                        </div>
+                    <!-- Group Title -->
+                    <div class="col-sm-12">
+                        <div class="panel panel-default roux-panel">
+                            <div class="panel-body group-header">
 
-                        <input class="group-title" type="text" placeholder="Untitled Group">
-                        <span class="glyphicon glyphicon-trash title-button float-right"></span>
+                                <div class="row">
 
-                    </div>
-                </div>
-            </div>
+                                </div>
 
-            <!-- All Students Panel -->
-            <div class="col-sm-4">
-                <div class="panel panel-default roux-panel">
-                    <div class="panel-body">
+                                <input class="group-title" type="text" placeholder="Untitled Group">
+                                <span class="glyphicon glyphicon-trash title-button float-right"></span>
 
-                        <div class="input-group">
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-search"></span>
-                        </span>
-                            <input id="search-student" type="text" class="form-control" placeholder="All students">
-                        </div>
-                        <br>
-
-                        <div class="scroll-list">
-                            <div class="scroll-list-all-student">
-                                <div id="search-student-list" class="student-button-list"></div>
                             </div>
                         </div>
-                        <br>
-
                     </div>
-                </div>
-            </div>
 
-            <!-- Selected Students Panel -->
-            <div class="col-sm-4">
-                <div class="panel panel-default roux-panel">
-                    <div class="panel-body">
+                    <!-- All Students Panel -->
+                    <div class="col-sm-6">
+                        <div class="panel panel-default roux-panel">
+                            <div class="panel-body">
 
-                        <div class="input-group">
+                                <div class="input-group">
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-search"></span>
                         </span>
-                            <input id="search-selected-student" type="text" class="form-control"
-                                   placeholder="Selected students">
-                        </div>
-                        <br>
+                                    <input id="search-student" type="text" class="form-control" placeholder="All students">
+                                </div>
+                                <br>
 
-                        <div class="scroll-list">
-                            <div class="scroll-list-selected-student">
-                                <div id="search-selected-student-list" class="selected-student-button-list"></div>
-                            </div>
-                        </div>
-                        <br>
-
-                    </div>
-                </div>
-            </div>
-
-            <!-- Session Panel -->
-            <div class="col-sm-8">
-                <div class="panel panel-default roux-panel">
-
-                    <div class="panel-heading">
-                        <h3 class="session-panel-title">Session</h3>
-                    </div>
-
-                    <div class="panel-body">
-
-                        <div class="input-group">
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-search"></span>
-                        </span>
-                            <input id="search-session" type="text" class="form-control"
-                                   placeholder="Search session">
-                        </div>
-                        <br>
-
-                        <div class="row session-row">
-
-                            <!-- Add Session Sub Panel -->
-                            <div class="col-sm-6 col-md-4 col-lg-3">
-                                <div id="create-session-panel" class="panel panel-default roux-panel panel-session-add">
-                                    <div class="panel-body">
-                                        <div class="panel-session-wrap">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                            <br>Add session
-                                        </div>
+                                <div class="scroll-list">
+                                    <div class="scroll-list-all-student">
+                                        <div id="search-student-list" class="student-button-list"></div>
                                     </div>
                                 </div>
+                                <br>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selected Students Panel -->
+                    <div class="col-sm-6">
+                        <div class="panel panel-default roux-panel">
+                            <div class="panel-body">
+
+                                <div class="input-group">
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </span>
+                                    <input id="search-selected-student" type="text" class="form-control"
+                                           placeholder="Selected students">
+                                </div>
+                                <br>
+
+                                <div class="scroll-list">
+                                    <div class="scroll-list-selected-student">
+                                        <div id="search-selected-student-list" class="selected-student-button-list"></div>
+                                    </div>
+                                </div>
+                                <br>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Session Panel -->
+                    <div class="col-sm-12">
+                        <div class="panel panel-default roux-panel">
+
+                            <div class="panel-heading">
+                                <h3 class="session-panel-title">Session</h3>
                             </div>
 
-                            <div id="search-session-list" class="session-panel-list"></div>
+                            <div class="panel-body">
+
+                                <div class="input-group">
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </span>
+                                    <input id="search-session" type="text" class="form-control"
+                                           placeholder="Search session">
+                                </div>
+                                <br>
+
+                                <div class="row session-row">
+
+                                    <!-- Add Session Sub Panel -->
+                                    <div class="col-sm-6 col-md-4 col-lg-3">
+                                        <div id="create-session-panel" class="panel panel-default roux-panel panel-session-add">
+                                            <div class="panel-body">
+                                                <div class="panel-session-wrap">
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                    <br>Add session
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div id="search-session-list" class="session-panel-list"></div>
+
+                                </div>
+                                <br>
+
+                            </div>
 
                         </div>
-                        <br>
-
                     </div>
 
                 </div>
+
             </div>
+
         </div>
 
     </div>

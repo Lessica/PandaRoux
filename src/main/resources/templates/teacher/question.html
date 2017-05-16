@@ -5,6 +5,64 @@
       layout:decorate="site-base">
 <head>
     <title>Question</title>
+    <link rel="stylesheet" th:href="@{/css/sweetalert.css}">
+    <script th:src="@{/js/sweetalert.min.js}"></script>
+    <script>
+
+        $(document).ready(function () {
+
+            'use strict';
+
+            console.log("document ready");
+
+            var DOMFactory = {
+                elementWithId: function () {
+                    if (arguments.length === 0)
+                        return null;
+                    var elem_id = arguments[0];
+                    var result = $("#template-" + elem_id).html();
+                    for (var i = 1; i < arguments.length; i++) {
+                        var re = new RegExp('\\{' + (i) + '\\}', 'gm');
+                        result = result.replace(re, arguments[i]);
+                    }
+                    return $(result);
+                }
+            };
+
+            var APIService = {
+
+            };
+
+            var QuestionListController = {
+
+            };
+
+            var ViewController = {
+
+                storage: {
+
+                },
+
+                init: function () {
+                    ViewController.bindSearchPair();
+                }
+
+
+
+            };
+
+            {
+                document.DOMFactory = DOMFactory;
+                document.APIService = APIService;
+                document.RootController = ViewController;
+            }
+
+            APIService.init();
+            ViewController.init();
+
+        });
+
+    </script>
 </head>
 <body>
 
