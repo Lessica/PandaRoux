@@ -18,7 +18,7 @@ public class AnswerAPI {
         return null;
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public Map getAnswer(@PathVariable("id") int id) {
         return answerService.getAnswer(id);
     }
