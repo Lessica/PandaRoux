@@ -9,6 +9,8 @@ import pandaroux.Entity.QuestionType;
 import pandaroux.Entity.User;
 import pandaroux.Repository.OptionRepository;
 import pandaroux.Repository.QuestionRepository;
+import pandaroux.Repository.QuestionTypeRepository;
+import pandaroux.Repository.UserRepository;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,14 +22,12 @@ public class QuestionService {
     @Autowired
     private QuestionRepository questionRepository;
 
-    public Map save(Question question) {
-        questionRepository.save(question);
+    @Autowired
+    private QuestionTypeRepository questionTypeRepository;
 
-        Map data = new HashMap();
-        data.put("result", "succeed");
+    @Autowired
+    private UserRepository userRepository;
 
-        return data;
-    }
 
     public List<Map> getQuestions() {
         return questionRepository.getQuestions();
@@ -37,26 +37,46 @@ public class QuestionService {
         return questionRepository.getTeacherQuestions(id);
     }
 
-    public void create(QuestionType type, String name, User teacher, boolean has_commentary, String option_text, int rate, boolean mandatory){
-        Question question = new Question();
+    public Map add(Map question) {
 
-        question.setName(name);
-        question.setQuestionType(type);
-        question.setTeacher(teacher);
+        Question questionDB;
 
-        save(question);
+        if (question.containsKey("id")) {
+            int id_question = (int) question.get("id");
 
-        OptionService optionService = new OptionService();
-        Option option = new Option();
-        option.setOption_text(option_text);
-        option.setHas_commentary(has_commentary);
-        option.setRate(rate);
-        option.setQuestion(question);
+            if (questionRepository.exists(id_question)) {
+                questionDB = questionRepository.findOne(id_question);
+            } else {
+                questionDB = new Question();
+                questionDB.setId(id_question);
+            }
+        } else {
+            questionDB = new Question();
+        }
 
-        optionService.save(option);
-    }
-    public void alter(int id, QuestionType type, String name, User teacher, boolean has_commentary, String option_text, int rate, boolean mandatory){
-        questionRepository.delete(id);
-        create(type, name, teacher, has_commentary, option_text, rate, mandatory);
+        if (question.containsKey("name")) {
+            questionDB.setName((String) question.get("name"));
+        }
+
+        if (question.containsKey("has_commentary")) {
+            questionDB.isHas_commentary((Boolean) question.get("has_commentary"));
+        }
+
+        if (question.containsKey("id_question_type")) {
+            QuestionType questionType = questionTypeRepository.findOne((int) question.get("id_question_type"));
+            questionDB.setQuestionType(questionType);
+        }
+
+        if (question.containsKey("id_teacher")) {
+            User teacher = userRepository.findOne((int) question.get("id_teacher"));
+            questionDB.setTeacher(teacher);
+        }
+
+        questionRepository.save(questionDB);
+
+        Map data = new HashMap();
+        data.put("result", "succeed");
+
+        return data;
     }
 }

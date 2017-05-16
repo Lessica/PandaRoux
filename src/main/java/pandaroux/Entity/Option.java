@@ -3,7 +3,7 @@ package pandaroux.Entity;
 import javax.persistence.*;
 
 @Entity
-@Table
+@Table(name = "Options")
 public class Option {
 
     @Id

@@ -7,6 +7,7 @@ import pandaroux.Service.Entity.OptionService;
 import pandaroux.Entity.Question;
 import pandaroux.Service.Entity.QuestionService;
 
+import javax.management.Query;
 import java.util.List;
 import java.util.Map;
 
@@ -17,19 +18,10 @@ public class QuestionAPI {
     @Autowired
     private QuestionService questionService;
 
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public void add(@RequestBody int id,
-                    @RequestBody QuestionType type,
-                    @RequestBody String name,
-                    @RequestBody User teacher,
-                    @RequestBody boolean has_commentary,
-                    @RequestBody String option_text,
-                    @RequestBody int rate,
-                    @RequestBody boolean mandatory) {
-        if(id==0)
-            questionService.create(type, name, teacher, has_commentary, option_text, rate, mandatory);
-        else
-            questionService.alter(id, type, name, teacher, has_commentary, option_text, rate, mandatory);
+    public Map add2(@RequestBody Map question) {
+        return questionService.add(question);
     }
 
     @RequestMapping(method = RequestMethod.GET)
