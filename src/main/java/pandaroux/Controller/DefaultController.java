@@ -57,7 +57,4 @@ public class DefaultController {
         return "student/course";
     }
 
-    @RequestMapping(value = "/student/question")
-    public String studentQuestion() { return "student/question"; }
-
 }

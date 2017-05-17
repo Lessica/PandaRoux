@@ -44,8 +44,8 @@
                 },
                 errorHandler: function (xmlHTTP, status, httperror) {
                     var resp = $.parseJSON(xmlHTTP.responseText);
-                    if (resp && resp["error"]) {
-                        swal("Oops...", resp['error'], "error");
+                    if (resp && resp["message"]) {
+                        swal("Oops...", resp['message'], "error");
                     }
                 },
                 getGroupList: function (callback) {
@@ -628,7 +628,6 @@
                 },
 
                 bindSearchPair: function () {
-
                     var BindSearchEventPair = function (input_s, list_s, where_s) {
                         $(input_s).on("change keyup paste", function () {
                             var sc = $(this).val();
@@ -650,14 +649,10 @@
                             });
                         });
                     };
-
-                    // search-group -> search-group-list -> button
-                    // search-student -> search-student-list -> button
                     BindSearchEventPair("#search-group", "#search-group-list > button", null);
                     BindSearchEventPair("#search-student", "#search-student-list > button", null);
                     BindSearchEventPair("#search-selected-student", "#search-selected-student-list > button", null);
                     BindSearchEventPair("#search-session", "#search-session-list > div", "h3");
-
                 }
 
             };
