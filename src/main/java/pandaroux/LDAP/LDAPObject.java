@@ -1,4 +1,4 @@
-package pandaroux.Service.LDAP;
+package pandaroux.LDAP;
 
 import java.io.Serializable;
 

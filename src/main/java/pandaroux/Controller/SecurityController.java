@@ -5,7 +5,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import pandaroux.Service.LDAPService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 @RestController
 public class SecurityController {
@@ -14,10 +16,18 @@ public class SecurityController {
     private LDAPService ldapService;
 
     @RequestMapping(value = "/loginCheck", method = RequestMethod.POST)
-    public boolean loginCheck(@RequestParam("login") String login,
-                                @RequestParam("password") String password) {
-        // return ldapService.loginCheck(login, password);
+    public Map loginCheck(@RequestParam("login") String login,
+                          @RequestParam("password") String password,
+                          HttpServletRequest request) {
 
-        return true;
+        // return ldapService.loginCheck(login, password, request.getSession());
+
+        return null;
+    }
+
+    @RequestMapping(value = "/session", method = RequestMethod.GET)
+    public String viewSession(HttpServletRequest request) {
+
+        return request.getSession().getAttribute("user").toString();
     }
 }

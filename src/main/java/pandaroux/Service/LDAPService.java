@@ -4,10 +4,14 @@ import pandaroux.Entity.Role;
 import pandaroux.Entity.User;
 import pandaroux.Repository.RoleRepository;
 import pandaroux.Repository.UserRepository;
-import pandaroux.Service.LDAP.LDAPAccess;
-import pandaroux.Service.LDAP.LDAPObject;
+import pandaroux.LDAP.LDAPAccess;
+import pandaroux.LDAP.LDAPObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Service
@@ -20,14 +24,20 @@ public class LDAPService {
     RoleRepository roleRepository;
 
 
-    public boolean loginCheck(String login, String password) {
+    public Map loginCheck(String login, String password, HttpSession session) {
+
+        Map result = new HashMap();
+
+        result.put("loginSucces", false);
+        result.put("message", null);
+
 
         LDAPAccess access = new LDAPAccess();
         try {
             LDAPObject test = access.LDAPget(login, password);
 
             if (test == null) {
-                return false;
+                return result;
             }
 
             System.out.println(test.toString());
@@ -36,9 +46,9 @@ public class LDAPService {
 
             int user_id = Integer.parseInt(test.getNumber());
 
-            if (!userRepository.exists(user_id)) {
+            User user = new User();
 
-                User user = new User();
+            if (!userRepository.exists(user_id)) {
 
                 String roleName = test.getType();
 
@@ -61,13 +71,18 @@ public class LDAPService {
                 System.out.println(user);
 
                 userRepository.save(user);
+            } else {
+                user = userRepository.findOne(user_id);
             }
 
-            return true;
+            result.replace("loginSucces", true);
+            session.setAttribute("user", user);
+
+            return result;
 
         } catch(Exception e) {
             System.out.println(e.getMessage());
-            return false;
+            return result;
         }
     }
 }
