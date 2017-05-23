@@ -50,6 +50,12 @@
                     $.ajax("/api/question", {
                         success: callback
                     });
+                },
+                saveQuestion: function (callback, form_data) {
+                    $.ajax("/api/question/add", {
+                        data: JSON.stringify(form_data),
+                        success: callback
+                    });
                 }
             };
 
@@ -62,16 +68,33 @@
                     questionTypeInput: $("#question-type"), // select
                     questionContentInput: $("#question-content"), // textarea,
                     allowCommentInput: $("#allow-comment-option"),
-                    createChartInput: $("#create-graph-option")
+                    createChartInput: $("#create-graph-option"),
+                    questionDeleteButton: $("#question-delete-button"),
+                    questionSaveButton: $("#question-save-button"),
+                    questionResetButton: $("#question-reset-button"),
+                    questionDetailData: null
+                },
+
+                init: function () {
+                    QuestionDetailController.bindEvent();
                 },
 
                 reset: function () {
+                    QuestionDetailController.storage.questionDetailData = null;
+                    QuestionDetailController.storage.questionDeleteButton.data("id", null);
+                    QuestionDetailController.storage.questionSaveButton.data("id", null);
+                    QuestionDetailController.storage.questionResetButton.data("id", null);
+
                     QuestionDetailController.storage.questionTitle.val("New Question");
                     QuestionDetailController.storage.mandatoryInput.prop("checked", true);
                     QuestionDetailController.storage.questionTypeInput.val("1");
                     QuestionDetailController.storage.questionContentInput.val("");
                     QuestionDetailController.storage.allowCommentInput.prop("checked", false);
                     QuestionDetailController.storage.createChartInput.prop("checked", false);
+
+                    QuestionDetailController.storage.questionTypeInput.prop("disabled", true);
+                    QuestionDetailController.storage.createChartInput.prop("disabled", true);
+                    QuestionDetailController.storage.mandatoryInput.prop("disabled", true);
                 },
 
                 hide: function () {
@@ -83,8 +106,94 @@
                 },
 
                 focusOnTitle: function () {
-//                     QuestionDetailController.storage.questionTitle.focus();
+                    // QuestionDetailController.storage.questionTitle.focus();
                     QuestionDetailController.storage.questionContentInput.focus();
+                },
+
+                bindEvent: function () {
+                    QuestionDetailController.storage.questionDeleteButton.click(QuestionDetailController.questionDeleteButtonClicked);
+                    QuestionDetailController.storage.questionSaveButton.click(QuestionDetailController.questionSaveButtonClicked);
+                    QuestionDetailController.storage.questionResetButton.click(QuestionDetailController.questionResetButtonClicked);
+                    QuestionDetailController.storage.questionContentInput.on("change paste keyup", function () {
+                        QuestionDetailController.storage.questionSaveButton.attr('disabled', $.trim($(this).val()).length <= 0);
+                    });
+                },
+
+                questionDeleteButtonClicked: function (event) {
+                    var sender = $(this);
+                    var data = sender.data();
+                    console.log(data);
+                    if (QuestionDetailController.storage.questionDetailData === null) { // new question
+                        QuestionDetailController.hide();
+                        QuestionDetailController.reset();
+                    } else {
+                        swal({
+                            title: "Are you sure?",
+                            text: "The question will be deleted! \n" +
+                            "You will not be able to revoke this operation!",
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#DD6B55",
+                            confirmButtonText: "Yes, delete it!",
+                            closeOnConfirm: false,
+                            html: false
+                        }, function () {
+
+                        });
+                    }
+                },
+
+                questionSaveButtonClicked: function (event) {
+                    var sender = $(this);
+                    var data = sender.data();
+                    var form_data = {
+                        "name": QuestionDetailController.storage.questionContentInput.val(),
+                        "has_commentary": QuestionDetailController.storage.allowCommentInput.is(':checked'),
+                        "id_question_type": parseInt(QuestionDetailController.storage.questionTypeInput.val())
+                    };
+                    if (data["id"]) {
+                        form_data["id"] = data["id"];
+                    }
+                    console.log(form_data);
+                    APIService.saveQuestion(function (resp) {
+                        if (resp["result"] === "succeed") {
+                            swal("Saved!",
+                                "This question has been saved.",
+                                "success");
+                            QuestionListController.setQuestionData(form_data);
+                            QuestionDetailController.loadWithData(form_data);
+                        }
+                    }, form_data);
+                },
+
+                questionResetButtonClicked: function (event) {
+                    var sender = $(this);
+                    var data = sender.data();
+                    console.log(data);
+                    QuestionDetailController.loadWithData(jQuery.extend(true, {}, data));
+                },
+
+                loadWithData: function (data) {
+                    QuestionDetailController.reset();
+                    QuestionDetailController.storage.questionDetailData = data;
+                    if (data && data["id"]) {
+                        QuestionDetailController.loadQuestionForm(data);
+                    }
+                    QuestionDetailController.show();
+                },
+
+                loadQuestionForm: function (data) {
+                    QuestionDetailController.storage.questionTitle.val("Question " + data["id"]);
+                    QuestionDetailController.storage.questionTypeInput.val(data["id_question_type"]);
+                    QuestionDetailController.storage.questionContentInput.val(data["name"]);
+                    if (data["has_commentary"]) {
+                        QuestionDetailController.storage.allowCommentInput.prop("checked", true);
+                    } else {
+                        QuestionDetailController.storage.allowCommentInput.prop("checked", false);
+                    }
+                    QuestionDetailController.storage.questionDeleteButton.data(data);
+                    QuestionDetailController.storage.questionSaveButton.data(data);
+                    QuestionDetailController.storage.questionResetButton.data(data);
                 }
 
             };
@@ -93,7 +202,7 @@
 
                 storage: {
                     questionCreateButton: $("#common-new-question"), // button
-                    questionList: $("#search-group-list"), // div
+                    questionList: $("#search-question-list"), // div
                     searchQuestionInput: $("#search-group"),
                     selectedQuestionId: null
                 },
@@ -101,24 +210,58 @@
                 init: function () {
                     QuestionListController.storage.questionCreateButton.click(QuestionListController.createQuestionButtonClicked);
                     QuestionListController.load();
+                    QuestionDetailController.init();
                 },
 
                 load: function () {
                     QuestionDetailController.reset();
                     QuestionDetailController.hide();
+                    QuestionListController.reloadData();
+                },
+
+                reloadData: function () {
                     APIService.getQuestionList(QuestionListController.reloadQuestionList);
+                },
+
+                setQuestionData: function (data) {
+                    $("#question-button-" + data["id"]).data(data);
                 },
 
                 reloadQuestionList: function (resp) {
                     console.log(resp);
-                    QuestionListController.questionList.html("");
-                    var resp_question_list = resp[""];
+                    QuestionListController.storage.questionList.html("");
+                    var resp_question_list = resp["question_list"];
+                    for (var i in resp_question_list) {
+                        var resp_question = resp_question_list[i];
+                        var new_question_button = DOMFactory.elementWithId("question-button", "Question " + resp_question["id"], "btn-default");
+                        new_question_button.attr('id', "question-button-" + resp_question['id']);
+                        new_question_button.data(resp_question);
+                        new_question_button.click(QuestionListController.questionButtonClicked);
+                        QuestionListController.storage.questionList.prepend(new_question_button);
+                    }
+                },
+
+                setSelectedQuestion: function (question_id) {
+                    QuestionListController.storage.selectedQuestionId = parseInt(question_id);
+                    $(".question-button").removeClass("btn-primary");
+                    if (question_id) {
+                        $("#question-button-" + question_id.toString()).addClass("btn-primary");
+                    }
                 },
 
                 createQuestionButtonClicked: function (event) {
+                    QuestionListController.setSelectedQuestion(null);
                     QuestionDetailController.reset();
                     QuestionDetailController.show();
                     QuestionDetailController.focusOnTitle();
+                },
+
+                questionButtonClicked: function (event) {
+                    var sender = $(this);
+                    var data = sender.data();
+                    QuestionListController.setSelectedQuestion(data["id"]);
+                    QuestionDetailController.loadWithData(data);
+                    console.log(data);
                 }
 
             };
@@ -247,7 +390,7 @@
                             <form method="POST" class="form-horizontal">
 
                                 <input class="edit-title question-title" type="text" placeholder="Untitled Question"
-                                       value="N/A" disabled>
+                                       value="New Question" disabled>
 
                                 <hr/>
 
@@ -498,11 +641,11 @@
                                 <div class="form-group">
                                     <div class="question-button-group">
                                         <div class="float-left">
-                                            <button type="reset" class="btn btn-danger">Delete</button>
+                                            <button id="question-delete-button" type="button" class="btn btn-danger">Delete</button>
                                         </div>
                                         <div class="float-right">
-                                            <button type="reset" class="btn btn-default">Reset</button>
-                                            <button type="button" class="btn btn-success">Save</button>
+                                            <button id="question-reset-button" type="button" class="btn btn-default">Reset</button>
+                                            <button id="question-save-button" type="button" class="btn btn-success" disabled>Save</button>
                                         </div>
                                     </div>
                                 </div>

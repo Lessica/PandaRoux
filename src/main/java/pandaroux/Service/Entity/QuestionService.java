@@ -29,8 +29,10 @@ public class QuestionService {
     private UserRepository userRepository;
 
 
-    public List<Map> getQuestions() {
-        return questionRepository.getQuestions();
+    public Map getQuestions() {
+        Map questions = new HashMap();
+        questions.put("question_list", questionRepository.getQuestions());
+        return questions;
     }
 
     public Map getTeacherQuestions() {
@@ -66,7 +68,7 @@ public class QuestionService {
         }
 
         if (question.containsKey("has_commentary")) {
-            questionDB.isHas_commentary((Boolean) question.get("has_commentary"));
+            questionDB.setHas_commentary((Boolean) question.get("has_commentary"));
         }
 
         if (question.containsKey("id_question_type")) {

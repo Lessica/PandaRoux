@@ -25,7 +25,7 @@ public class QuestionAPI {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public List<Map> getQuestions() {
+    public Map getQuestions() {
         return questionService.getQuestions();
     }
 

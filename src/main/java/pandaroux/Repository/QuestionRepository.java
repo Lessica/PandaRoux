@@ -12,9 +12,9 @@ import java.util.Map;
 @Repository
 public interface QuestionRepository extends CrudRepository<Question, Integer> {
 
-    @Query("SELECT q.id AS id, q.has_commentary AS has_commentary, q.name AS name, q.questionType.id AS id_questionType, q.teacher.id AS teacher_id FROM Question q")
+    @Query("SELECT q.id AS id, q.has_commentary AS has_commentary, q.name AS name, q.questionType.id AS id_question_type, q.teacher.id AS teacher_id FROM Question q")
     List<Map> getQuestions();
 
-    @Query("SELECT q.id AS id, q.has_commentary AS has_commentary, q.name AS name, q.questionType.id AS id_questionType FROM Question q WHERE q.teacher.id = ?1")
+    @Query("SELECT q.id AS id, q.has_commentary AS has_commentary, q.name AS name, q.questionType.id AS id_question_type FROM Question q WHERE q.teacher.id = ?1")
     List<Map> getTeacherQuestions(int id);
 }
