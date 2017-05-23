@@ -452,3 +452,15 @@ code {
         padding: 60px 30px 0;
     }
 }
+
+#pt-course-panel {
+    text-align: center;
+}
+
+#pt-ques-panel {
+    text-align: center;
+}
+
+#left {
+    text-align: left;
+}
