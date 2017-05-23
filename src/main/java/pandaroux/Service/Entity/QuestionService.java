@@ -85,6 +85,7 @@ public class QuestionService {
 
         Map data = new HashMap();
         data.put("result", "succeed");
+        data.put("id", questionDB.getId());
 
         return data;
     }
