@@ -46,7 +46,7 @@ public class GroupeAPI {
 
     @RequestMapping(value = "{id}/modify", method = RequestMethod.POST)
     private Map modifyGroupe(@PathVariable("id") int id_groupe,
-                           @RequestBody Map groupe) {
+                             @RequestBody Map groupe) {
         return groupeService.modifyGroupe(id_groupe, groupe);
     }
 }

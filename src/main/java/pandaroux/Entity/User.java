@@ -8,8 +8,12 @@ import java.util.List;
 public class User {
 
     @Id
+    @GeneratedValue
     @Column
     private int id;
+
+    @Column
+    private int id_isep;
 
     @Column
     private String name;
@@ -51,6 +55,14 @@ public class User {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getId_isep() {
+        return id_isep;
+    }
+
+    public void setId_isep(int id_isep) {
+        this.id_isep = id_isep;
     }
 
     public String getName() {

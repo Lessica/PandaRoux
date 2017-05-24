@@ -28,7 +28,7 @@ public class    UserService {
         Map studentData = new HashMap();
 
         studentData.put("result", "succeed");
-        studentData.put("students", userRepository.getStudents());
+        studentData.put("students", userRepository.getStudents(1));
 
         return studentData;
     }

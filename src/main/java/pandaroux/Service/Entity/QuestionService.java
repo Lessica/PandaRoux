@@ -1,19 +1,15 @@
 package pandaroux.Service.Entity;
 
-import jdk.nashorn.internal.runtime.options.Options;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pandaroux.Entity.Option;
 import pandaroux.Entity.Question;
 import pandaroux.Entity.QuestionType;
 import pandaroux.Entity.User;
-import pandaroux.Repository.OptionRepository;
 import pandaroux.Repository.QuestionRepository;
 import pandaroux.Repository.QuestionTypeRepository;
 import pandaroux.Repository.UserRepository;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -79,6 +75,11 @@ public class QuestionService {
         if (question.containsKey("id_teacher")) {
             User teacher = userRepository.findOne((int) question.get("id_teacher"));
             questionDB.setTeacher(teacher);
+        }
+
+        if (question.containsKey("id_questionType")) {
+            QuestionType questionType = questionTypeRepository.findOne((int) question.get("id_questionType"));
+            questionDB.setQuestionType(questionType);
         }
 
         questionRepository.save(questionDB);

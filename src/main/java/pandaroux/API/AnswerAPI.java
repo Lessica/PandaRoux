@@ -14,10 +14,6 @@ public class AnswerAPI {
     @Autowired
     private AnswerService answerService;
 
-    private Answer getAll() {
-        return null;
-    }
-
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public Map getAnswer(@PathVariable("id") int id) {
         return answerService.getAnswer(id);

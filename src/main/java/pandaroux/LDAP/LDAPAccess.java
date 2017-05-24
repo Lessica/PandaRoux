@@ -88,8 +88,6 @@ public class LDAPAccess implements Serializable {
             }
 
         } catch (Exception e) {
-
-            System.out.println(e);
             throw (new Exception(messageErreur));
         }
 

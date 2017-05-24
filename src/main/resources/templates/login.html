@@ -64,12 +64,8 @@
                     password.length !== 0
                 ) {
                     APIService.loginCheck(function (data) {
-                        if (data['result'] === 'success') {
-                            if (data['role'] === 'eleve') {
-                                window.location.href = '/student';
-                            } else if (data['role'] === 'prof') {
-                                window.location.href = '/teacher';
-                            }
+                        if (data['loginSucces']) {
+                            window.location.href = data['redirectionLink'];
                         }
                     }, username, password);
                 }
