@@ -85,7 +85,7 @@
                     for (var i in resp_course_list) {
                         var resp_course = resp_course_list[i];
                         var new_course_panel = DOMFactory.elementWithId("course-panel", resp_course["name"] , "panel-default");
-                        new_course_panel.attr('id', "course-panel-" + resp_course['id']);
+                        new_course_panel.attr('id', "pt-course-panel" + resp_course['id']);
                         new_course_panel.data(resp_course);
                         CourseListController.storage.courseList.append(new_course_panel);
                     }
@@ -176,7 +176,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="ques-tip">
-                        Questionnaire Available (3)
+                        Questionnaire Available <b>(3)</b>
                     </div>
                     <hr>
                     <a th:href="@{/student/question}">Access to Course</a>
