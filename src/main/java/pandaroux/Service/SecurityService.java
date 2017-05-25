@@ -64,4 +64,47 @@ public class SecurityService {
 
         request.getSession(true).setAttribute("user", userSession);
     }
+
+    public static int getUserId(HttpServletRequest request) throws Exception {
+
+        Map user = (Map) request.getSession(true).getAttribute("user");
+
+        if (user == null) {
+            throw (new Exception("User not conected"));
+        }
+
+        return (int) user.get("id");
+
+    }
+
+    public static boolean hasRole(String role_name, HttpServletRequest request) throws Exception {
+
+        Map user = (Map) request.getSession(true).getAttribute("user");
+
+        if (user == null) {
+            throw (new Exception("User not conected"));
+        }
+
+        String role_nameSession = (String) user.get("role_name");
+
+        return role_nameSession.equals(role_name);
+    }
+
+    public static boolean hasRole(int role_id, HttpServletRequest request) throws Exception {
+
+        Map user = (Map) request.getSession(true).getAttribute("user");
+
+        if (user == null) {
+            throw (new Exception("User not conected"));
+        }
+
+        int role_idSession = (int) user.get("role_id");
+
+        return role_idSession == role_id;
+    }
+
+    public static boolean isConnected(HttpServletRequest request) {
+
+        return request.getSession(true).getAttribute("user") != null;
+    }
 }
