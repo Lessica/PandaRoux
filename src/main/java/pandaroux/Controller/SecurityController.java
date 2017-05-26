@@ -27,9 +27,10 @@ public class SecurityController {
                           HttpServletRequest request) throws Exception {
 
         // with isep network
-        // Map result = ldapService.loginCheck(loginData);
+        Map result = ldapService.loginCheck(loginData);
 
         // without isep network
+        /*
         Map result = new HashMap() {{
             put("loginSucces", true);
             put("redirectionLink", "/student/index");
@@ -42,6 +43,7 @@ public class SecurityController {
                 }});
             }});
         }};
+        */
 
         SecurityService.addUserToSession((User) result.get("user"), request);
 

@@ -1,5 +1,6 @@
 package pandaroux.Service.Entity;
 
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pandaroux.Entity.Question;
@@ -80,6 +81,13 @@ public class QuestionService {
         if (question.containsKey("id_questionType")) {
             QuestionType questionType = questionTypeRepository.findOne((int) question.get("id_questionType"));
             questionDB.setQuestionType(questionType);
+        }
+
+        if (question.containsKey("parameters")) {
+
+            String json = new Gson().toJson(question.get("parameters"), Object.class);
+
+            questionDB.setJsonParameters(json);
         }
 
         questionRepository.save(questionDB);

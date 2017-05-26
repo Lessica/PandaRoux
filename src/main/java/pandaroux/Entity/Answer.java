@@ -27,11 +27,11 @@ public class Answer {
     private String text;
 
     @Column
-    private int code_answer;
-
-    @Column
     @Type(type = "date")
     private Date date;
+
+    @Column
+    private String jsonParameters;
 
 
     public Answer() {}
@@ -75,5 +75,13 @@ public class Answer {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String getJsonParameters() {
+        return jsonParameters;
+    }
+
+    public void setJsonParameters(String jsonParameters) {
+        this.jsonParameters = jsonParameters;
     }
 }

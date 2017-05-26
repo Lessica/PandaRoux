@@ -2,13 +2,8 @@ package pandaroux.API;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import pandaroux.Entity.*;
-import pandaroux.Service.Entity.OptionService;
-import pandaroux.Entity.Question;
 import pandaroux.Service.Entity.QuestionService;
 
-import javax.management.Query;
-import java.util.List;
 import java.util.Map;
 
 @RestController

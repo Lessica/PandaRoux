@@ -32,8 +32,9 @@ public class Question {
     @JoinColumn(name = "id_teacher")
     private User teacher;
 
-    @OneToMany(mappedBy = "question")
-    private List<Option> options;
+    @Column
+    private String jsonParameters;
+
 
     public Question() {}
 
@@ -54,8 +55,8 @@ public class Question {
         this.name = name;
     }
 
-    public boolean isHas_commentary(Boolean has_commentary) {
-        return this.has_commentary;
+    public boolean isHas_commentary() {
+        return has_commentary;
     }
 
     public void setHas_commentary(boolean has_commentary) {
@@ -84,5 +85,13 @@ public class Question {
 
     public void setTeacher(User teacher) {
         this.teacher = teacher;
+    }
+
+    public String getJsonParameters() {
+        return jsonParameters;
+    }
+
+    public void setJsonParameters(String jsonParameters) {
+        this.jsonParameters = jsonParameters;
     }
 }

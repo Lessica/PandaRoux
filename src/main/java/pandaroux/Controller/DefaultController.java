@@ -6,8 +6,6 @@ import pandaroux.Service.SecurityService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Map;
-
 
 @Controller
 public class DefaultController {
