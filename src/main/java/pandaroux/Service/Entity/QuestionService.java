@@ -32,12 +32,12 @@ public class QuestionService {
         return questions;
     }
 
-    public Map getTeacherQuestions() {
+    public Map getTeacherQuestions(int userId) {
 
         Map data = new HashMap();
 
         data.put("result", "succeed");
-        data.put("teacher_questions", questionRepository.getTeacherQuestions(1));
+        data.put("teacher_questions", questionRepository.getTeacherQuestions(userId));
 
         return data;
 

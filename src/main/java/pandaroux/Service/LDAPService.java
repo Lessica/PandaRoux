@@ -38,7 +38,7 @@ public class LDAPService {
             LDAPObject test = access.LDAPget(login, password);
 
             if (test == null) {
-                return result;
+                throw new Exception("Empty response.");
             }
 
             System.out.println(test.toString());

@@ -3,7 +3,9 @@ package pandaroux.API;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pandaroux.Service.Entity.QuestionService;
+import pandaroux.Service.SecurityService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @RestController
@@ -25,7 +27,7 @@ public class QuestionAPI {
     }
 
     @RequestMapping(value = "/teacher", method = RequestMethod.POST)
-    public Map getTeacherQuestions() {
-        return questionService.getTeacherQuestions();
+    public Map getTeacherQuestions(HttpServletRequest request) throws Exception {
+        return questionService.getTeacherQuestions(SecurityService.getUserId(request));
     }
 }

@@ -56,6 +56,7 @@ public class SecurityService {
 
         Map userSession = new HashMap() {{
             put("id", user.getId());
+            put("id_isep", user.getId_isep());
             put("name", user.getName());
             put("first_name", user.getFirst_name());
             put("role_name", user.getRole().getName());

@@ -24,12 +24,12 @@ public class GroupeService {
     private LectureRepository lectureRepository;
 
 
-    public Map getGroupes() {
+    public Map getGroupes(int userId) {
 
         Map groupesData = new HashMap();
 
         groupesData.put("result", "succeed");
-        groupesData.put("groupes", groupeRepository.getGroupes(1));
+        groupesData.put("groupes", groupeRepository.getGroupes(userId));
 
         return groupesData;
     }
@@ -51,8 +51,8 @@ public class GroupeService {
         return groupeData;
     }
 
-    public Map save(Groupe groupe) {
-        groupe.setTeacher(userRepository.findOne(1));
+    public Map save(Groupe groupe, int userId) {
+        groupe.setTeacher(userRepository.findOne(userId));
         groupeRepository.save(groupe);
 
         Map data = new HashMap();

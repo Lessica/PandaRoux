@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pandaroux.Entity.Groupe;
 import pandaroux.Service.Entity.GroupeService;
+import pandaroux.Service.SecurityService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -23,13 +25,13 @@ public class GroupeAPI {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public Map add(@RequestBody Groupe groupe) {
-        return groupeService.save(groupe);
+    public Map add(@RequestBody Groupe groupe, HttpServletRequest request) throws Exception {
+        return groupeService.save(groupe, SecurityService.getUserId(request));
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public Map getGroupes() {
-        return groupeService.getGroupes();
+    public Map getGroupes(HttpServletRequest request) throws Exception {
+        return groupeService.getGroupes(SecurityService.getUserId(request));
     }
 
     @RequestMapping(value = "/{id}/add/students", method = RequestMethod.POST)

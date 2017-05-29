@@ -1,0 +1,379 @@
+{
+	"variables": [],
+	"info": {
+		"name": "PandaRoux",
+		"_postman_id": "96e725e3-aa2c-dc1a-56ec-3f684ebe1607",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Answer",
+			"description": "",
+			"item": [
+				{
+					"name": "answer detail",
+					"request": {
+						"url": "http://localhost:8080/api/answer/1",
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "answer add",
+					"request": {
+						"url": "http://localhost:8080/api/answer/add",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"text\": \"test\",\n\t\"date\": \"2017-03-02\",\n\t\"id_student\": 9604,\n\t\"id_quiz_question\": 1\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Groupe",
+			"description": "",
+			"item": [
+				{
+					"name": "groupe add",
+					"request": {
+						"url": "http://localhost:8080/api/groupe/add",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Group X\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "groupes",
+					"request": {
+						"url": "http://localhost:8080/api/groupe",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "login",
+									"value": "vincenthays",
+									"type": "text",
+									"enabled": false
+								},
+								{
+									"key": "password",
+									"value": "BhfxY+7a",
+									"type": "text",
+									"enabled": false
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "groupe details (lectures)",
+					"request": {
+						"url": "http://localhost:8080/api/groupe/1",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"name\": \"Benjamin\",\n    \"studentGroupes\": [\n      {\n        \"id\": 1\n      }\n    ]\n  }\n]"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "groupe add students",
+					"request": {
+						"url": "http://localhost:8080/api/groupe/1/add/students",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[ 2, 3]"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "groupe remove students",
+					"request": {
+						"url": "http://localhost:8080/api/groupe/1/remove/students",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id_students\": [2, 3]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lecture",
+			"description": "",
+			"item": [
+				{
+					"name": "lecture add",
+					"request": {
+						"url": "http://localhost:8080/api/lecture/add",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"lecture 2\",\n\t\"commentary\": \"test\",\n\t\"groupe\": {\n\t\t\"id\": 1\n\t}\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "lecture delete",
+					"request": {
+						"url": "http://localhost:8080/api/lecture/3/delete",
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "lecture modify",
+					"request": {
+						"url": "http://localhost:8080/api/lecture/3/modify",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"test\",\n\t\"date\": \"2017-03-02\",\n\t\"rate\": 3\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Question",
+			"description": "",
+			"item": [
+				{
+					"name": "question add",
+					"request": {
+						"url": "http://localhost:8080/api/question/add",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": 2,\n\t\"name\": \"question 2\",\n\t\"has_commentary\": true\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "question",
+					"request": {
+						"url": "http://localhost:8080/api/question",
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "question teacher",
+					"request": {
+						"url": "http://localhost:8080/api/question/teacher/1",
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Quiz",
+			"description": "",
+			"item": [
+				{
+					"name": "quiz add",
+					"request": {
+						"url": "http://localhost:8080/api/quiz/add",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": 1,\n\t\"active\": true,\n\t\"name\": \"quiz 1\",\n\t\"date_start\": \"2017-03-02\",\n\t\"date_end\": \"2017-03-03\",\n\t\"groupe\": {\n\t\t\"id\": 1\n\t},\n\t\"teacher\": {\n\t\t\"id\": 1\n\t}\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "quiz",
+					"request": {
+						"url": "http://localhost:8080/api/quiz",
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "quiz data",
+					"request": {
+						"url": "http://localhost:8080/api/quiz/1",
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"description": "",
+			"item": [
+				{
+					"name": "users",
+					"request": {
+						"url": "http://localhost:8080/api/user",
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "user details",
+					"request": {
+						"url": "http://localhost:8080/api/user/1",
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "user students",
+					"request": {
+						"url": "http://localhost:8080/api/user/students",
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "login check",
+			"request": {
+				"url": "http://localhost:8080/loginCheck",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"login\":\"zhwu10362\",\"password\":\"Nv8cG$dD\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

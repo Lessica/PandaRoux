@@ -27,23 +27,24 @@ public class SecurityController {
                           HttpServletRequest request) throws Exception {
 
         // with isep network
-        Map result = ldapService.loginCheck(loginData);
+//        Map result = ldapService.loginCheck(loginData);
 
         // without isep network
-        /*
+
         Map result = new HashMap() {{
             put("loginSucces", true);
-            put("redirectionLink", "/student/index");
+            put("redirectionLink", "/teacher/index");
             put("user", new User() {{
                 setId(1);
+                setId_isep(1);
                 setName("Not on isep network");
                 setFirst_name("test");
                 setRole(new Role() {{
-                    setName("eleve");
+                    setName("prof");
                 }});
             }});
         }};
-        */
+
 
         if (result.get("user") != null) {
             SecurityService.addUserToSession((User) result.get("user"), request);

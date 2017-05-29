@@ -10,25 +10,34 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class    UserService {
+public class UserService {
 
     @Autowired
     private UserRepository userRepository;
 
-    public List<Map> findAll() {
-        return userRepository.findAllUser();
+    public Map findAll() {
+        Map resp = new HashMap();
+
+        resp.put("result", "succeed");
+        resp.put("users", userRepository.findAllUser());
+
+        return resp;
     }
 
     public Map findOneById(int id) {
-        return userRepository.findOneById(id);
+        Map resp = new HashMap();
+
+        resp.put("result", "succeed");
+        resp.put("user", userRepository.findOneById(id));
+
+        return resp;
     }
 
     public Map getStudents() {
-
         Map studentData = new HashMap();
 
         studentData.put("result", "succeed");
-        studentData.put("students", userRepository.getStudents(1));
+        studentData.put("students", userRepository.getStudents());
 
         return studentData;
     }
