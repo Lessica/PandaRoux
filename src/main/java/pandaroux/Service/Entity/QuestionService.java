@@ -11,6 +11,7 @@ import pandaroux.Repository.QuestionTypeRepository;
 import pandaroux.Repository.UserRepository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -27,9 +28,28 @@ public class QuestionService {
 
 
     public Map getQuestions() {
-        Map questions = new HashMap();
-        questions.put("question_list", questionRepository.getQuestions());
-        return questions;
+        Map data = new HashMap();
+
+        List<Map> questions = questionRepository.getQuestions();
+
+        for(int i=0; i<questions.size(); i++) {
+
+            Map question = questions.get(i);
+
+            String parameters = (String) question.get("parameters");
+
+            Object object = new Gson().fromJson(parameters, Object.class);
+
+            // System.out.println(object);
+
+            question.replace("parameters", object);
+
+            questions.set(i, question);
+        }
+
+        data.put("question_list", questions);
+
+        return data;
     }
 
     public Map getTeacherQuestions(int userId) {

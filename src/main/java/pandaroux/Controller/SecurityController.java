@@ -22,60 +22,45 @@ public class SecurityController {
     private LDAPService ldapService;
 
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Map login(@RequestBody Map loginData,
-                     HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/loginCheck", method = RequestMethod.POST)
+    public Map loginCheck(@RequestBody Map loginData,
+                          HttpServletRequest request) throws Exception {
 
         // with isep network
-//        Map result = ldapService.loginCheck(loginData);
+        Map result = ldapService.loginCheck(loginData);
 
         // without isep network
-
+        /*
         Map result = new HashMap() {{
             put("loginSucces", true);
-            put("redirectionLink", "/teacher/index");
+            put("redirectionLink", "/student/index");
             put("user", new User() {{
                 setId(1);
-                setId_isep(1);
-                setName("Test Prof");
+                setName("Not on isep network");
                 setFirst_name("test");
                 setRole(new Role() {{
-                    setName("prof");
+                    setName("eleve");
                 }});
             }});
         }};
+        */
 
+        SecurityService.addUserToSession((User) result.get("user"), request);
 
-        if (result.get("user") != null) {
-            SecurityService.addUserToSession((User) result.get("user"), request);
-
-            result.remove("user");
-        }
-
-        return result;
-    }
-
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public Map logout(HttpServletRequest request) {
-
-        HttpSession session = request.getSession();
-        session.removeAttribute("user");
-
-        Map result = new HashMap();
-        result.put("succeed", true);
+        result.remove("user");
 
         return result;
     }
 
     @RequestMapping(value = "/session", method = RequestMethod.POST)
-    public Map viewSession(HttpServletRequest request) throws Exception {
+    public String viewSession(HttpServletRequest request) {
 
         Map user = (Map) request.getSession(true).getAttribute("user");
 
         if (user == null) {
-            throw new Exception("No user connected");
+            return "No user connected";
         }
 
-        return user;
+        return "session : " + user.toString();
     }
 }
