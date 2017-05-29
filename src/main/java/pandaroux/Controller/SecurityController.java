@@ -45,9 +45,11 @@ public class SecurityController {
         }};
         */
 
-        SecurityService.addUserToSession((User) result.get("user"), request);
+        if (result.get("user") != null) {
+            SecurityService.addUserToSession((User) result.get("user"), request);
 
-        result.remove("user");
+            result.remove("user");
+        }
 
         return result;
     }

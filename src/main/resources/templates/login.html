@@ -7,6 +7,7 @@
     <title>Login</title>
     <link rel="stylesheet" th:href="@{/css/sweetalert.css}">
     <script th:src="@{/js/sweetalert.min.js}"></script>
+    <script th:src="@{/js/roux-ui.js}"></script>
     <script>
         $(function () {
 
@@ -40,9 +41,14 @@
                     });
                 },
                 errorHandler: function (xmlHTTP, status, httperror) {
-                    var resp = $.parseJSON(xmlHTTP.responseText);
-                    if (resp && resp["message"]) {
-                        swal("Oops...", resp['message'], "error");
+                    UI.allowsUserInteraction(true);
+                    if (httperror === "timeout") {
+                        swal("Oops...", "Connection Timeout (10)", "error");
+                    } else {
+                        var resp = $.parseJSON(xmlHTTP.responseText);
+                        if (resp && resp["message"]) {
+                            swal("Oops...", resp['message'], "error");
+                        }
                     }
                 },
                 loginCheck: function (callback, username, password) {
@@ -56,33 +62,58 @@
                 }
             };
 
-            $("button[name=submit]").click(function (e) {
-                var username = $("#username").val();
-                var password = $("#password").val();
-                if (
-                    username.length !== 0 &&
-                    password.length !== 0
-                ) {
-                    APIService.loginCheck(function (data) {
-                        if (data['loginSucces']) {
-                            window.location.href = data['redirectionLink'];
+            var LoginController = {
+
+                storage: {
+                    usernameInput: $("#username"),
+                    passwordInput: $("#password"),
+                    submitInput: $("button[name=submit]")
+                },
+
+                init: function () {
+                    LoginController.bindEvent();
+                    UI.allowsUserInteraction(true);
+                },
+
+                bindEvent: function () {
+                    LoginController.storage.submitInput.click(LoginController.loginButtonClicked);
+                    LoginController.storage.passwordInput.on("keypress", function () {
+                        if (event.which === 13) {
+                            if ($.trim($(this).val()).length > 0) {
+                                LoginController.storage.submitInput.click();
+                            }
                         }
-                    }, username, password);
+                    });
+                },
+
+                loginButtonClicked: function (e) {
+                    var username = LoginController.storage.usernameInput.val();
+                    var password = LoginController.storage.passwordInput.val();
+                    if (
+                        username.length !== 0 &&
+                        password.length !== 0
+                    ) {
+                        UI.allowsUserInteraction(false);
+                        APIService.loginCheck(function (data) {
+                            UI.allowsUserInteraction(true);
+                            if (data['loginSucces'] === true)
+                            {
+                                window.location.href = data['redirectionLink'];
+                            }
+                        }, username, password);
+                    }
                 }
-            });
+
+            };
 
             APIService.init();
+            LoginController.init();
 
         });
     </script>
 </head>
 <body>
 <div layout:fragment="container">
-    <!--div class="alert alert-danger alert-dismissible" role="alert" layout:fragment="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                aria-hidden="true">&times;</span></button>
-        Error: <strong>Wrong username or password!</strong> Better check yourself, you're not looking too good.
-    </div-->
     <div class="roux-login-wrap">
         <div class="roux-login">
             <h1><span class="i-logo">PandaRoux</span></h1>
@@ -108,6 +139,10 @@
             </form>
         </div>
     </div>
+
+    <!-- Ajax Overlay -->
+    <div class="overlay" style="z-index: 200;"></div>
+
 </div>
 </body>
 </html>
