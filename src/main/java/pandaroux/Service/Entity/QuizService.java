@@ -40,7 +40,7 @@ public class QuizService {
         save(q);
 
         Quiz_questionService  quiz_questionService = new Quiz_questionService();
-        for(Question que:questions){
+        for (Question que:questions) {
             Quiz_question temp = new Quiz_question();
             temp.setQuestion(que);
             temp.setQuiz(q);

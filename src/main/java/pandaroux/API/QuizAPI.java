@@ -19,17 +19,17 @@ public class QuizAPI {
     private QuizService quizService;
 
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.POST)
     public List<Map> findAll() {
         return quizService.findAll();
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public Map getQuizData(@PathVariable("id") int id) {
         return quizService.getQuiz(id);
     }
 
-    @RequestMapping(value="/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
     public void create(@RequestBody int id,
                        @RequestBody String name,
                        @RequestBody Date date_start,
@@ -38,12 +38,13 @@ public class QuizAPI {
                        @RequestBody User teacher,
                        @RequestBody Groupe groupe,
                        @RequestBody List<Question> questions
-                       ) {
-    if(id==0){
-        quizService.create(name, date_start, date_end, activate, teacher, groupe, questions);
-    }else{
-        quizService.alter(id, name, date_start, date_end, activate, teacher, groupe, questions);
-    }
+    ) {
+        // TODO: JSON Body ?
+        if (id == 0) {
+            quizService.create(name, date_start, date_end, activate, teacher, groupe, questions);
+        } else {
+            quizService.alter(id, name, date_start, date_end, activate, teacher, groupe, questions);
+        }
 
     }
 }

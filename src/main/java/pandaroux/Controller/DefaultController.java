@@ -2,6 +2,7 @@ package pandaroux.Controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import pandaroux.Service.SecurityService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,15 +14,6 @@ public class DefaultController {
     @RequestMapping(value = "/login")
     public String login(HttpServletRequest request) throws Exception {
         return SecurityService.loginFireWall("login", request);
-    }
-
-    @RequestMapping(value = "/logOut")
-    public String logOut(HttpServletRequest request) {
-
-        HttpSession session = request.getSession();
-        session.removeAttribute("user");
-
-        return "redirect:/login";
     }
 
     @RequestMapping(value = "/")

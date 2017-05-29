@@ -15,6 +15,85 @@
     <link th:href="@{/css/style.css}" rel="stylesheet">
     <script th:src="@{/js/jquery.min.js}"></script>
     <script th:src="@{/js/bootstrap.js}"></script>
+    <script>
+        $(function () {
+
+            'use strict';
+
+            console.log("document ready");
+
+            var APIService = {
+                init: function () {
+                    $.ajaxSetup({
+                        method: "POST",
+                        dataType: "json",
+                        contentType: "application/json; charset=UTF-8",
+                        timeout: 10000,
+                        error: APIService.errorHandler,
+                        async: true
+                    });
+                },
+                errorHandler: function (xmlHTTP, status, httperror) {
+                    if (httperror === "timeout") {
+                        swal("Oops...", "Connection Timeout (10)", "error");
+                    } else {
+                        var resp = $.parseJSON(xmlHTTP.responseText);
+                        if (resp && resp["message"]) {
+                            swal("Oops...", resp['message'], "error");
+                        }
+                    }
+                },
+                sessionCheck: function (callback) {
+                    $.ajax("/session", {
+                        success: callback
+                    });
+                },
+                logout: function (callback) {
+                    $.ajax("/logout", {
+                        success: callback
+                    });
+                }
+            };
+
+            var SessionController = {
+
+                storage: {
+                    logoutButton: $("#logout-button"),
+                    sessionButton: $("#session-button")
+                },
+
+                init: function () {
+                    SessionController.bindEvent();
+                    if (SessionController.storage.sessionButton.length > 0) {
+                        APIService.sessionCheck(function (resp) {
+                            if (resp["name"]) {
+                                SessionController.storage.sessionButton.text(resp["name"]);
+                                SessionController.storage.logoutButton.data(resp);
+                            }
+                        });
+                    }
+                },
+
+                bindEvent: function () {
+                    SessionController.storage.logoutButton.click(SessionController.logoutButtonClicked);
+                },
+
+                logoutButtonClicked: function (event) {
+                    var sender = $(this);
+                    var data = sender.data();
+                    console.log(data);
+                    APIService.logout(function (resp) {
+                        window.location.href = "/login";
+                    });
+                }
+
+            };
+
+            APIService.init();
+            SessionController.init();
+
+        });
+    </script>
 </head>
 
 <body>
@@ -37,8 +116,15 @@
             <ul class="nav navbar-nav" layout:fragment="nav-content">
 
             </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li id="nav_sect_login"><a th:href="@{/login}">Login</a></li>
+            <ul id="login-area" class="nav navbar-nav navbar-right" layout:fragment="nav-login">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                        <span id="session-button"></span> <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a id="logout-button" href="#">Logout</a></li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>

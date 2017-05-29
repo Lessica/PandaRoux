@@ -22,9 +22,9 @@ public class SecurityController {
     private LDAPService ldapService;
 
 
-    @RequestMapping(value = "/loginCheck", method = RequestMethod.POST)
-    public Map loginCheck(@RequestBody Map loginData,
-                          HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public Map login(@RequestBody Map loginData,
+                     HttpServletRequest request) throws Exception {
 
         // with isep network
 //        Map result = ldapService.loginCheck(loginData);
@@ -37,7 +37,7 @@ public class SecurityController {
             put("user", new User() {{
                 setId(1);
                 setId_isep(1);
-                setName("Not on isep network");
+                setName("Test Prof");
                 setFirst_name("test");
                 setRole(new Role() {{
                     setName("prof");
@@ -55,15 +55,27 @@ public class SecurityController {
         return result;
     }
 
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    public Map logout(HttpServletRequest request) {
+
+        HttpSession session = request.getSession();
+        session.removeAttribute("user");
+
+        Map result = new HashMap();
+        result.put("succeed", true);
+
+        return result;
+    }
+
     @RequestMapping(value = "/session", method = RequestMethod.POST)
-    public String viewSession(HttpServletRequest request) {
+    public Map viewSession(HttpServletRequest request) throws Exception {
 
         Map user = (Map) request.getSession(true).getAttribute("user");
 
         if (user == null) {
-            return "No user connected";
+            throw new Exception("No user connected");
         }
 
-        return "session : " + user.toString();
+        return user;
     }
 }

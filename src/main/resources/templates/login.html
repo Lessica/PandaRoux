@@ -52,7 +52,7 @@
                     }
                 },
                 loginCheck: function (callback, username, password) {
-                    $.ajax("/loginCheck", {
+                    $.ajax("/login", {
                         data: JSON.stringify({
                             "login": username,
                             "password": password
@@ -113,6 +113,15 @@
     </script>
 </head>
 <body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <ul class="nav navbar-nav navbar-right" layout:fragment="nav-login">
+            <li id="login-button" class="active"><a th:href="@{/login}">Login</a></li>
+        </ul>
+    </div>
+</nav>
+
 <div layout:fragment="container">
     <div class="roux-login-wrap">
         <div class="roux-login">
