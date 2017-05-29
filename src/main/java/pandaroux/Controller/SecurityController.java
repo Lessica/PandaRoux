@@ -52,8 +52,6 @@ public class SecurityController {
         return result;
     }
 
-
-
     @RequestMapping(value = "/session", method = RequestMethod.POST)
     public String viewSession(HttpServletRequest request) {
 

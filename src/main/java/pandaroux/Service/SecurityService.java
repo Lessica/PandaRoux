@@ -132,4 +132,11 @@ public class SecurityService {
 
         return role_idSession == role_id;
     }
+
+    public static String logout(String login, HttpServletRequest request) {
+
+        request.getSession(true).removeAttribute("user");
+
+        return login;
+    }
 }
