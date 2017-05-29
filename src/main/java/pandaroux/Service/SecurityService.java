@@ -21,9 +21,9 @@ public class SecurityService {
     private static String caseRole(String role_name) throws Exception {
 
         switch (role_name) {
-            case "eleve":
+            case "eleve":   // student
                 return "/student/index";
-            case "pof":
+            case "prof":     // teacher
                 return "/teacher/index";
             // case "administration":
             // return "/admin/index";
@@ -34,11 +34,40 @@ public class SecurityService {
 
     public static String fireWall(String path, HttpServletRequest request) {
 
-        if (request.getSession(true).getAttribute("user") == null) {
+        Map user = (Map) request.getSession(true).getAttribute("user");
+
+        if (user == null) {
             return "redirect:/login";
-        } else {
-            return path;
         }
+
+        return path;
+    }
+
+    public static String fireWall(String path, HttpServletRequest request, String[] roles_names) throws Exception {
+
+        Map user = (Map) request.getSession(true).getAttribute("user");
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        String role_nameSession = (String) user.get("role_name");
+
+        // if he has the role to see this page
+        if (!containsRoleName(roles_names, role_nameSession)) {
+            return "redirect:" + caseRole(role_nameSession);
+        }
+
+        return path;
+    }
+
+    private static boolean containsRoleName(String[] roles_names, String role_name) {
+
+        for (String roleNameLoop : roles_names) {
+            if(roleNameLoop.equals(role_name)) return true;
+        }
+
+        return false;
     }
 
     public static String loginFireWall(String path, HttpServletRequest request) throws Exception {
@@ -102,10 +131,5 @@ public class SecurityService {
         int role_idSession = (int) user.get("role_id");
 
         return role_idSession == role_id;
-    }
-
-    public static boolean isConnected(HttpServletRequest request) {
-
-        return request.getSession(true).getAttribute("user") != null;
     }
 }

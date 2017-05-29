@@ -22,47 +22,47 @@ public class DefaultController {
     }
 
     @RequestMapping(value = "/teacher")
-    public String teacher(HttpServletRequest request) {
-        return SecurityService.fireWall("redirect:/teacher/index", request);
+    public String teacher(HttpServletRequest request) throws Exception {
+        return SecurityService.fireWall("redirect:/teacher/index", request, new String[] {"prof"});
     }
 
     @RequestMapping(value = "/teacher/index")
-    public String teacherIndex(HttpServletRequest request) {
-        return SecurityService.fireWall("redirect:/teacher/group", request);
+    public String teacherIndex(HttpServletRequest request) throws Exception {
+        return SecurityService.fireWall("redirect:/teacher/group", request, new String[] {"prof"});
     }
 
     @RequestMapping(value = "/teacher/group")
-    public String teacherGroup(HttpServletRequest request) {
-        return SecurityService.fireWall("teacher/group", request);
+    public String teacherGroup(HttpServletRequest request) throws Exception {
+        return SecurityService.fireWall("teacher/group", request, new String[] {"prof"});
     }
 
     @RequestMapping(value = "/teacher/question")
-    public String teacherQuestion(HttpServletRequest request) {
-        return SecurityService.fireWall("teacher/question", request);
+    public String teacherQuestion(HttpServletRequest request) throws Exception {
+        return SecurityService.fireWall("teacher/question", request, new String[] {"prof"});
     }
 
     @RequestMapping(value = "/teacher/questionnaire")
-    public String teacherQuestionnaire(HttpServletRequest request) {
-        return SecurityService.fireWall("teacher/questionnaire", request);
+    public String teacherQuestionnaire(HttpServletRequest request) throws Exception {
+        return SecurityService.fireWall("teacher/questionnaire", request, new String[] {"prof"});
     }
 
     @RequestMapping(value = "/student")
-    public String student(HttpServletRequest request) {
-        return SecurityService.fireWall("redirect:/student/index", request);
+    public String student(HttpServletRequest request) throws Exception {
+        return SecurityService.fireWall("redirect:/student/index", request, new String[] {"eleve"});
     }
 
     @RequestMapping(value = "/student/index")
-    public String studentIndex(HttpServletRequest request) {
-        return SecurityService.fireWall("redirect:/student/course", request);
+    public String studentIndex(HttpServletRequest request) throws Exception {
+        return SecurityService.fireWall("redirect:/student/course", request, new String[] {"eleve"});
     }
 
     @RequestMapping(value = "/student/course")
-    public String studentCourse(HttpServletRequest request) {
-        return SecurityService.fireWall("student/course", request);
+    public String studentCourse(HttpServletRequest request) throws Exception {
+        return SecurityService.fireWall("student/course", request, new String[] {"eleve"});
     }
 
     @RequestMapping(value = "/student/question")
-    public String studentQuestion(HttpServletRequest request) {
-        return SecurityService.fireWall("student/question", request);
+    public String studentQuestion(HttpServletRequest request) throws Exception {
+        return SecurityService.fireWall("student/question", request, new String[] {"eleve"});
     }
 }
