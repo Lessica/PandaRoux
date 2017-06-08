@@ -46,6 +46,11 @@ public class DefaultController {
         return SecurityService.fireWall("teacher/questionnaire", request, new String[] {"prof"});
     }
 
+    @RequestMapping(value = "/teacher/statistics")
+    public String teacherStatistics(HttpServletRequest request) throws Exception {
+        return SecurityService.fireWall("teacher/statistics", request, new String[] {"prof"});
+    }
+
     @RequestMapping(value = "/student")
     public String student(HttpServletRequest request) throws Exception {
         return SecurityService.fireWall("redirect:/student/index", request, new String[] {"eleve"});

@@ -15,22 +15,23 @@
 
             console.log("document ready");
 
-            var DOMFactory = {
-                elementWithId: function () {
+            class DOMFactory {
+                elementWithId () {
                     if (arguments.length === 0)
                         return null;
-                    var elem_id = arguments[0];
-                    var result = $("#template-" + elem_id).html();
-                    for (var i = 1; i < arguments.length; i++) {
-                        var re = new RegExp('\\{' + (i) + '\\}', 'gm');
+                    const elem_id = arguments[0];
+                    let result = $("#template-" + elem_id).html();
+                    for (let i = 1; i < arguments.length; i++) {
+                        const re = new RegExp('\\{' + (i) + '\\}', 'gm');
                         result = result.replace(re, arguments[i]);
                     }
                     return $(result);
                 }
-            };
+            }
 
-            var APIService = {
-                init: function () {
+            class APIService {
+
+                constructor () {
                     $.ajaxSetup({
                         method: "POST",
                         dataType: "json",
@@ -39,93 +40,98 @@
                         error: APIService.errorHandler,
                         async: true
                     });
-                },
-                errorHandler: function (xmlHTTP, status, httperror) {
-                    var resp = $.parseJSON(xmlHTTP.responseText);
+                }
+
+                static errorHandler (xmlHTTP, status, httperror) {
+                    const resp = $.parseJSON(xmlHTTP.responseText);
                     if (resp && resp["message"]) {
                         swal("Oops...", resp['message'], "error");
                     }
-                },
-                getQuestionList: function (callback) {
+                }
+
+                getQuestionList (callback) {
                     $.ajax("/api/question", {
                         success: callback
                     });
-                },
-                saveQuestion: function (callback, form_data) {
+                }
+
+                saveQuestion (callback, form_data) {
                     $.ajax("/api/question/add", {
                         data: JSON.stringify(form_data),
                         success: callback
                     });
                 }
-            };
 
-            var QuestionDetailController = {
+            }
 
-                storage: {
-                    questionView: $(".question-detail"), // div
-                    questionTitle: $(".question-title"),
-                    mandatoryInput: $("#mandatory-option"), // input checkbox
-                    questionTypeInput: $("#question-type"), // select
-                    questionContentInput: $("#question-content"), // textarea,
-                    allowCommentInput: $("#allow-comment-option"),
-                    createChartInput: $("#create-graph-option"),
-                    questionDeleteButton: $("#question-delete-button"),
-                    questionSaveButton: $("#question-save-button"),
-                    questionResetButton: $("#question-reset-button"),
-                    questionDetailData: null
-                },
+            class QuestionDetailController {
 
-                init: function () {
-                    QuestionDetailController.bindEvent();
-                },
+                constructor () {
+                    this.DOM = {
+                        questionView: $(".question-detail"), // div
+                        questionTitle: $(".question-title"),
+                        mandatoryInput: $("#mandatory-option"), // input checkbox
+                        questionTypeInput: $("#question-type"), // select
+                        questionContentInput: $("#question-content"), // textarea,
+                        allowCommentInput: $("#allow-comment-option"),
+                        createChartInput: $("#create-graph-option"),
+                        questionDeleteButton: $("#question-delete-button"),
+                        questionSaveButton: $("#question-save-button"),
+                        questionResetButton: $("#question-reset-button"),
+                        questionDetailData: null
+                    };
+                    this.bindEvent();
+                }
 
-                reset: function () {
-                    QuestionDetailController.storage.questionDetailData = null;
-                    QuestionDetailController.storage.questionDeleteButton.data("id", null);
-                    QuestionDetailController.storage.questionSaveButton.data("id", null);
-                    QuestionDetailController.storage.questionResetButton.data("id", null);
+                reset () {
+                    this.DOM.questionDetailData = null;
+                    this.DOM.questionDeleteButton.data("id", null);
+                    this.DOM.questionSaveButton.data("id", null);
+                    this.DOM.questionResetButton.data("id", null);
+                    this.DOM.questionTitle.val("New Question");
+                    this.DOM.mandatoryInput.prop("checked", true);
+                    this.DOM.questionTypeInput.val("1");
+                    this.DOM.questionContentInput.val("");
+                    this.DOM.allowCommentInput.prop("checked", false);
+                    this.DOM.createChartInput.prop("checked", false);
+                    this.DOM.questionSaveButton.prop("disabled", true);
+                    this.DOM.createChartInput.prop("disabled", true);
+                    this.DOM.mandatoryInput.prop("disabled", true);
+                }
 
-                    QuestionDetailController.storage.questionTitle.val("New Question");
-                    QuestionDetailController.storage.mandatoryInput.prop("checked", true);
-                    QuestionDetailController.storage.questionTypeInput.val("1");
-                    QuestionDetailController.storage.questionContentInput.val("");
-                    QuestionDetailController.storage.allowCommentInput.prop("checked", false);
-                    QuestionDetailController.storage.createChartInput.prop("checked", false);
+                hide () {
+                    this.DOM.questionView.fadeOut(200);
+                }
 
-                    QuestionDetailController.storage.questionTypeInput.prop("disabled", true);
-                    QuestionDetailController.storage.createChartInput.prop("disabled", true);
-                    QuestionDetailController.storage.mandatoryInput.prop("disabled", true);
-                },
+                show () {
+                    this.DOM.questionView.fadeIn(200);
+                }
 
-                hide: function () {
-                    QuestionDetailController.storage.questionView.fadeOut(200);
-                },
+                focusOnTitle () {
+                    this.DOM.questionContentInput.focus();
+                }
 
-                show: function () {
-                    QuestionDetailController.storage.questionView.fadeIn(200);
-                },
+                bindEvent () {
+                    this.DOM.questionDeleteButton.click($.proxy(this.questionDeleteButtonClicked, this));
+                    this.DOM.questionSaveButton.click($.proxy(this.questionSaveButtonClicked, this));
+                    this.DOM.questionResetButton.click($.proxy(this.questionResetButtonClicked, this));
+                    this.DOM.questionContentInput.on("change paste keyup", $.proxy(this.saveStatusChanged, this));
+                    this.DOM.questionTypeInput.on("change", $.proxy(this.saveStatusChanged, this));
+                    this.DOM.allowCommentInput.on("change", $.proxy(this.saveStatusChanged, this));
+                }
 
-                focusOnTitle: function () {
-                    // QuestionDetailController.storage.questionTitle.focus();
-                    QuestionDetailController.storage.questionContentInput.focus();
-                },
+                saveStatusChanged (event) {
+                    const content = this.DOM.questionContentInput.val();
+                    this.DOM.questionSaveButton.attr('disabled', $.trim(content).length <= 0);
+                }
 
-                bindEvent: function () {
-                    QuestionDetailController.storage.questionDeleteButton.click(QuestionDetailController.questionDeleteButtonClicked);
-                    QuestionDetailController.storage.questionSaveButton.click(QuestionDetailController.questionSaveButtonClicked);
-                    QuestionDetailController.storage.questionResetButton.click(QuestionDetailController.questionResetButtonClicked);
-                    QuestionDetailController.storage.questionContentInput.on("change paste keyup", function () {
-                        QuestionDetailController.storage.questionSaveButton.attr('disabled', $.trim($(this).val()).length <= 0);
-                    });
-                },
-
-                questionDeleteButtonClicked: function (event) {
-                    var sender = $(this);
-                    var data = sender.data();
+                questionDeleteButtonClicked (event) {
+                    const sender = $(event.target);
+                    const data = sender.data();
                     console.log(data);
-                    if (QuestionDetailController.storage.questionDetailData === null) { // new question
-                        QuestionDetailController.hide();
-                        QuestionDetailController.reset();
+                    if (this.DOM.questionDetailData === null) { // new question
+                        this.hide();
+                        this.reset();
                     } else {
                         swal({
                             title: "Are you sure?",
@@ -141,149 +147,147 @@
 
                         });
                     }
-                },
+                }
 
-                questionSaveButtonClicked: function (event) {
-                    var sender = $(this);
-                    var data = sender.data();
-                    var form_data = {
-                        "name": QuestionDetailController.storage.questionContentInput.val(),
-                        "has_commentary": QuestionDetailController.storage.allowCommentInput.is(':checked'),
-                        "id_question_type": parseInt(QuestionDetailController.storage.questionTypeInput.val())
+                questionSaveButtonClicked (event) {
+                    const sender = $(event.target);
+                    const data = sender.data();
+                    let form_data = {
+                        "name": this.DOM.questionContentInput.val(),
+                        "has_commentary": this.DOM.allowCommentInput.is(':checked'),
+                        "id_question_type": parseInt(this.DOM.questionTypeInput.val())
                     };
                     if (data["id"]) {
                         form_data["id"] = data["id"];
                     }
                     console.log(form_data);
-                    APIService.saveQuestion(function (resp) {
+                    document.APIService.saveQuestion(function (resp) {
                         if (resp["result"] === "succeed") {
                             swal("Saved!",
                                 "This question has been saved.",
                                 "success");
-                            QuestionListController.setQuestionData(form_data);
-                            QuestionDetailController.loadWithData(form_data);
+                            document.RootController.listController.load();
                         }
                     }, form_data);
-                },
-
-                questionResetButtonClicked: function (event) {
-                    var sender = $(this);
-                    var data = sender.data();
-                    console.log(data);
-                    QuestionDetailController.loadWithData(jQuery.extend(true, {}, data));
-                },
-
-                loadWithData: function (data) {
-                    QuestionDetailController.reset();
-                    QuestionDetailController.storage.questionDetailData = data;
-                    if (data && data["id"]) {
-                        QuestionDetailController.loadQuestionForm(data);
-                    }
-                    QuestionDetailController.show();
-                },
-
-                loadQuestionForm: function (data) {
-                    QuestionDetailController.storage.questionTitle.val("Question " + data["id"]);
-                    QuestionDetailController.storage.questionTypeInput.val(data["id_question_type"]);
-                    QuestionDetailController.storage.questionContentInput.val(data["name"]);
-                    if (data["has_commentary"]) {
-                        QuestionDetailController.storage.allowCommentInput.prop("checked", true);
-                    } else {
-                        QuestionDetailController.storage.allowCommentInput.prop("checked", false);
-                    }
-                    QuestionDetailController.storage.questionDeleteButton.data(data);
-                    QuestionDetailController.storage.questionSaveButton.data(data);
-                    QuestionDetailController.storage.questionResetButton.data(data);
                 }
 
-            };
+                questionResetButtonClicked (event) {
+                    const sender = $(event.target);
+                    const data = sender.data();
+                    console.log(data);
+                    this.loadWithData(jQuery.extend(true, {}, data));
+                }
 
-            var QuestionListController = {
+                loadWithData (data) {
+                    this.reset();
+                    this.DOM.questionDetailData = data;
+                    if (data && data["id"]) {
+                        this.loadQuestionForm(data);
+                    }
+                    this.show();
+                }
 
-                storage: {
-                    questionCreateButton: $("#common-new-question"), // button
-                    questionList: $("#search-question-list"), // div
-                    searchQuestionInput: $("#search-group"),
-                    selectedQuestionId: null
-                },
+                loadQuestionForm (data) {
+                    this.DOM.questionTitle.val("Question " + data["id"]);
+                    this.DOM.questionTypeInput.val(data["id_question_type"]);
+                    this.DOM.questionContentInput.val(data["name"]);
+                    if (data["has_commentary"]) {
+                        this.DOM.allowCommentInput.prop("checked", true);
+                    } else {
+                        this.DOM.allowCommentInput.prop("checked", false);
+                    }
+                    this.DOM.questionDeleteButton.data(data);
+                    this.DOM.questionSaveButton.data(data);
+                    this.DOM.questionResetButton.data(data);
+                }
 
-                init: function () {
-                    QuestionListController.storage.questionCreateButton.click(QuestionListController.createQuestionButtonClicked);
-                    QuestionListController.load();
-                    QuestionDetailController.init();
-                },
+            }
 
-                load: function () {
-                    QuestionDetailController.reset();
-                    QuestionDetailController.hide();
-                    QuestionListController.reloadData();
-                },
+            class QuestionListController {
 
-                reloadData: function () {
-                    APIService.getQuestionList(QuestionListController.reloadQuestionList);
-                },
+                constructor () {
+                    this.DOM = {
+                        questionCreateButton: $("#common-new-question"), // button
+                        questionList: $("#search-question-list"), // div
+                        searchQuestionInput: $("#search-group"),
+                        selectedQuestionId: null
+                    };
+                    this.detailController = new QuestionDetailController();
+                    this.bindEvent();
+                    this.load();
+                }
 
-                setQuestionData: function (data) {
-                    $("#question-button-" + data["id"]).data(data);
-                },
+                load () {
+                    this.detailController.reset();
+                    this.detailController.hide();
+                    this.reloadData();
+                }
 
-                reloadQuestionList: function (resp) {
+                bindEvent () {
+                    this.DOM.questionCreateButton.click($.proxy(this.createQuestionButtonClicked, this));
+                }
+
+                reloadData () {
+                    document.APIService.getQuestionList($.proxy(this.reloadQuestionList, this));
+                }
+
+//                setQuestionData (data) {
+//                    $("#question-button-" + data["id"]).data(data);
+//                }
+
+                reloadQuestionList (resp) {
                     console.log(resp);
-                    QuestionListController.storage.questionList.html("");
-                    var resp_question_list = resp["question_list"];
-                    for (var i in resp_question_list) {
-                        var resp_question = resp_question_list[i];
-                        var new_question_button = DOMFactory.elementWithId("question-button", "Question " + resp_question["id"], "btn-default");
+                    this.DOM.questionList.html("");
+                    const resp_question_list = resp["question_list"];
+                    for (let i in resp_question_list) {
+                        const resp_question = resp_question_list[i];
+                        const new_question_button = document.DOMFactory.elementWithId("question-button", "Question " + resp_question["id"], "btn-default");
                         new_question_button.attr('id', "question-button-" + resp_question['id']);
                         new_question_button.data(resp_question);
-                        new_question_button.click(QuestionListController.questionButtonClicked);
-                        QuestionListController.storage.questionList.prepend(new_question_button);
+                        new_question_button.click($.proxy(this.questionButtonClicked, this));
+                        this.DOM.questionList.prepend(new_question_button);
                     }
-                },
+                }
 
-                setSelectedQuestion: function (question_id) {
-                    QuestionListController.storage.selectedQuestionId = parseInt(question_id);
+                setSelectedQuestion (question_id) {
+                    this.DOM.selectedQuestionId = parseInt(question_id);
                     $(".question-button").removeClass("btn-primary");
                     if (question_id) {
                         $("#question-button-" + question_id.toString()).addClass("btn-primary");
                     }
-                },
+                }
 
-                createQuestionButtonClicked: function (event) {
-                    QuestionListController.setSelectedQuestion(null);
-                    QuestionDetailController.reset();
-                    QuestionDetailController.show();
-                    QuestionDetailController.focusOnTitle();
-                },
+                createQuestionButtonClicked (event) {
+                    this.setSelectedQuestion(null);
+                    this.detailController.reset();
+                    this.detailController.show();
+                    this.detailController.focusOnTitle();
+                }
 
-                questionButtonClicked: function (event) {
-                    var sender = $(this);
-                    var data = sender.data();
-                    QuestionListController.setSelectedQuestion(data["id"]);
-                    QuestionDetailController.loadWithData(data);
+                questionButtonClicked (event) {
+                    const sender = $(event.target);
+                    const data = sender.data();
+                    this.setSelectedQuestion(data["id"]);
+                    this.detailController.loadWithData(data);
                     console.log(data);
                 }
 
-            };
+            }
 
-            var ViewController = {
+            class ViewController {
 
-                storage: {
-
-                },
-
-                init: function () {
-                    ViewController.bindSearchPair();
-                    QuestionListController.init();
-                },
+                constructor () {
+                    this.listController = new QuestionListController();
+                    this.bindSearchPair();
+                }
                 
-                bindSearchPair: function () {
-                    var BindSearchEventPair = function (input_s, list_s, where_s) {
-                        $(input_s).on("change keyup paste", function () {
-                            var sc = $(this).val();
+                bindSearchPair () {
+                    const BindSearchEventPair = function (input_s, list_s, where_s) {
+                        $(input_s).on("change keyup paste", function (event) {
+                            const sc = $(event.target).val();
                             $(list_s).each(function () {
-                                var e = $(this);
-                                var st;
+                                const e = $(this);
+                                let st;
                                 if (where_s === null) {
                                     st = e.text();
                                 }
@@ -302,26 +306,201 @@
                     BindSearchEventPair("#search-question", "#search-question-list > button", null);
                 }
 
-            };
-
-            {
-                document.DOMFactory = DOMFactory;
-                document.APIService = APIService;
-                document.RootController = ViewController;
             }
 
-            APIService.init();
-            ViewController.init();
+            {
+                document.DOMFactory = new DOMFactory();
+                document.APIService = new APIService();
+                document.RootController = new ViewController();
+            }
 
         });
 
     </script>
-    <script id="template-question-button" language="text">
+    <script id="template-question-button" type="text/plain" language="text">
 
         <button type="button" class="btn {2} btn-block question-button">
             {1}
             <span class="glyphicon glyphicon-chevron-right btn-icon float-right"></span>
         </button>
+
+    </script>
+    <script id="template-question-field-radio" type="text/plain" language="text">
+
+        <div id="question-field-radio" class="question-area" style="display: none;">
+
+        <div class="question-field question-field-radio">
+            <div class="form-group">
+                <div class="row">
+                    <label for="user-radio-1" class="col-sm-3 control-label">Option 1</label>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                    <span class="input-group-addon">
+                        <input type="radio" name="user-radio-default" value="1" title="">
+                    </span>
+                            <input id="user-radio-1" name="user-radio-1" class="form-control"
+                                    type="text" placeholder="title of option 1" value="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="user-radio-2" class="col-sm-3 control-label">Option 2</label>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                    <span class="input-group-addon">
+                        <input type="radio" name="user-radio-default" value="2" title="">
+                    </span>
+                            <input id="user-radio-2" name="user-radio-2" class="form-control"
+                                    type="text" placeholder="title of option 2" value="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="user-radio-add" class="col-sm-3 control-label"></label>
+                    <div class="col-sm-9">
+                        <button id="user-radio-add" type="button" class="btn btn-success">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Add Option
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    </script>
+    <script id="template-question-field-checkbox" type="text/plain" language="text">
+
+        <div id="question-field-checkbox" class="question-area" style="display: none;">
+
+        <div class="question-field question-field-property">
+            <div class="form-group">
+                <div class="row">
+                    <label for="user-property-checkbox-min" class="col-sm-3 control-label">Minimum
+                        Count</label>
+                    <div class="col-sm-3">
+                        <input id="user-property-checkbox-min" name="user-property-checkbox-min"
+                                class="form-control"
+                                type="number" placeholder="0" value="0" min="0" step="1">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="user-property-checkbox-max" class="col-sm-3 control-label">Maximum
+                        Count</label>
+                    <div class="col-sm-3">
+                        <input id="user-property-checkbox-max" name="user-property-checkbox-max"
+                                class="form-control"
+                                type="number" placeholder="2" value="2" min="0" step="1">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-field question-field-checkbox">
+            <div class="form-group">
+                <div class="row">
+                    <label for="user-checkbox-1" class="col-sm-3 control-label">Option 1</label>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                    <span class="input-group-addon">
+                        <input type="checkbox" name="user-checkbox-default" value="1"
+                                title="">
+                    </span>
+                            <input id="user-checkbox-1" name="user-checkbox-1" class="form-control"
+                                    type="text" placeholder="title of option 1" value="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="user-checkbox-2" class="col-sm-3 control-label">Option 2</label>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                    <span class="input-group-addon">
+                        <input type="checkbox" name="user-checkbox-default" value="2"
+                                title="">
+                    </span>
+                            <input id="user-checkbox-2" name="user-checkbox-2" class="form-control"
+                                    type="text" placeholder="title of option 2" value="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="user-checkbox-add" class="col-sm-3 control-label"></label>
+                    <div class="col-sm-9">
+                        <button id="user-checkbox-add" type="button" class="btn btn-success">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Add Option
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    </script>
+    <script id="template-question-field-dropdown" type="text/plain" language="text">
+
+        <div id="question-field-dropdown" class="question-area" style="display: none;">
+
+        <div class="question-field question-field-property">
+            <div class="form-group">
+                <div class="row">
+                    <label for="user-property-dropdown-multiple" class="col-sm-3 control-label">Multiple</label>
+                    <div class="checkbox col-sm-9">
+                        <label>
+                            <input id="user-property-dropdown-multiple"
+                                    name="user-property-dropdown-multiple" type="checkbox" value="">
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-field question-field-dropdown">
+            <div class="form-group">
+                <div class="row">
+                    <label for="user-dropdown-1" class="col-sm-3 control-label">Option 1</label>
+                    <div class="col-sm-9">
+                        <input id="user-dropdown-1" name="user-dropdown-1" class="form-control"
+                                type="text" placeholder="title of option 1" value="">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="user-dropdown-2" class="col-sm-3 control-label">Option 2</label>
+                    <div class="col-sm-9">
+                        <input id="user-dropdown-2" name="user-dropdown-2" class="form-control"
+                                type="text" placeholder="title of option 2" value="">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="user-dropdown-add" class="col-sm-3 control-label"></label>
+                    <div class="col-sm-9">
+                        <button id="user-dropdown-add" type="button" class="btn btn-success">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Add Option
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
     </script>
 </head>
@@ -458,184 +637,7 @@
                                     </div>
                                 </div>
 
-                                <!--
-
-                                <hr/>
-
-                                <div class="question-area">
-
-                                    <div class="question-field question-field-radio">
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-radio-1" class="col-sm-3 control-label">Option 1</label>
-                                                <div class="col-sm-9">
-                                                    <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <input type="radio" name="user-radio-default" value="1" title="">
-                                                </span>
-                                                        <input id="user-radio-1" name="user-radio-1" class="form-control"
-                                                               type="text" placeholder="title of option 1" value="">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-radio-2" class="col-sm-3 control-label">Option 2</label>
-                                                <div class="col-sm-9">
-                                                    <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <input type="radio" name="user-radio-default" value="2" title="">
-                                                </span>
-                                                        <input id="user-radio-2" name="user-radio-2" class="form-control"
-                                                               type="text" placeholder="title of option 2" value="">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-radio-add" class="col-sm-3 control-label"></label>
-                                                <div class="col-sm-9">
-                                                    <button id="user-radio-add" type="button" class="btn btn-success">
-                                                        <span class="glyphicon glyphicon-plus"></span>
-                                                        Add Option
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <hr/>
-
-                                <div class="question-area">
-
-                                    <div class="question-field question-field-property">
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-property-checkbox-min" class="col-sm-3 control-label">Minimum
-                                                    Count</label>
-                                                <div class="col-sm-3">
-                                                    <input id="user-property-checkbox-min" name="user-property-checkbox-min"
-                                                           class="form-control"
-                                                           type="number" placeholder="0" value="0" min="0" step="1">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-property-checkbox-max" class="col-sm-3 control-label">Maximum
-                                                    Count</label>
-                                                <div class="col-sm-3">
-                                                    <input id="user-property-checkbox-max" name="user-property-checkbox-max"
-                                                           class="form-control"
-                                                           type="number" placeholder="2" value="2" min="0" step="1">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="question-field question-field-checkbox">
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-checkbox-1" class="col-sm-3 control-label">Option 1</label>
-                                                <div class="col-sm-9">
-                                                    <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <input type="checkbox" name="user-checkbox-default" value="1"
-                                                           title="">
-                                                </span>
-                                                        <input id="user-checkbox-1" name="user-checkbox-1" class="form-control"
-                                                               type="text" placeholder="title of option 1" value="">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-checkbox-2" class="col-sm-3 control-label">Option 2</label>
-                                                <div class="col-sm-9">
-                                                    <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <input type="checkbox" name="user-checkbox-default" value="2"
-                                                           title="">
-                                                </span>
-                                                        <input id="user-checkbox-2" name="user-checkbox-2" class="form-control"
-                                                               type="text" placeholder="title of option 2" value="">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-checkbox-add" class="col-sm-3 control-label"></label>
-                                                <div class="col-sm-9">
-                                                    <button id="user-checkbox-add" type="button" class="btn btn-success">
-                                                        <span class="glyphicon glyphicon-plus"></span>
-                                                        Add Option
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <hr/>
-
-                                <div class="question-area">
-
-                                    <div class="question-field question-field-property">
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-property-dropdown-multiple" class="col-sm-3 control-label">Multiple</label>
-                                                <div class="checkbox col-sm-9">
-                                                    <label>
-                                                        <input id="user-property-dropdown-multiple"
-                                                               name="user-property-dropdown-multiple" type="checkbox" value="">
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="question-field question-field-dropdown">
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-dropdown-1" class="col-sm-3 control-label">Option 1</label>
-                                                <div class="col-sm-9">
-                                                    <input id="user-dropdown-1" name="user-dropdown-1" class="form-control"
-                                                           type="text" placeholder="title of option 1" value="">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-dropdown-2" class="col-sm-3 control-label">Option 2</label>
-                                                <div class="col-sm-9">
-                                                    <input id="user-dropdown-2" name="user-dropdown-2" class="form-control"
-                                                           type="text" placeholder="title of option 2" value="">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-dropdown-add" class="col-sm-3 control-label"></label>
-                                                <div class="col-sm-9">
-                                                    <button id="user-dropdown-add" type="button" class="btn btn-success">
-                                                        <span class="glyphicon glyphicon-plus"></span>
-                                                        Add Option
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                -->
+                                <div id="question-field-container"></div>
 
                                 <hr/>
 
