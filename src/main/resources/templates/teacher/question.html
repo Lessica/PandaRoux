@@ -125,7 +125,7 @@
 
                 questionTypeChanged (event) {
 //                    this.saveStatusChanged(event);
-                    const sender = $(event.target);
+                    const sender = $(event.currentTarget);
                     const question_type = parseInt(sender.val());
                     this.DOM.questionFieldContainer.html("");
                     if (question_type === 3)
@@ -148,7 +148,7 @@
 //                }
 
                 questionDeleteButtonClicked (event) {
-                    const sender = $(event.target);
+                    const sender = $(event.currentTarget);
                     const data = sender.data();
                     console.log(data);
                     if (this.DOM.questionDetailData === null) { // new question
@@ -172,7 +172,7 @@
                 }
 
                 questionSaveButtonClicked (event) {
-                    const sender = $(event.target);
+                    const sender = $(event.currentTarget);
                     const data = sender.data();
                     const serialized_data = this.DOM.questionForm.serializeArray();
                     const indexed_array = {};
@@ -220,7 +220,7 @@
                 }
 
                 questionResetButtonClicked (event) {
-                    const sender = $(event.target);
+                    const sender = $(event.currentTarget);
                     const data = sender.data();
                     console.log(data);
                     this.loadWithData(jQuery.extend(true, {}, data));
@@ -583,13 +583,11 @@
                 }
 
                 questionButtonClicked (event) {
-                    const sender = $(event.target);
+                    const sender = $(event.currentTarget);
                     const data = sender.data();
-                    if (Object.keys(data).length !== 0) {
-                        this.setSelectedQuestion(data["id"]);
-                        this.detailController.loadWithData(data);
-                        console.log(data);
-                    }
+                    this.setSelectedQuestion(data["id"]);
+                    this.detailController.loadWithData(data);
+                    console.log(data);
                 }
 
             }
@@ -604,7 +602,7 @@
                 bindSearchPair () {
                     const BindSearchEventPair = function (input_s, list_s, where_s) {
                         $(input_s).on("change keyup paste", function (event) {
-                            const sc = $(event.target).val();
+                            const sc = $(event.currentTarget).val();
                             $(list_s).each(function () {
                                 const e = $(this);
                                 let st;

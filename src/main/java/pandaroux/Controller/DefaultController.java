@@ -18,7 +18,7 @@ public class DefaultController {
 
     @RequestMapping(value = "/")
     public String index(HttpServletRequest request) {
-        return SecurityService.fireWall("index", request);
+        return "index";
     }
 
     @RequestMapping(value = "/teacher")
