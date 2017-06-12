@@ -17,8 +17,9 @@ public class QuestionAPI {
 
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public Map add(@RequestBody Map question) {
-        return questionService.add(question);
+    public Map add(@RequestBody Map question,
+                   HttpServletRequest request) throws Exception {
+        return questionService.add(question, SecurityService.getUserId(request));
     }
 
     @RequestMapping(method = RequestMethod.POST)

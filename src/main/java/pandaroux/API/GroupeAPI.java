@@ -25,8 +25,9 @@ public class GroupeAPI {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public Map add(@RequestBody Groupe groupe, HttpServletRequest request) throws Exception {
-        return groupeService.save(groupe, SecurityService.getUserId(request));
+    public Map add(@RequestBody Groupe groupe,
+                   HttpServletRequest request) throws Exception {
+        return groupeService.add(groupe, SecurityService.getUserId(request));
     }
 
     @RequestMapping(method = RequestMethod.POST)

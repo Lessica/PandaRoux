@@ -35,7 +35,7 @@ public class QuizService {
     }
 
 
-    public Map add(Map quiz) throws ParseException {
+    public Map add(Map quiz, int teacherId) throws ParseException {
 
         Quiz quizDB;
 
@@ -51,6 +51,9 @@ public class QuizService {
         } else {
             quizDB = new Quiz();
         }
+
+        User teacher = userRepository.findOne(teacherId);
+        quizDB.setTeacher(teacher);
 
         if (quiz.containsKey("name")) {
             quizDB.setName((String) quiz.get("name"));
@@ -73,11 +76,6 @@ public class QuizService {
         if (quiz.containsKey("id_group")) {
             Groupe groupe = groupeRepository.findOne((int) quiz.get("id_group"));
             quizDB.setGroupe(groupe);
-        }
-
-        if (quiz.containsKey("id_teacher")) {
-            User teacher = userRepository.findOne((int) quiz.get("id_teacher"));
-            quizDB.setTeacher(teacher);
         }
 
 

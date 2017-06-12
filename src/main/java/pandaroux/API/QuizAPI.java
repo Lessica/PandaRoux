@@ -5,7 +5,9 @@ import org.springframework.web.bind.annotation.*;
 import pandaroux.Entity.*;
 import pandaroux.Service.Entity.Quiz_questionService;
 import pandaroux.Service.Entity.QuizService;
+import pandaroux.Service.SecurityService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.soap.Addressing;
 import java.text.ParseException;
 import java.util.Date;
@@ -31,7 +33,8 @@ public class QuizAPI {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public Map add(@RequestBody Map quiz) throws ParseException {
-        return quizService.add(quiz);
+    public Map add(@RequestBody Map quiz,
+                   HttpServletRequest request) throws Exception {
+        return quizService.add(quiz, SecurityService.getUserId(request));
     }
 }

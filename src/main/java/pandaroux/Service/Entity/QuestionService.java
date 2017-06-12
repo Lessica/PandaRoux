@@ -57,7 +57,7 @@ public class QuestionService {
 
     }
 
-    public Map add(Map question) {
+    public Map add(Map question, int teacherId) {
 
         Question questionDB;
 
@@ -66,6 +66,7 @@ public class QuestionService {
 
             if (questionRepository.exists(id_question)) {
                 questionDB = questionRepository.findOne(id_question);
+
             } else {
                 questionDB = new Question();
                 questionDB.setId(id_question);
@@ -73,6 +74,9 @@ public class QuestionService {
         } else {
             questionDB = new Question();
         }
+
+        User teacher = userRepository.findOne(teacherId);
+        questionDB.setTeacher(teacher);
 
         if (question.containsKey("name")) {
             questionDB.setName((String) question.get("name"));
@@ -89,11 +93,6 @@ public class QuestionService {
         if (question.containsKey("id_question_type")) {
             QuestionType questionType = questionTypeRepository.findOne((int) question.get("id_question_type"));
             questionDB.setQuestionType(questionType);
-        }
-
-        if (question.containsKey("id_teacher")) {
-            User teacher = userRepository.findOne((int) question.get("id_teacher"));
-            questionDB.setTeacher(teacher);
         }
 
         if (question.containsKey("id_questionType")) {

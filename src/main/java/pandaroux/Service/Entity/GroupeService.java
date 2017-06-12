@@ -51,7 +51,7 @@ public class GroupeService {
         return groupeData;
     }
 
-    public Map save(Groupe groupe, int userId) {
+    public Map add(Groupe groupe, int userId) {
         groupe.setTeacher(userRepository.findOne(userId));
         groupeRepository.save(groupe);
 
