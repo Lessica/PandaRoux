@@ -58,16 +58,11 @@ public class DefaultController {
 
     @RequestMapping(value = "/student/index")
     public String studentIndex(HttpServletRequest request) throws Exception {
-        return SecurityService.fireWall("redirect:/student/course", request, new String[] {"eleve"});
+        return SecurityService.fireWall("redirect:/student/group", request, new String[] {"eleve"});
     }
 
-    @RequestMapping(value = "/student/course")
-    public String studentCourse(HttpServletRequest request) throws Exception {
-        return SecurityService.fireWall("student/course", request, new String[] {"eleve"});
-    }
-
-    @RequestMapping(value = "/student/question")
-    public String studentQuestion(HttpServletRequest request) throws Exception {
-        return SecurityService.fireWall("student/question", request, new String[] {"eleve"});
+    @RequestMapping(value = "/student/group")
+    public String studentGroup(HttpServletRequest request) throws Exception {
+        return SecurityService.fireWall("student/group", request, new String[] {"eleve"});
     }
 }

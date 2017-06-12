@@ -174,29 +174,71 @@
                 questionSaveButtonClicked (event) {
                     const sender = $(event.currentTarget);
                     const data = sender.data();
-                    const serialized_data = this.DOM.questionForm.serializeArray();
-                    const indexed_array = {};
-                    $.map(serialized_data, function(n, i) {
-                        if (typeof indexed_array[n['name']] !== 'undefined') {
-                            if (indexed_array[n['name']].constructor === Array)
-                            { // 3+
-                                indexed_array[n['name']].push(n['value']);
-                            }
-                            else
-                            { // 2
-                                const orig_val = indexed_array[n['name']];
-                                indexed_array[n['name']] = [ orig_val, n['value'] ];
-                            }
-                        } else { // 1
-                            indexed_array[n['name']] = n['value'];
-                        }
+                    const parameters = {};
+                    const parameters_property_element = $("input[name*='user-property']");
+                    $.each(parameters_property_element, function (index, value) {
+                        parameters[$(value).attr("name")] = $(value).val();
                     });
+                    const option_list = $("div[id*='option-list']");
+                    const parameters_option_element = option_list.find("input[type='text']");
+                    const user_options = [];
+                    $.each(parameters_option_element, function (index, value) {
+                        const input_name = $(value).attr("name");
+                        const input_value = $(value).val();
+                        user_options.push({
+                            "name": input_name,
+                            "value": input_value
+                        });
+                    });
+                    parameters["user-options"] = user_options;
+                    const parameters_default_element = option_list.find("input:checked");
+                    const user_default = [];
+                    $.each(parameters_default_element, function (index, value) {
+                        const input_value = parseInt($(value).val());
+                        user_default.push(input_value);
+                    });
+                    parameters["user-default"] = user_default;
+                    // pre-check
+                    const question_content = this.DOM.questionContentInput.val();
+                    if (question_content.length === 0) {
+                        swal("Oops...", "The content of question cannot be empty.", "error");
+                        return;
+                    }
+                    if (user_options.length > 32) {
+                        swal("Oops...", "The count of options reaches the maximum limit (32).", "error");
+                        return;
+                    }
+                    for (let user_option_i = 0; user_option_i < user_options.length; ++user_option_i) {
+                        const user_option = user_options[user_option_i];
+                        if (user_option["value"].length === 0)
+                        {
+                            swal("Oops...", "The title of " + user_option["name"] + " cannot be empty.", "error");
+                            return;
+                        }
+                    }
+                    if (
+                        typeof parameters["user-property-checkbox-min"] !== 'undefined' &&
+                        typeof parameters["user-property-checkbox-max"] !== 'undefined'
+                    ) {
+                        const default_length = user_default.length;
+                        const min_length = parseInt(parameters["user-property-checkbox-min"]);
+                        const max_length = parseInt(parameters["user-property-checkbox-max"]);
+                        if (min_length > max_length) {
+                            swal("Oops...", "The minimum count (" + min_length + ") is larger than the maximum count (" + max_length + ").", "error");
+                            return;
+                        }
+                        if (default_length < min_length || default_length > max_length) {
+                            swal("Oops...", "The count of default values out of range (" + min_length + ", " + max_length + ")", "error");
+                            return;
+                        }
+                    }
+                    console.log(parameters);
                     let form_data = {
-                        "name": this.DOM.questionContentInput.val(),
+                        "name": question_content,
                         "has_commentary": this.DOM.allowCommentInput.is(':checked'),
                         "id_question_type": parseInt(this.DOM.questionTypeInput.val()),
                         "mandatory": this.DOM.mandatoryInput.is(':checked'),
-                        "parameters": indexed_array
+                        "parameters": parameters
                     };
                     if (data["id"]) {
                         form_data["id"] = data["id"];
@@ -266,24 +308,25 @@
                         const para = data["parameters"];
                         if (para !== null)
                         {
-                            const format = "user-radio-";
-                            const default_val = parseInt(para["user-radio-default"]);
-                            let option_index;
-                            for (option_index = 1; option_index <= 16; option_index++) {
-                                const elem_id = format + option_index;
-                                if (typeof para[elem_id] !== 'undefined')
-                                {
-                                    const checked_val = (default_val === option_index) ? "checked" : "";
-                                    field_content += document.DOMFactory.elementWithId(
-                                        "field-group-radio",
-                                        "Option " + option_index, // {1}
-                                        para[elem_id], // {2}
-                                        "" + option_index, // {3}
-                                        checked_val, // {4}
-                                        "user-radio-" + option_index, // {5}
-                                        "title of option " + option_index // {6}
-                                    ).wrap('<div>').parent().html();
-                                }
+                            const default_val = parseInt(para["user-default"][0]);
+                            const user_options = para["user-options"];
+                            for (var i = 0; i < user_options.length; i++) {
+                                const user_option = user_options[i];
+                                const option_name = user_option["name"];
+                                const option_value = user_option["value"];
+                                const option_array = option_name.split("-");
+                                const option_id = parseInt(option_array[2]);
+
+                                const checked_val = (default_val === option_id) ? "checked" : "";
+                                field_content += document.DOMFactory.elementWithId(
+                                    "field-group-radio",
+                                    "Option " + option_id, // {1}
+                                    option_value, // {2}
+                                    "" + option_id, // {3}
+                                    checked_val, // {4}
+                                    "user-radio-" + option_id, // {5}
+                                    "title of option " + option_id // {6}
+                                ).wrap('<div>').parent().html();
                             }
                         }
                     }
@@ -317,7 +360,7 @@
                     $("#user-radio-add").click($.proxy(function (event) {
                         const option_list = $("#radio-option-list");
                         const option_count = option_list.children().length + 1;
-                        if (option_count < 16)
+                        if (option_count < 32)
                         {
                             const new_option = document.DOMFactory.elementWithId(
                                 "field-group-radio",
@@ -346,30 +389,25 @@
                         const para = data["parameters"];
                         if (para !== null)
                         {
-                            const format = "user-checkbox-";
-                            const default_vals = para["user-checkbox-default"];
-                            let option_index;
-                            for (option_index = 1; option_index <= 16; option_index++) {
-                                const elem_id = format + option_index;
-                                if (typeof para[elem_id] !== 'undefined')
-                                {
-                                    let should_check = false;
-                                    if (default_vals.constructor === Array) {
-                                        should_check = ($.inArray(option_index.toString(), default_vals) >= 0);
-                                    } else {
-                                        should_check = (option_index === parseInt(default_vals));
-                                    }
-                                    const checked_val = (should_check) ? "checked" : "";
-                                    field_content += document.DOMFactory.elementWithId(
-                                        "field-group-checkbox",
-                                        "Option " + option_index, // {1}
-                                        para[elem_id], // {2}
-                                        "" + option_index, // {3}
-                                        checked_val, // {4}
-                                        "user-checkbox-" + option_index, // {5}
-                                        "title of option " + option_index // {6}
-                                    ).wrap('<div>').parent().html();
-                                }
+                            const default_vals = para["user-default"];
+                            const user_options = para["user-options"];
+                            for (var i = 0; i < user_options.length; i++) {
+                                const user_option = user_options[i];
+                                const option_name = user_option["name"];
+                                const option_value = user_option["value"];
+                                const option_array = option_name.split("-");
+                                const option_id = parseInt(option_array[2]);
+
+                                const checked_val = ($.inArray(option_id, default_vals) >= 0) ? "checked" : "";
+                                field_content += document.DOMFactory.elementWithId(
+                                    "field-group-checkbox",
+                                    "Option " + option_id, // {1}
+                                    option_value, // {2}
+                                    "" + option_id, // {3}
+                                    checked_val, // {4}
+                                    "user-checkbox-" + option_id, // {5}
+                                    "title of option " + option_id // {6}
+                                ).wrap('<div>').parent().html();
                             }
                         }
                     }
@@ -403,7 +441,7 @@
                     $("#user-checkbox-add").click($.proxy(function (event) {
                         const option_list = $("#checkbox-option-list");
                         const option_count = option_list.children().length + 1;
-                        if (option_count < 16)
+                        if (option_count < 32)
                         {
                             const new_option = document.DOMFactory.elementWithId(
                                 "field-group-checkbox",
@@ -446,20 +484,20 @@
                         const para = data["parameters"];
                         if (para !== null)
                         {
-                            const format = "user-dropdown-";
-                            let option_index;
-                            for (option_index = 1; option_index <= 16; option_index++) {
-                                const elem_id = format + option_index;
-                                if (typeof para[elem_id] !== 'undefined')
-                                {
-                                    field_content += document.DOMFactory.elementWithId(
-                                        "field-group-dropdown",
-                                        "Option " + option_index, // {1}
-                                        para[elem_id], // {2}
-                                        "user-dropdown-" + option_index, // {3}
-                                        "title of option " + option_index // {4}
-                                    ).wrap('<div>').parent().html();
-                                }
+                            const user_options = para["user-options"];
+                            for (var i = 0; i < user_options.length; i++) {
+                                const user_option = user_options[i];
+                                const option_name = user_option["name"];
+                                const option_value = user_option["value"];
+                                const option_array = option_name.split("-");
+                                const option_id = parseInt(option_array[2]);
+                                field_content += document.DOMFactory.elementWithId(
+                                    "field-group-dropdown",
+                                    "Option " + option_id, // {1}
+                                    option_value, // {2}
+                                    "user-dropdown-" + option_id, // {3}
+                                    "title of option " + option_id // {4}
+                                ).wrap('<div>').parent().html();
                             }
                         }
                     }
