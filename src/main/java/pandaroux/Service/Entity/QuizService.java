@@ -61,11 +61,13 @@ public class QuizService {
         }
 
         if (quiz.containsKey("date_start")) {
-            quizDB.setDate_start(new SimpleDateFormat("yyyy-MM-dd").parse((String) quiz.get("date_start")));
+            Date date_start = new SimpleDateFormat("yyyy-MM-dd").parse((String) quiz.get("date_start"));
+            quizDB.setDate_start(date_start);
         }
 
         if (quiz.containsKey("date_end")) {
-            quizDB.setDate_end(new SimpleDateFormat("yyyy-MM-dd").parse((String) quiz.get("date_end")));
+            Date date_end = new SimpleDateFormat("yyyy-MM-dd").parse((String) quiz.get("date_end"));
+            quizDB.setDate_end(date_end);
         }
 
         if (quiz.containsKey("id_group")) {

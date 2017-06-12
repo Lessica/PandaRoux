@@ -34,17 +34,11 @@ public class QuestionService {
 
         for(int i=0; i<questions.size(); i++) {
 
-            Map question = questions.get(i);
-
-            String parameters = (String) question.get("parameters");
+            String parameters = (String) questions.get(i).get("parameters");
 
             Object object = new Gson().fromJson(parameters, Object.class);
 
-            // System.out.println(object);
-
-            question.replace("parameters", object);
-
-            questions.set(i, question);
+            questions.get(i).put("parameters", object);
         }
 
         data.put("question_list", questions);
@@ -108,9 +102,7 @@ public class QuestionService {
         }
 
         if (question.containsKey("parameters")) {
-
             String json = new Gson().toJson(question.get("parameters"), Object.class);
-
             questionDB.setJsonParameters(json);
         }
 

@@ -12,8 +12,6 @@ import java.util.Map;
 @Repository
 public interface AnswerRepository extends CrudRepository<Answer, Integer> {
 
-    List<Answer> findAll();
-
-    @Query("SELECT a.id AS id, a.date AS date, a.text AS text, a.student.id AS id_student, qq.id AS id_quiz_question FROM Answer a JOIN a.quiz_question qq WHERE a.id = ?1")
-    Map getAnswer(int id);
+    @Query("SELECT a.id AS id, a.date AS date, a.jsonParameters AS parameters, a.text AS text, a.student.id AS id_student, a.quiz_question.id AS id_quiz_question FROM Answer a")
+    List<Map> getAnswers();
 }
