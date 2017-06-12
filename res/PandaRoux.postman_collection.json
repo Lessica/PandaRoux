@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "PandaRoux",
-		"_postman_id": "96e725e3-aa2c-dc1a-56ec-3f684ebe1607",
+		"_postman_id": "705630b3-7c24-d7e1-6a5f-0fd9c9ae555b",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -17,7 +17,10 @@
 						"url": "http://localhost:8080/api/answer/1",
 						"method": "POST",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
@@ -87,13 +90,13 @@
 									"key": "login",
 									"value": "vincenthays",
 									"type": "text",
-									"enabled": false
+									"disabled": true
 								},
 								{
 									"key": "password",
 									"value": "BhfxY+7a",
 									"type": "text",
-									"enabled": false
+									"disabled": true
 								}
 							]
 						},
@@ -193,7 +196,10 @@
 						"url": "http://localhost:8080/api/lecture/3/delete",
 						"method": "POST",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
@@ -225,7 +231,35 @@
 			"description": "",
 			"item": [
 				{
-					"name": "question add",
+					"name": "question",
+					"request": {
+						"url": "http://localhost:8080/api/question",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "question teacher",
+					"request": {
+						"url": "http://localhost:8080/api/question/teacher/1",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "question add radio",
 					"request": {
 						"url": "http://localhost:8080/api/question/add",
 						"method": "POST",
@@ -238,30 +272,68 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"id\": 2,\n\t\"name\": \"question 2\",\n\t\"has_commentary\": true\n}"
+							"raw": "{\n    \"id_question_type\":3,\n    \"name\":\"123\",\n    \"has_commentary\":false,\n    \"mandatory\":false,\n    \"parameters\":{\n        \"user-options\":[\n            {\n                \"name\":\"user-radio-1\",\n                \"value\":\"Hello 1\"\n            },\n            {\n                \"name\":\"user-radio-2\",\n                \"value\":\"Hello 2\"\n            },\n            {\n                \"name\":\"user-radio-3\",\n                \"value\":\"Hello 3\"\n            },\n            {\n                \"name\":\"user-radio-4\",\n                \"value\":\"Hello 4\"\n            }\n        ],\n        \"user-default\":[\n            1\n        ]\n    }\n}\n"
 						},
 						"description": ""
 					},
 					"response": []
 				},
 				{
-					"name": "question",
+					"name": "question add checkbox",
 					"request": {
-						"url": "http://localhost:8080/api/question",
+						"url": "http://localhost:8080/api/question/add",
 						"method": "POST",
-						"header": [],
-						"body": {},
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id_question_type\":4,\n    \"name\":\"Please choose a color you like best...\",\n    \"has_commentary\":true,\n    \"mandatory\":true,\n    \"parameters\":{\n        \"user-property-checkbox-min\":\"0\",\n        \"user-property-checkbox-max\":\"3\",\n        \"user-options\":[\n            {\n                \"name\":\"user-checkbox-1\",\n                \"value\":\"Check 1\"\n            },\n            {\n                \"name\":\"user-checkbox-2\",\n                \"value\":\"Check 2\"\n            },\n            {\n                \"name\":\"user-checkbox-3\",\n                \"value\":\"Check 3\"\n            },\n            {\n                \"name\":\"user-checkbox-4\",\n                \"value\":\"Check 4\"\n            },\n            {\n                \"name\":\"user-checkbox-5\",\n                \"value\":\"Check 5\"\n            }\n        ],\n        \"user-default\":[\n            2,\n            4,\n            5\n        ]\n    }\n}\n"
+						},
 						"description": ""
 					},
 					"response": []
 				},
 				{
-					"name": "question teacher",
+					"name": "question add dropdown",
 					"request": {
-						"url": "http://localhost:8080/api/question/teacher/1",
+						"url": "http://localhost:8080/api/question/add",
 						"method": "POST",
-						"header": [],
-						"body": {},
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id_question_type\":5,\n    \"name\":\"Advanced question 8.\",\n    \"has_commentary\":true,\n    \"mandatory\":false,\n    \"parameters\":{\n        \"user-options\":[\n            {\n                \"name\":\"user-dropdown-1\",\n                \"value\":\"Dropdown 1\"\n            },\n            {\n                \"name\":\"user-dropdown-2\",\n                \"value\":\"Dropdown 2\"\n            }\n        ],\n        \"user-default\":[\n\n        ]\n    }\n}\n"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "question add short answer / paragraph",
+					"request": {
+						"url": "http://localhost:8080/api/question/add",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id_question_type\":2,\n    \"name\":\"Common question 7 =-=\",\n    \"has_commentary\":true,\n    \"mandatory\":true,\n    \"parameters\":{\n        \"user-options\":[\n\n        ],\n        \"user-default\":[\n\n        ]\n    }\n}\n"
+						},
 						"description": ""
 					},
 					"response": []
@@ -298,7 +370,10 @@
 						"url": "http://localhost:8080/api/quiz",
 						"method": "POST",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
@@ -309,7 +384,10 @@
 						"url": "http://localhost:8080/api/quiz/1",
 						"method": "POST",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
@@ -326,7 +404,10 @@
 						"url": "http://localhost:8080/api/user",
 						"method": "POST",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
@@ -337,7 +418,10 @@
 						"url": "http://localhost:8080/api/user/1",
 						"method": "POST",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
@@ -348,7 +432,10 @@
 						"url": "http://localhost:8080/api/user/students",
 						"method": "POST",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
@@ -358,7 +445,7 @@
 		{
 			"name": "login check",
 			"request": {
-				"url": "http://localhost:8080/loginCheck",
+				"url": "http://localhost:8080/login",
 				"method": "POST",
 				"header": [
 					{
@@ -369,7 +456,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"login\":\"zhwu10362\",\"password\":\"Nv8cG$dD\"}"
+					"raw": "{\n\t\"login\":\"zhwu10362\",\n\t\"password\":\"Nv8cG$dD\"\n}"
 				},
 				"description": ""
 			},
