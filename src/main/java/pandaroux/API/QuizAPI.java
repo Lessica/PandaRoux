@@ -7,6 +7,7 @@ import pandaroux.Service.Entity.Quiz_questionService;
 import pandaroux.Service.Entity.QuizService;
 
 import javax.xml.ws.soap.Addressing;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -25,26 +26,12 @@ public class QuizAPI {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
-    public Map getQuizData(@PathVariable("id") int id) {
+    public Map getQuiz(@PathVariable("id") int id) {
         return quizService.getQuiz(id);
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public void create(@RequestBody int id,
-                       @RequestBody String name,
-                       @RequestBody Date date_start,
-                       @RequestBody Date date_end,
-                       @RequestBody boolean activate,
-                       @RequestBody User teacher,
-                       @RequestBody Groupe groupe,
-                       @RequestBody List<Question> questions
-    ) {
-        // TODO: JSON Body ?
-        if (id == 0) {
-            quizService.create(name, date_start, date_end, activate, teacher, groupe, questions);
-        } else {
-            quizService.alter(id, name, date_start, date_end, activate, teacher, groupe, questions);
-        }
-
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public Map add(@RequestBody Map quiz) throws ParseException {
+        return quizService.add(quiz);
     }
 }

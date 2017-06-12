@@ -22,7 +22,7 @@ public class SecurityController {
     private LDAPService ldapService;
 
 
-    @RequestMapping(value = "/loginCheck", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Map loginCheck(@RequestBody Map loginData,
                           HttpServletRequest request) throws Exception {
 
