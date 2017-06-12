@@ -23,6 +23,7 @@ public class QuizService {
     @Autowired
     private GroupeRepository groupeRepository;
 
+    @Autowired
     private UserRepository userRepository;
 
 

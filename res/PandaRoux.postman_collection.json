@@ -145,6 +145,26 @@
 					"response": []
 				},
 				{
+					"name": "groupe modify",
+					"request": {
+						"url": "http://localhost:8080/api/groupe/1/modify",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"test 5\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "groupe remove students",
 					"request": {
 						"url": "http://localhost:8080/api/groupe/1/remove/students",
@@ -358,7 +378,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"id\": 1,\n\t\"active\": true,\n\t\"name\": \"quiz 1\",\n\t\"date_start\": \"2017-03-02\",\n\t\"date_end\": \"2017-03-03\",\n\t\"groupe\": {\n\t\t\"id\": 1\n\t},\n\t\"teacher\": {\n\t\t\"id\": 1\n\t}\n}"
+							"raw": "{\n\t\"id\": 1,\n\t\"active\": true,\n\t\"name\": \"quiz 1\",\n\t\"date_start\": \"2017-03-02\",\n\t\"date_end\": \"2017-03-03\",\n\t\"id_groupe\": 1\n}"
 						},
 						"description": ""
 					},
@@ -441,6 +461,28 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "logout",
+			"request": {
+				"url": "http://localhost:8080/logout",
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "session",
+			"request": {
+				"url": "http://localhost:8080/session",
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
 		},
 		{
 			"name": "login check",
