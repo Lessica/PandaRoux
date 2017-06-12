@@ -65,14 +65,14 @@ public class SecurityController {
     }
 
     @RequestMapping(value = "/session", method = RequestMethod.POST)
-    public Map viewSession(HttpServletRequest request) throws Exception {
+    public String viewSession(HttpServletRequest request) {
 
         Map user = (Map) request.getSession(true).getAttribute("user");
 
         if (user == null) {
-            throw new Exception("No user connected");
+            return "No user connected";
         }
 
-        return user;
+        return "session : " + user.toString();
     }
 }

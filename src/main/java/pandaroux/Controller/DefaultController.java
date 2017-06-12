@@ -16,6 +16,11 @@ public class DefaultController {
         return SecurityService.loginFireWall("login", request);
     }
 
+    @RequestMapping(value = "/logout")
+    public String logOut(HttpServletRequest request) {
+        return SecurityService.logout("login", request);
+    }
+
     @RequestMapping(value = "/")
     public String index(HttpServletRequest request) {
         return "index";

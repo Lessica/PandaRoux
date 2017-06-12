@@ -3,9 +3,14 @@ package pandaroux.Service.Entity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pandaroux.Entity.*;
+import pandaroux.Repository.GroupeRepository;
 import pandaroux.Repository.QuizRepository;
+import pandaroux.Repository.UserRepository;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,41 +20,72 @@ public class QuizService {
     @Autowired
     private QuizRepository quizRepository;
 
+    @Autowired
+    private GroupeRepository groupeRepository;
+
+    private UserRepository userRepository;
+
 
     public List<Map> findAll() {
         return quizRepository.findAllQuizzes();
-    }
-
-    public void save(Quiz quiz) {
-        quizRepository.save(quiz);
     }
 
     public Map getQuiz(int id) {
         return quizRepository.getQuiz(id);
     }
 
-    public void create(String name, Date date_start, Date date_end, boolean activate, User teacher, Groupe groupe, List<Question> questions){
-        Quiz q = new Quiz();
-        q.setDate_start(date_start);
-        q.setDate_end(date_end);
-        q.setActive(activate);
-        q.setTeacher(teacher);
-        q.setGroupe(groupe);
-        q.setName(name);
 
-        save(q);
+    public Map add(Map quiz) throws ParseException {
 
-        Quiz_questionService  quiz_questionService = new Quiz_questionService();
-        for (Question que:questions) {
-            Quiz_question temp = new Quiz_question();
-            temp.setQuestion(que);
-            temp.setQuiz(q);
-            quiz_questionService.save(temp);
+        Quiz quizDB;
+
+        if (quiz.containsKey("id")) {
+            int id_quiz = (int) quiz.get("id");
+
+            if (quizRepository.exists(id_quiz)) {
+                quizDB = quizRepository.findOne(id_quiz);
+            } else {
+                quizDB = new Quiz();
+                quizDB.setId(id_quiz);
+            }
+        } else {
+            quizDB = new Quiz();
         }
-    }
 
-    public void alter(int id, String name, Date date_start, Date date_end, boolean activate, User teacher, Groupe groupe, List<Question> questions){
-        quizRepository.delete(id);
-        create(name, date_start, date_end, activate, teacher, groupe, questions);
+        if (quiz.containsKey("name")) {
+            quizDB.setName((String) quiz.get("name"));
+        }
+
+        if (quiz.containsKey("active")) {
+            quizDB.setActive((Boolean) quiz.get("active"));
+        }
+
+        if (quiz.containsKey("date_start")) {
+            Date date_start = new SimpleDateFormat("yyyy-MM-dd").parse((String) quiz.get("date_start"));
+            quizDB.setDate_start(date_start);
+        }
+
+        if (quiz.containsKey("date_end")) {
+            Date date_end = new SimpleDateFormat("yyyy-MM-dd").parse((String) quiz.get("date_end"));
+            quizDB.setDate_end(date_end);
+        }
+
+        if (quiz.containsKey("id_group")) {
+            Groupe groupe = groupeRepository.findOne((int) quiz.get("id_group"));
+            quizDB.setGroupe(groupe);
+        }
+
+        if (quiz.containsKey("id_teacher")) {
+            User teacher = userRepository.findOne((int) quiz.get("id_teacher"));
+            quizDB.setTeacher(teacher);
+        }
+
+
+        quizRepository.save(quizDB);
+
+        Map data = new HashMap();
+        data.put("result", "succeed");
+
+        return data;
     }
 }
