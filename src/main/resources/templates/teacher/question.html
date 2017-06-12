@@ -177,7 +177,15 @@
                     const parameters = {};
                     const parameters_property_element = $("input[name*='user-property']");
                     $.each(parameters_property_element, function (index, value) {
-                        parameters[$(value).attr("name")] = $(value).val();
+                        const elem_type = $(value).attr("type");
+                        const elem_name = $(value).attr("name");
+                        if (elem_type === "text") {
+                            parameters[elem_name] = $(value).val();
+                        } else if (elem_type === "checkbox") {
+                            if ($(value).is(':checked')) {
+                                parameters[elem_name] = "checked";
+                            }
+                        }
                     });
                     const option_list = $("div[id*='option-list']");
                     const parameters_option_element = option_list.find("input[type='text']");
