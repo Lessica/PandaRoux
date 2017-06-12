@@ -100,7 +100,7 @@ public class SecurityService {
         Map user = (Map) request.getSession(true).getAttribute("user");
 
         if (user == null) {
-            throw (new Exception("User not conected"));
+            throw (new Exception("User not connected"));
         }
 
         return (int) user.get("id");
@@ -112,7 +112,7 @@ public class SecurityService {
         Map user = (Map) request.getSession(true).getAttribute("user");
 
         if (user == null) {
-            throw (new Exception("User not conected"));
+            throw (new Exception("User not connected"));
         }
 
         String role_nameSession = (String) user.get("role_name");
@@ -125,7 +125,7 @@ public class SecurityService {
         Map user = (Map) request.getSession(true).getAttribute("user");
 
         if (user == null) {
-            throw (new Exception("User not conected"));
+            throw (new Exception("User not connected"));
         }
 
         int role_idSession = (int) user.get("role_id");
