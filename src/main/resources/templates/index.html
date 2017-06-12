@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:fragment="site-base">
+<head>
+    <title>PandaRoux - Online Survey Engine</title>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link rel="icon" th:href="@{/img/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style-home.css}"/>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu"/>
+</head>
+
+<body>
+<x>
+    <y>
+        <img src="/img/roux.png"/>
+        <div class="roux">
+            <div class="big">PandaRoux</div>
+            <div>The online survey engine between professors and students for ISEP.</div>
+        </div>
+        <ul>
+            <li><a href="https://github.com/Lessica/PandaRoux"><i class="fa fa-github"></i> <span>GitHub</span></a></li>
+            <li><a href="/login"><i class="fa fa-paper-plane-o"></i> <span>Login</span></a></li>
+            <li><a href="https://github.com/Lessica/PandaRoux/releases"><i class="fa fa-arrow-circle-o-down"></i> <span>Download</span></a></li>
+        </ul>
+    </y>
+    <footer>
+        &copy; 2017 PandaRoux Team.
+    </footer>
+</x>
+</body>
+</html>

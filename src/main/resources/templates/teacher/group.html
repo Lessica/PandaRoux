@@ -177,8 +177,12 @@
 
                 init: function () {
                     CreateGroupModalController.init();
-                    GroupListController.storage.groupCreateButton.click(GroupListController.createGroupButtonClicked);
+                    GroupListController.bindEvent();
                     GroupListController.load();
+                },
+
+                bindEvent: function () {
+                    GroupListController.storage.groupCreateButton.click(GroupListController.createGroupButtonClicked);
                 },
 
                 load: function () {
@@ -209,9 +213,9 @@
                 groupButtonClicked: function (event) {
                     var sender = $(this);
                     var data = sender.data();
+                    console.log(data);
                     GroupListController.setSelectedGroup(data['id']);
                     WorkspaceController.loadWithId(data['id']);
-                    console.log(data);
                 },
 
                 setSelectedGroup: function (group_id) {
@@ -222,7 +226,7 @@
                     }
                 },
 
-                setGroupName: function(group_id, group_name) {
+                setGroupName: function (group_id, group_name) {
                     if (group_id && group_name) {
                         var new_group_button = DOMFactory.elementWithId("group-button", group_name, "btn-default");
                         $("#group-button-" + group_id.toString()).html(new_group_button.html());
@@ -311,7 +315,7 @@
                                 WorkspaceController.loadWithId(group_id);
                                 EditSessionModalController.storage.modalWindow.modal("hide");
                             }
-                        }, data['id'], { "rate": parseInt(rate), "commentary": commentary });
+                        }, data['id'], {"rate": parseInt(rate), "commentary": commentary});
                     });
                 },
 
@@ -343,7 +347,8 @@
                     sessionList: $("#search-session-list"), // div
                     searchSelectedStudentInput: $("#search-selected-student"),
                     searchSessionInput: $("#search-session"),
-                    createSessionPanel: $("#create-session-panel")
+                    createSessionPanel: $("#create-session-panel"),
+                    groupRemoveButton: $("#remove-group"),
                 },
 
                 init: function () {
@@ -361,7 +366,28 @@
                             }
                         }
                     });
+                    WorkspaceController.storage.groupRemoveButton.click(WorkspaceController.removeGroupButtonClicked);
                     WorkspaceController.storage.createSessionPanel.click(WorkspaceController.createSessionPanelClicked);
+                },
+
+                removeGroupButtonClicked: function (event) {
+                    var sender = $(this);
+                    var data = sender.data();
+                    console.log(data);
+                    var group_id = data["id"];
+                    swal({
+                        title: "Are you sure?",
+                        text: "The group and its related sessions will be deleted! \n" +
+                        "You will not be able to revoke this operation!",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Yes, delete it!",
+                        closeOnConfirm: false,
+                        html: false
+                    }, function () {
+
+                    });
                 },
 
                 groupTitleInputBlured: function (event) {
@@ -406,11 +432,11 @@
                 focusOnTitle: function () {
                     WorkspaceController.storage.groupTitle.focus();
                 },
-                
+
                 loadWithId: function (gid) {
                     APIService.getGroupDetail(WorkspaceController.load, gid);
                 },
-                
+
                 load: function (resp) {
                     console.log(resp);
                     WorkspaceController.reset();
@@ -419,10 +445,11 @@
                     WorkspaceController.loadSessionList(resp);
                     WorkspaceController.show();
                 },
-                
+
                 loadGroupTitle: function (resp) {
                     WorkspaceController.storage.groupTitle.val(resp["name"]);
                     WorkspaceController.storage.groupTitle.data(resp);
+                    WorkspaceController.storage.groupRemoveButton.data(resp);
                 },
 
                 loadSelectedStudentList: function (resp) {
@@ -550,7 +577,7 @@
                         if (resp["result"] === "succeed") {
                             WorkspaceController.loadWithId(group_id);
                         }
-                    }, group_id, [ data['id'] ]);
+                    }, group_id, [data['id']]);
                 }
             };
 
@@ -609,16 +636,14 @@
                         if (resp["result"] === "succeed") {
                             WorkspaceController.loadWithId(group_id);
                         }
-                    }, group_id, [ data['id'] ]);
+                    }, group_id, [data['id']]);
                 }
 
             };
 
             var ViewController = {
 
-                storage: {
-
-                },
+                storage: {},
 
                 init: function () {
                     ViewController.bindSearchPair();
@@ -672,26 +697,21 @@
 
     <!-- JS TEMPLATE ENGINE -->
 
-    <script id="template-group-button" language="text">
-
+    <script id="template-group-button" type="text/plain" language="text">
         <button id="group-button" type="button" class="btn {2} btn-block group-button">
             {1}
             <span class="glyphicon glyphicon-chevron-right btn-icon float-right"></span>
         </button>
-
     </script>
 
-    <script id="template-student-button" language="text">
-
+    <script id="template-student-button" type="text/plain" language="text">
         <button type="button" class="btn {2} btn-block student-button">
             {1}
             <span class="glyphicon {3} btn-icon float-right"></span>
         </button>
-
     </script>
 
-    <script id="template-session-panel" language="text">
-
+    <script id="template-session-panel" type="text/plain" language="text">
         <div class="col-sm-6 col-md-4 col-lg-3">
             <div class="panel {3} roux-panel panel-session">
                 <div class="panel-heading">
@@ -715,7 +735,6 @@
                 </div>
             </div>
         </div>
-
     </script>
 
 </head>
@@ -788,7 +807,7 @@
                                 </div>
 
                                 <input class="group-title" type="text" placeholder="Untitled Group">
-                                <span class="glyphicon glyphicon-trash title-button float-right"></span>
+                                <span id="remove-group" class="glyphicon glyphicon-trash title-button float-right"></span>
 
                             </div>
                         </div>
@@ -800,10 +819,11 @@
                             <div class="panel-body">
 
                                 <div class="input-group">
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-search"></span>
-                        </span>
-                                    <input id="search-student" type="text" class="form-control" placeholder="All students">
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-search"></span>
+                                    </span>
+                                    <input id="search-student" type="text" class="form-control"
+                                           placeholder="All students">
                                 </div>
                                 <br>
 
@@ -834,7 +854,8 @@
 
                                 <div class="scroll-list">
                                     <div class="scroll-list-selected-student">
-                                        <div id="search-selected-student-list" class="selected-student-button-list"></div>
+                                        <div id="search-selected-student-list"
+                                             class="selected-student-button-list"></div>
                                     </div>
                                 </div>
                                 <br>
@@ -866,7 +887,8 @@
 
                                     <!-- Add Session Sub Panel -->
                                     <div class="col-sm-6 col-md-4 col-lg-3">
-                                        <div id="create-session-panel" class="panel panel-default roux-panel panel-session-add">
+                                        <div id="create-session-panel"
+                                             class="panel panel-default roux-panel panel-session-add">
                                             <div class="panel-body">
                                                 <div class="panel-session-wrap">
                                                     <span class="glyphicon glyphicon-plus"></span>
@@ -1006,7 +1028,8 @@
                     </div>
 
                     <div class="comment-input">
-                        <textarea id="session-comment-input" name="comment-area" class="form-control" rows="6" title=""></textarea>
+                        <textarea id="session-comment-input" name="comment-area" class="form-control" rows="6"
+                                  title=""></textarea>
                     </div>
 
                 </div>

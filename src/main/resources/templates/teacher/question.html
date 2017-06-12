@@ -15,22 +15,23 @@
 
             console.log("document ready");
 
-            var DOMFactory = {
-                elementWithId: function () {
+            class DOMFactory {
+                elementWithId () {
                     if (arguments.length === 0)
                         return null;
-                    var elem_id = arguments[0];
-                    var result = $("#template-" + elem_id).html();
-                    for (var i = 1; i < arguments.length; i++) {
-                        var re = new RegExp('\\{' + (i) + '\\}', 'gm');
+                    const elem_id = arguments[0];
+                    let result = $("#template-" + elem_id).html();
+                    for (let i = 1; i < arguments.length; i++) {
+                        const re = new RegExp('\\{' + (i) + '\\}', 'gm');
                         result = result.replace(re, arguments[i]);
                     }
                     return $(result);
                 }
-            };
+            }
 
-            var APIService = {
-                init: function () {
+            class APIService {
+
+                constructor () {
                     $.ajaxSetup({
                         method: "POST",
                         dataType: "json",
@@ -39,93 +40,120 @@
                         error: APIService.errorHandler,
                         async: true
                     });
-                },
-                errorHandler: function (xmlHTTP, status, httperror) {
-                    var resp = $.parseJSON(xmlHTTP.responseText);
+                }
+
+                static errorHandler (xmlHTTP, status, httperror) {
+                    const resp = $.parseJSON(xmlHTTP.responseText);
                     if (resp && resp["message"]) {
                         swal("Oops...", resp['message'], "error");
                     }
-                },
-                getQuestionList: function (callback) {
+                }
+
+                getQuestionList (callback) {
                     $.ajax("/api/question", {
                         success: callback
                     });
-                },
-                saveQuestion: function (callback, form_data) {
+                }
+
+                saveQuestion (callback, form_data) {
                     $.ajax("/api/question/add", {
                         data: JSON.stringify(form_data),
                         success: callback
                     });
                 }
-            };
 
-            var QuestionDetailController = {
+            }
 
-                storage: {
-                    questionView: $(".question-detail"), // div
-                    questionTitle: $(".question-title"),
-                    mandatoryInput: $("#mandatory-option"), // input checkbox
-                    questionTypeInput: $("#question-type"), // select
-                    questionContentInput: $("#question-content"), // textarea,
-                    allowCommentInput: $("#allow-comment-option"),
-                    createChartInput: $("#create-graph-option"),
-                    questionDeleteButton: $("#question-delete-button"),
-                    questionSaveButton: $("#question-save-button"),
-                    questionResetButton: $("#question-reset-button"),
-                    questionDetailData: null
-                },
+            class QuestionDetailController {
 
-                init: function () {
-                    QuestionDetailController.bindEvent();
-                },
+                constructor () {
+                    this.DOM = {
+                        questionView: $(".question-detail"), // div
+                        questionTitle: $(".question-title"),
+                        mandatoryInput: $("#mandatory-option"), // input checkbox
+                        questionTypeInput: $("#question-type"), // select
+                        questionContentInput: $("#question-content"), // textarea,
+                        allowCommentInput: $("#allow-comment-option"),
+                        createChartInput: $("#create-graph-option"),
+                        questionDeleteButton: $("#question-delete-button"),
+                        questionSaveButton: $("#question-save-button"),
+                        questionResetButton: $("#question-reset-button"),
+                        questionFieldContainer: $("#question-field-container"),
+                        questionForm: $("#question-form"),
+                        questionDetailData: null
+                    };
+                    this.bindEvent();
+                }
 
-                reset: function () {
-                    QuestionDetailController.storage.questionDetailData = null;
-                    QuestionDetailController.storage.questionDeleteButton.data("id", null);
-                    QuestionDetailController.storage.questionSaveButton.data("id", null);
-                    QuestionDetailController.storage.questionResetButton.data("id", null);
+                reset () {
+                    this.DOM.questionDetailData = null;
+                    this.DOM.questionDeleteButton.data("id", null);
+                    this.DOM.questionSaveButton.data("id", null);
+                    this.DOM.questionResetButton.data("id", null);
+                    this.DOM.questionTitle.val("New Question");
+                    this.DOM.mandatoryInput.prop("checked", true);
+                    this.DOM.questionTypeInput.val("1");
+                    this.DOM.questionContentInput.val("");
+                    this.DOM.allowCommentInput.prop("checked", false);
+                    this.DOM.createChartInput.prop("checked", false);
+//                    this.DOM.questionSaveButton.prop("disabled", true);
+                    this.DOM.createChartInput.prop("disabled", true);
+                    this.DOM.questionFieldContainer.html("");
+                }
 
-                    QuestionDetailController.storage.questionTitle.val("New Question");
-                    QuestionDetailController.storage.mandatoryInput.prop("checked", true);
-                    QuestionDetailController.storage.questionTypeInput.val("1");
-                    QuestionDetailController.storage.questionContentInput.val("");
-                    QuestionDetailController.storage.allowCommentInput.prop("checked", false);
-                    QuestionDetailController.storage.createChartInput.prop("checked", false);
+                hide () {
+                    this.DOM.questionView.fadeOut(200);
+                }
 
-                    QuestionDetailController.storage.questionTypeInput.prop("disabled", true);
-                    QuestionDetailController.storage.createChartInput.prop("disabled", true);
-                    QuestionDetailController.storage.mandatoryInput.prop("disabled", true);
-                },
+                show () {
+                    this.DOM.questionView.fadeIn(200);
+                }
 
-                hide: function () {
-                    QuestionDetailController.storage.questionView.fadeOut(200);
-                },
+                focusOnTitle () {
+                    this.DOM.questionContentInput.focus();
+                }
 
-                show: function () {
-                    QuestionDetailController.storage.questionView.fadeIn(200);
-                },
+                bindEvent () {
+                    this.DOM.questionDeleteButton.click($.proxy(this.questionDeleteButtonClicked, this));
+                    this.DOM.questionSaveButton.click($.proxy(this.questionSaveButtonClicked, this));
+                    this.DOM.questionResetButton.click($.proxy(this.questionResetButtonClicked, this));
+//                    this.DOM.questionContentInput.on("change paste keyup", $.proxy(this.saveStatusChanged, this));
+                    this.DOM.questionTypeInput.on("change", $.proxy(this.questionTypeChanged, this));
+//                    this.DOM.allowCommentInput.on("change", $.proxy(this.saveStatusChanged, this));
+//                    this.DOM.mandatoryInput.on("change", $.proxy(this.saveStatusChanged, this));
+                }
 
-                focusOnTitle: function () {
-                    // QuestionDetailController.storage.questionTitle.focus();
-                    QuestionDetailController.storage.questionContentInput.focus();
-                },
+                questionTypeChanged (event) {
+//                    this.saveStatusChanged(event);
+                    const sender = $(event.currentTarget);
+                    const question_type = parseInt(sender.val());
+                    this.DOM.questionFieldContainer.html("");
+                    if (question_type === 3)
+                    {
+                        this.loadQuestionFieldRadio(null);
+                    }
+                    else if (question_type === 4)
+                    {
+                        this.loadQuestionFieldCheckbox(null);
+                    }
+                    else if (question_type === 5)
+                    {
+                        this.loadQuestionFieldDropdown(null);
+                    }
+                }
 
-                bindEvent: function () {
-                    QuestionDetailController.storage.questionDeleteButton.click(QuestionDetailController.questionDeleteButtonClicked);
-                    QuestionDetailController.storage.questionSaveButton.click(QuestionDetailController.questionSaveButtonClicked);
-                    QuestionDetailController.storage.questionResetButton.click(QuestionDetailController.questionResetButtonClicked);
-                    QuestionDetailController.storage.questionContentInput.on("change paste keyup", function () {
-                        QuestionDetailController.storage.questionSaveButton.attr('disabled', $.trim($(this).val()).length <= 0);
-                    });
-                },
+//                saveStatusChanged (event) {
+//                    const content = this.DOM.questionContentInput.val();
+//                    this.DOM.questionSaveButton.attr('disabled', $.trim(content).length <= 0);
+//                }
 
-                questionDeleteButtonClicked: function (event) {
-                    var sender = $(this);
-                    var data = sender.data();
+                questionDeleteButtonClicked (event) {
+                    const sender = $(event.currentTarget);
+                    const data = sender.data();
                     console.log(data);
-                    if (QuestionDetailController.storage.questionDetailData === null) { // new question
-                        QuestionDetailController.hide();
-                        QuestionDetailController.reset();
+                    if (this.DOM.questionDetailData === null) { // new question
+                        this.hide();
+                        this.reset();
                     } else {
                         swal({
                             title: "Are you sure?",
@@ -141,149 +169,443 @@
 
                         });
                     }
-                },
+                }
 
-                questionSaveButtonClicked: function (event) {
-                    var sender = $(this);
-                    var data = sender.data();
-                    var form_data = {
-                        "name": QuestionDetailController.storage.questionContentInput.val(),
-                        "has_commentary": QuestionDetailController.storage.allowCommentInput.is(':checked'),
-                        "id_question_type": parseInt(QuestionDetailController.storage.questionTypeInput.val())
+                questionSaveButtonClicked (event) {
+                    const sender = $(event.currentTarget);
+                    const data = sender.data();
+                    const serialized_data = this.DOM.questionForm.serializeArray();
+                    const indexed_array = {};
+                    $.map(serialized_data, function(n, i) {
+                        if (typeof indexed_array[n['name']] !== 'undefined') {
+                            if (indexed_array[n['name']].constructor === Array)
+                            { // 3+
+                                indexed_array[n['name']].push(n['value']);
+                            }
+                            else
+                            { // 2
+                                const orig_val = indexed_array[n['name']];
+                                indexed_array[n['name']] = [ orig_val, n['value'] ];
+                            }
+                        } else { // 1
+                            indexed_array[n['name']] = n['value'];
+                        }
+                    });
+                    let form_data = {
+                        "name": this.DOM.questionContentInput.val(),
+                        "has_commentary": this.DOM.allowCommentInput.is(':checked'),
+                        "id_question_type": parseInt(this.DOM.questionTypeInput.val()),
+                        "mandatory": this.DOM.mandatoryInput.is(':checked'),
+                        "parameters": indexed_array
                     };
                     if (data["id"]) {
                         form_data["id"] = data["id"];
                     }
-                    console.log(form_data);
-                    APIService.saveQuestion(function (resp) {
+                    document.APIService.saveQuestion($.proxy(function (resp) {
                         if (resp["result"] === "succeed") {
                             swal("Saved!",
                                 "This question has been saved.",
                                 "success");
-                            QuestionListController.setQuestionData(form_data);
-                            QuestionDetailController.loadWithData(form_data);
+                            if (this.DOM.questionDetailData === null)
+                            {
+                                document.RootController.listController.load();
+                            }
+                            else
+                            {
+                                document.RootController.listController.setQuestionData(form_data);
+                                this.loadWithData(form_data);
+                            }
                         }
-                    }, form_data);
-                },
-
-                questionResetButtonClicked: function (event) {
-                    var sender = $(this);
-                    var data = sender.data();
-                    console.log(data);
-                    QuestionDetailController.loadWithData(jQuery.extend(true, {}, data));
-                },
-
-                loadWithData: function (data) {
-                    QuestionDetailController.reset();
-                    QuestionDetailController.storage.questionDetailData = data;
-                    if (data && data["id"]) {
-                        QuestionDetailController.loadQuestionForm(data);
-                    }
-                    QuestionDetailController.show();
-                },
-
-                loadQuestionForm: function (data) {
-                    QuestionDetailController.storage.questionTitle.val("Question " + data["id"]);
-                    QuestionDetailController.storage.questionTypeInput.val(data["id_question_type"]);
-                    QuestionDetailController.storage.questionContentInput.val(data["name"]);
-                    if (data["has_commentary"]) {
-                        QuestionDetailController.storage.allowCommentInput.prop("checked", true);
-                    } else {
-                        QuestionDetailController.storage.allowCommentInput.prop("checked", false);
-                    }
-                    QuestionDetailController.storage.questionDeleteButton.data(data);
-                    QuestionDetailController.storage.questionSaveButton.data(data);
-                    QuestionDetailController.storage.questionResetButton.data(data);
+                    }, this), form_data);
                 }
 
-            };
+                questionResetButtonClicked (event) {
+                    const sender = $(event.currentTarget);
+                    const data = sender.data();
+                    console.log(data);
+                    this.loadWithData(jQuery.extend(true, {}, data));
+                }
 
-            var QuestionListController = {
+                loadWithData (data) {
+                    this.reset();
+                    this.DOM.questionDetailData = data;
+                    if (data && data["id"]) {
+                        this.loadQuestionForm(data);
+                    }
+                    this.show();
+                }
 
-                storage: {
-                    questionCreateButton: $("#common-new-question"), // button
-                    questionList: $("#search-question-list"), // div
-                    searchQuestionInput: $("#search-group"),
-                    selectedQuestionId: null
-                },
+                loadQuestionForm (data) {
+                    this.DOM.questionTitle.val("Question " + data["id"]);
+                    this.DOM.questionTypeInput.val(data["id_question_type"]);
+                    this.DOM.questionContentInput.val(data["name"]);
+                    this.DOM.allowCommentInput.prop("checked", data["has_commentary"]);
+                    this.DOM.mandatoryInput.prop("checked", data["mandatory"]);
+                    this.DOM.questionDeleteButton.data(data);
+                    this.DOM.questionSaveButton.data(data);
+                    this.DOM.questionResetButton.data(data);
+                    this.DOM.questionFieldContainer.html("");
+                    const question_type = parseInt(data["id_question_type"]);
+                    if (question_type === 3)
+                    {
+                        this.loadQuestionFieldRadio(data);
+                    }
+                    else if (question_type === 4)
+                    {
+                        this.loadQuestionFieldCheckbox(data);
+                    }
+                    else if (question_type === 5)
+                    {
+                        this.loadQuestionFieldDropdown(data);
+                    }
+                }
 
-                init: function () {
-                    QuestionListController.storage.questionCreateButton.click(QuestionListController.createQuestionButtonClicked);
-                    QuestionListController.load();
-                    QuestionDetailController.init();
-                },
+                loadQuestionFieldRadio (data) {
+                    let field_content = "";
+                    if (data !== null) {
+                        const para = data["parameters"];
+                        if (para !== null)
+                        {
+                            const format = "user-radio-";
+                            const default_val = parseInt(para["user-radio-default"]);
+                            let option_index;
+                            for (option_index = 1; option_index <= 16; option_index++) {
+                                const elem_id = format + option_index;
+                                if (typeof para[elem_id] !== 'undefined')
+                                {
+                                    const checked_val = (default_val === option_index) ? "checked" : "";
+                                    field_content += document.DOMFactory.elementWithId(
+                                        "field-group-radio",
+                                        "Option " + option_index, // {1}
+                                        para[elem_id], // {2}
+                                        "" + option_index, // {3}
+                                        checked_val, // {4}
+                                        "user-radio-" + option_index, // {5}
+                                        "title of option " + option_index // {6}
+                                    ).wrap('<div>').parent().html();
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        field_content += document.DOMFactory.elementWithId(
+                            "field-group-radio",
+                            "Option 1", // {1}
+                            "", // {2}
+                            "1", // {3}
+                            "checked", // {4}
+                            "user-radio-1", // {5}
+                            "title of option 1" // {6}
+                        ).wrap('<div>').parent().html();
+                        field_content += document.DOMFactory.elementWithId(
+                            "field-group-radio",
+                            "Option 2", // {1}
+                            "", // {2}
+                            "2", // {3}
+                            "", // {4}
+                            "user-radio-2", // {5}
+                            "title of option 2" // {6}
+                        ).wrap('<div>').parent().html();
+                    }
+                    let field = document.DOMFactory.elementWithId(
+                        "question-field-radio",
+                        field_content
+                    ).wrap('<div>').parent().html();
+                    field += "<hr/>";
+                    this.DOM.questionFieldContainer.html(field);
+                    $("#user-radio-add").click($.proxy(function (event) {
+                        const option_list = $("#radio-option-list");
+                        const option_count = option_list.children().length + 1;
+                        if (option_count < 16)
+                        {
+                            const new_option = document.DOMFactory.elementWithId(
+                                "field-group-radio",
+                                "Option " + option_count, // {1}
+                                "", // {2}
+                                "" + option_count, // {3}
+                                "", // {4}
+                                "user-radio-" + option_count, // {5}
+                                "title of option " + option_count // {6}
+                            );
+                            option_list.append(new_option);
+                        }
+                    }, this));
+                    $("#user-radio-remove").click($.proxy(function (event) {
+                        const option_list = $("#radio-option-list");
+                        const option_count = option_list.children().length;
+                        if (option_count > 2) {
+                            option_list.children().last().remove();
+                        }
+                    }, this));
+                }
 
-                load: function () {
-                    QuestionDetailController.reset();
-                    QuestionDetailController.hide();
-                    QuestionListController.reloadData();
-                },
+                loadQuestionFieldCheckbox (data) {
+                    let field_content = "";
+                    if (data !== null) {
+                        const para = data["parameters"];
+                        if (para !== null)
+                        {
+                            const format = "user-checkbox-";
+                            const default_vals = para["user-checkbox-default"];
+                            let option_index;
+                            for (option_index = 1; option_index <= 16; option_index++) {
+                                const elem_id = format + option_index;
+                                if (typeof para[elem_id] !== 'undefined')
+                                {
+                                    let should_check = false;
+                                    if (default_vals.constructor === Array) {
+                                        should_check = ($.inArray(option_index.toString(), default_vals) >= 0);
+                                    } else {
+                                        should_check = (option_index === parseInt(default_vals));
+                                    }
+                                    const checked_val = (should_check) ? "checked" : "";
+                                    field_content += document.DOMFactory.elementWithId(
+                                        "field-group-checkbox",
+                                        "Option " + option_index, // {1}
+                                        para[elem_id], // {2}
+                                        "" + option_index, // {3}
+                                        checked_val, // {4}
+                                        "user-checkbox-" + option_index, // {5}
+                                        "title of option " + option_index // {6}
+                                    ).wrap('<div>').parent().html();
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        field_content += document.DOMFactory.elementWithId(
+                            "field-group-checkbox",
+                            "Option 1", // {1}
+                            "", // {2}
+                            "1", // {3}
+                            "", // {4}
+                            "user-checkbox-1", // {5}
+                            "title of option 1" // {6}
+                        ).wrap('<div>').parent().html();
+                        field_content += document.DOMFactory.elementWithId(
+                            "field-group-checkbox",
+                            "Option 2", // {1}
+                            "", // {2}
+                            "2", // {3}
+                            "", // {4}
+                            "user-checkbox-2", // {5}
+                            "title of option 2" // {6}
+                        ).wrap('<div>').parent().html();
+                    }
+                    let field = document.DOMFactory.elementWithId(
+                        "question-field-checkbox",
+                        field_content
+                    ).wrap('<div>').parent().html();
+                    field += "<hr/>";
+                    this.DOM.questionFieldContainer.html(field);
+                    $("#user-checkbox-add").click($.proxy(function (event) {
+                        const option_list = $("#checkbox-option-list");
+                        const option_count = option_list.children().length + 1;
+                        if (option_count < 16)
+                        {
+                            const new_option = document.DOMFactory.elementWithId(
+                                "field-group-checkbox",
+                                "Option " + option_count, // {1}
+                                "", // {2}
+                                "" + option_count, // {3}
+                                "", // {4}
+                                "user-checkbox-" + option_count, // {5}
+                                "title of option " + option_count // {6}
+                            );
+                            option_list.append(new_option);
+                        }
+                    }, this));
+                    $("#user-checkbox-remove").click($.proxy(function (event) {
+                        const option_list = $("#checkbox-option-list");
+                        const option_count = option_list.children().length;
+                        if (option_count > 2) {
+                            option_list.children().last().remove();
+                        }
+                    }, this));
+                    if (data !== null) {
+                        const para = data["parameters"];
+                        if (para !== null) {
+                            let elem_name;
+                            elem_name = "user-property-checkbox-min";
+                            if (typeof para[elem_name] !== 'undefined') {
+                                $("input[name=" + elem_name + "]").val(para[elem_name]);
+                            }
+                            elem_name = "user-property-checkbox-max";
+                            if (typeof para[elem_name] !== 'undefined') {
+                                $("input[name=" + elem_name + "]").val(para[elem_name]);
+                            }
+                        }
+                    }
+                }
 
-                reloadData: function () {
-                    APIService.getQuestionList(QuestionListController.reloadQuestionList);
-                },
+                loadQuestionFieldDropdown (data) {
+                    let field_content = "";
+                    if (data !== null) {
+                        const para = data["parameters"];
+                        if (para !== null)
+                        {
+                            const format = "user-dropdown-";
+                            let option_index;
+                            for (option_index = 1; option_index <= 16; option_index++) {
+                                const elem_id = format + option_index;
+                                if (typeof para[elem_id] !== 'undefined')
+                                {
+                                    field_content += document.DOMFactory.elementWithId(
+                                        "field-group-dropdown",
+                                        "Option " + option_index, // {1}
+                                        para[elem_id], // {2}
+                                        "user-dropdown-" + option_index, // {3}
+                                        "title of option " + option_index // {4}
+                                    ).wrap('<div>').parent().html();
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        field_content += document.DOMFactory.elementWithId(
+                            "field-group-dropdown",
+                            "Option 1", // {1}
+                            "", // {2}
+                            "user-dropdown-1", // {3}
+                            "title of option 1" // {4}
+                        ).wrap('<div>').parent().html();
+                        field_content += document.DOMFactory.elementWithId(
+                            "field-group-dropdown",
+                            "Option 2", // {1}
+                            "", // {2}
+                            "user-dropdown-2", // {3}
+                            "title of option 2" // {4}
+                        ).wrap('<div>').parent().html();
+                    }
+                    let field = document.DOMFactory.elementWithId(
+                        "question-field-dropdown",
+                        field_content
+                    ).wrap('<div>').parent().html();
+                    field += "<hr/>";
+                    this.DOM.questionFieldContainer.html(field);
+                    $("#user-dropdown-add").click($.proxy(function (event) {
+                        const option_list = $("#dropdown-option-list");
+                        const option_count = option_list.children().length + 1;
+                        if (option_count < 16)
+                        {
+                            const new_option = document.DOMFactory.elementWithId(
+                                "field-group-dropdown",
+                                "Option " + option_count, // {1}
+                                "", // {2}
+                                "user-dropdown-" + option_count, // {3}
+                                "title of option " + option_count // {4}
+                            );
+                            option_list.append(new_option);
+                        }
+                    }, this));
+                    $("#user-dropdown-remove").click($.proxy(function (event) {
+                        const option_list = $("#dropdown-option-list");
+                        const option_count = option_list.children().length;
+                        if (option_count > 2) {
+                            option_list.children().last().remove();
+                        }
+                    }, this));
+                    if (data !== null) {
+                        const para = data["parameters"];
+                        if (para !== null) {
+                            const elem_name = "user-property-dropdown-multiple";
+                            if (typeof para[elem_name] !== 'undefined') {
+                                $("input[name=" + elem_name + "]").prop("checked", true);
+                            }
+                        }
+                    }
+                }
 
-                setQuestionData: function (data) {
+            }
+
+            class QuestionListController {
+
+                constructor () {
+                    this.DOM = {
+                        questionCreateButton: $("#common-new-question"), // button
+                        questionList: $("#search-question-list"), // div
+                        searchQuestionInput: $("#search-group"),
+                        selectedQuestionId: null
+                    };
+                    this.detailController = new QuestionDetailController();
+                    this.bindEvent();
+                    this.load();
+                }
+
+                load () {
+                    this.detailController.reset();
+                    this.detailController.hide();
+                    this.reloadData();
+                }
+
+                bindEvent () {
+                    this.DOM.questionCreateButton.click($.proxy(this.createQuestionButtonClicked, this));
+                }
+
+                reloadData () {
+                    document.APIService.getQuestionList($.proxy(this.reloadQuestionList, this));
+                }
+
+                setQuestionData (data) {
                     $("#question-button-" + data["id"]).data(data);
-                },
+                }
 
-                reloadQuestionList: function (resp) {
+                reloadQuestionList (resp) {
                     console.log(resp);
-                    QuestionListController.storage.questionList.html("");
-                    var resp_question_list = resp["question_list"];
-                    for (var i in resp_question_list) {
-                        var resp_question = resp_question_list[i];
-                        var new_question_button = DOMFactory.elementWithId("question-button", "Question " + resp_question["id"], "btn-default");
+                    this.DOM.questionList.html("");
+                    const resp_question_list = resp["question_list"];
+                    for (let i in resp_question_list) {
+                        const resp_question = resp_question_list[i];
+                        const new_question_button = document.DOMFactory.elementWithId("question-button", "Question " + resp_question["id"], "btn-default");
                         new_question_button.attr('id', "question-button-" + resp_question['id']);
                         new_question_button.data(resp_question);
-                        new_question_button.click(QuestionListController.questionButtonClicked);
-                        QuestionListController.storage.questionList.prepend(new_question_button);
+                        new_question_button.click($.proxy(this.questionButtonClicked, this));
+                        this.DOM.questionList.prepend(new_question_button);
                     }
-                },
+                }
 
-                setSelectedQuestion: function (question_id) {
-                    QuestionListController.storage.selectedQuestionId = parseInt(question_id);
+                setSelectedQuestion (question_id) {
+                    this.DOM.selectedQuestionId = parseInt(question_id);
                     $(".question-button").removeClass("btn-primary");
                     if (question_id) {
                         $("#question-button-" + question_id.toString()).addClass("btn-primary");
                     }
-                },
+                }
 
-                createQuestionButtonClicked: function (event) {
-                    QuestionListController.setSelectedQuestion(null);
-                    QuestionDetailController.reset();
-                    QuestionDetailController.show();
-                    QuestionDetailController.focusOnTitle();
-                },
+                createQuestionButtonClicked (event) {
+                    this.setSelectedQuestion(null);
+                    this.detailController.reset();
+                    this.detailController.show();
+                    this.detailController.focusOnTitle();
+                }
 
-                questionButtonClicked: function (event) {
-                    var sender = $(this);
-                    var data = sender.data();
-                    QuestionListController.setSelectedQuestion(data["id"]);
-                    QuestionDetailController.loadWithData(data);
+                questionButtonClicked (event) {
+                    const sender = $(event.currentTarget);
+                    const data = sender.data();
+                    this.setSelectedQuestion(data["id"]);
+                    this.detailController.loadWithData(data);
                     console.log(data);
                 }
 
-            };
+            }
 
-            var ViewController = {
+            class ViewController {
 
-                storage: {
-
-                },
-
-                init: function () {
-                    ViewController.bindSearchPair();
-                    QuestionListController.init();
-                },
+                constructor () {
+                    this.listController = new QuestionListController();
+                    this.bindSearchPair();
+                }
                 
-                bindSearchPair: function () {
-                    var BindSearchEventPair = function (input_s, list_s, where_s) {
-                        $(input_s).on("change keyup paste", function () {
-                            var sc = $(this).val();
+                bindSearchPair () {
+                    const BindSearchEventPair = function (input_s, list_s, where_s) {
+                        $(input_s).on("change keyup paste", function (event) {
+                            const sc = $(event.currentTarget).val();
                             $(list_s).each(function () {
-                                var e = $(this);
-                                var st;
+                                const e = $(this);
+                                let st;
                                 if (where_s === null) {
                                     st = e.text();
                                 }
@@ -302,27 +624,175 @@
                     BindSearchEventPair("#search-question", "#search-question-list > button", null);
                 }
 
-            };
-
-            {
-                document.DOMFactory = DOMFactory;
-                document.APIService = APIService;
-                document.RootController = ViewController;
             }
 
-            APIService.init();
-            ViewController.init();
+            {
+                document.DOMFactory = new DOMFactory();
+                document.APIService = new APIService();
+                document.RootController = new ViewController();
+            }
 
         });
 
     </script>
-    <script id="template-question-button" language="text">
-
+    <script id="template-question-button" type="text/plain" language="text">
         <button type="button" class="btn {2} btn-block question-button">
             {1}
             <span class="glyphicon glyphicon-chevron-right btn-icon float-right"></span>
         </button>
-
+    </script>
+    <script id="template-field-group-radio" type="text/plain" language="text">
+        <div class="form-group">
+            <div class="row">
+                <label class="col-sm-3 control-label">{1}</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <input type="radio" name="user-radio-default" value="{3}" title="" {4}>
+                        </span>
+                        <input name="{5}" class="form-control"
+                                type="text" placeholder="{6}" value="{2}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script id="template-question-field-radio" type="text/plain" language="text">
+        <div id="question-field-radio" class="question-area">
+            <div class="question-field question-field-radio">
+                <div id="radio-option-list">
+                    {1}
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-9">
+                            <button id="user-radio-add" type="button" class="btn btn-success">
+                                <span class="glyphicon glyphicon-plus"></span>
+                                Add
+                            </button>
+                            <button id="user-radio-remove" type="button" class="btn btn-danger">
+                                <span class="glyphicon glyphicon-minus"></span>
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script id="template-field-group-checkbox" type="text/plain" language="text">
+        <div class="form-group">
+            <div class="row">
+                <label class="col-sm-3 control-label">{1}</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <input type="checkbox" name="user-checkbox-default" value="{3}"
+                                    title="" {4}>
+                        </span>
+                        <input name="{5}" class="form-control"
+                                type="text" placeholder="{6}" value="{2}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script id="template-question-field-checkbox" type="text/plain" language="text">
+        <div id="question-field-checkbox" class="question-area">
+            <div class="question-field question-field-property">
+                <div class="form-group">
+                    <div class="row">
+                        <label for="user-property-checkbox-min" class="col-sm-3 control-label">Minimum
+                            Count</label>
+                        <div class="col-sm-3">
+                            <input id="user-property-checkbox-min" name="user-property-checkbox-min"
+                                    class="form-control"
+                                    type="number" placeholder="0" value="0" min="0" step="1">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <label for="user-property-checkbox-max" class="col-sm-3 control-label">Maximum
+                            Count</label>
+                        <div class="col-sm-3">
+                            <input id="user-property-checkbox-max" name="user-property-checkbox-max"
+                                    class="form-control"
+                                    type="number" placeholder="2" value="2" min="0" step="1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="question-field question-field-checkbox">
+                <div id="checkbox-option-list">
+                    {1}
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-9">
+                            <button id="user-checkbox-add" type="button" class="btn btn-success">
+                                <span class="glyphicon glyphicon-plus"></span>
+                                Add
+                            </button>
+                            <button id="user-checkbox-remove" type="button" class="btn btn-danger">
+                                <span class="glyphicon glyphicon-minus"></span>
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script id="template-field-group-dropdown" type="text/plain" language="text">
+        <div class="form-group">
+            <div class="row">
+                <label class="col-sm-3 control-label">{1}</label>
+                <div class="col-sm-9">
+                    <input name="{3}" class="form-control"
+                            type="text" placeholder="{4}" value="{2}">
+                </div>
+            </div>
+        </div>
+    </script>
+    <script id="template-question-field-dropdown" type="text/plain" language="text">
+        <div id="question-field-dropdown" class="question-area">
+            <div class="question-field question-field-property">
+                <div class="form-group">
+                    <div class="row">
+                        <label for="user-property-dropdown-multiple" class="col-sm-3 control-label">Multiple</label>
+                        <div class="checkbox col-sm-9">
+                            <label>
+                                <input id="user-property-dropdown-multiple"
+                                        name="user-property-dropdown-multiple" type="checkbox" value="">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="question-field question-field-dropdown">
+                <div id="dropdown-option-list">
+                    {1}
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-9">
+                            <button id="user-dropdown-add" type="button" class="btn btn-success">
+                                <span class="glyphicon glyphicon-plus"></span>
+                                Add
+                            </button>
+                            <button id="user-dropdown-remove" type="button" class="btn btn-danger">
+                                <span class="glyphicon glyphicon-minus"></span>
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </script>
 </head>
 <body>
@@ -388,7 +858,7 @@
 
                         <div class="question-form">
 
-                            <form method="POST" class="form-horizontal">
+                            <form id="question-form" method="POST" class="form-horizontal">
 
                                 <input class="edit-title question-title" type="text" placeholder="Untitled Question"
                                        value="New Question" disabled>
@@ -458,186 +928,9 @@
                                     </div>
                                 </div>
 
-                                <!--
-
                                 <hr/>
 
-                                <div class="question-area">
-
-                                    <div class="question-field question-field-radio">
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-radio-1" class="col-sm-3 control-label">Option 1</label>
-                                                <div class="col-sm-9">
-                                                    <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <input type="radio" name="user-radio-default" value="1" title="">
-                                                </span>
-                                                        <input id="user-radio-1" name="user-radio-1" class="form-control"
-                                                               type="text" placeholder="title of option 1" value="">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-radio-2" class="col-sm-3 control-label">Option 2</label>
-                                                <div class="col-sm-9">
-                                                    <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <input type="radio" name="user-radio-default" value="2" title="">
-                                                </span>
-                                                        <input id="user-radio-2" name="user-radio-2" class="form-control"
-                                                               type="text" placeholder="title of option 2" value="">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-radio-add" class="col-sm-3 control-label"></label>
-                                                <div class="col-sm-9">
-                                                    <button id="user-radio-add" type="button" class="btn btn-success">
-                                                        <span class="glyphicon glyphicon-plus"></span>
-                                                        Add Option
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <hr/>
-
-                                <div class="question-area">
-
-                                    <div class="question-field question-field-property">
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-property-checkbox-min" class="col-sm-3 control-label">Minimum
-                                                    Count</label>
-                                                <div class="col-sm-3">
-                                                    <input id="user-property-checkbox-min" name="user-property-checkbox-min"
-                                                           class="form-control"
-                                                           type="number" placeholder="0" value="0" min="0" step="1">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-property-checkbox-max" class="col-sm-3 control-label">Maximum
-                                                    Count</label>
-                                                <div class="col-sm-3">
-                                                    <input id="user-property-checkbox-max" name="user-property-checkbox-max"
-                                                           class="form-control"
-                                                           type="number" placeholder="2" value="2" min="0" step="1">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="question-field question-field-checkbox">
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-checkbox-1" class="col-sm-3 control-label">Option 1</label>
-                                                <div class="col-sm-9">
-                                                    <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <input type="checkbox" name="user-checkbox-default" value="1"
-                                                           title="">
-                                                </span>
-                                                        <input id="user-checkbox-1" name="user-checkbox-1" class="form-control"
-                                                               type="text" placeholder="title of option 1" value="">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-checkbox-2" class="col-sm-3 control-label">Option 2</label>
-                                                <div class="col-sm-9">
-                                                    <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <input type="checkbox" name="user-checkbox-default" value="2"
-                                                           title="">
-                                                </span>
-                                                        <input id="user-checkbox-2" name="user-checkbox-2" class="form-control"
-                                                               type="text" placeholder="title of option 2" value="">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-checkbox-add" class="col-sm-3 control-label"></label>
-                                                <div class="col-sm-9">
-                                                    <button id="user-checkbox-add" type="button" class="btn btn-success">
-                                                        <span class="glyphicon glyphicon-plus"></span>
-                                                        Add Option
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <hr/>
-
-                                <div class="question-area">
-
-                                    <div class="question-field question-field-property">
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-property-dropdown-multiple" class="col-sm-3 control-label">Multiple</label>
-                                                <div class="checkbox col-sm-9">
-                                                    <label>
-                                                        <input id="user-property-dropdown-multiple"
-                                                               name="user-property-dropdown-multiple" type="checkbox" value="">
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="question-field question-field-dropdown">
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-dropdown-1" class="col-sm-3 control-label">Option 1</label>
-                                                <div class="col-sm-9">
-                                                    <input id="user-dropdown-1" name="user-dropdown-1" class="form-control"
-                                                           type="text" placeholder="title of option 1" value="">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-dropdown-2" class="col-sm-3 control-label">Option 2</label>
-                                                <div class="col-sm-9">
-                                                    <input id="user-dropdown-2" name="user-dropdown-2" class="form-control"
-                                                           type="text" placeholder="title of option 2" value="">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <label for="user-dropdown-add" class="col-sm-3 control-label"></label>
-                                                <div class="col-sm-9">
-                                                    <button id="user-dropdown-add" type="button" class="btn btn-success">
-                                                        <span class="glyphicon glyphicon-plus"></span>
-                                                        Add Option
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                -->
-
-                                <hr/>
+                                <div id="question-field-container"></div>
 
                                 <div class="form-group">
                                     <div class="question-button-group">
@@ -646,7 +939,7 @@
                                         </div>
                                         <div class="float-right">
                                             <button id="question-reset-button" type="button" class="btn btn-default">Reset</button>
-                                            <button id="question-save-button" type="button" class="btn btn-success" disabled>Save</button>
+                                            <button id="question-save-button" type="button" class="btn btn-success">Save</button>
                                         </div>
                                     </div>
                                 </div>

@@ -52,6 +52,18 @@ public class SecurityController {
         return result;
     }
 
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    public Map logout(HttpServletRequest request) {
+
+        HttpSession session = request.getSession();
+        session.removeAttribute("user");
+
+        Map result = new HashMap();
+        result.put("succeed", true);
+
+        return result;
+    }
+
     @RequestMapping(value = "/session", method = RequestMethod.POST)
     public String viewSession(HttpServletRequest request) {
 

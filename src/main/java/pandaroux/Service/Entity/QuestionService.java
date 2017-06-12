@@ -88,6 +88,10 @@ public class QuestionService {
             questionDB.setHas_commentary((Boolean) question.get("has_commentary"));
         }
 
+        if (question.containsKey("mandatory")) {
+            questionDB.setMandatory((Boolean) question.get("mandatory"));
+        }
+
         if (question.containsKey("id_question_type")) {
             QuestionType questionType = questionTypeRepository.findOne((int) question.get("id_question_type"));
             questionDB.setQuestionType(questionType);

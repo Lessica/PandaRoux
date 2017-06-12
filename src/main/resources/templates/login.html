@@ -52,7 +52,7 @@
                     }
                 },
                 loginCheck: function (callback, username, password) {
-                    $.ajax("/loginCheck", {
+                    $.ajax("/login", {
                         data: JSON.stringify({
                             "login": username,
                             "password": password

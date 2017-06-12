@@ -21,6 +21,10 @@ public class Question {
     @Type(type = "boolean")
     private boolean has_commentary;
 
+    @Column
+    @Type(type = "boolean")
+    private boolean mandatory;
+
     @ManyToOne
     @JoinColumn(name = "id_questionType")
     private QuestionType questionType;
@@ -32,7 +36,7 @@ public class Question {
     @JoinColumn(name = "id_teacher")
     private User teacher;
 
-    @Column
+    @Column(columnDefinition="TEXT")
     private String jsonParameters;
 
 
@@ -93,5 +97,13 @@ public class Question {
 
     public void setJsonParameters(String jsonParameters) {
         this.jsonParameters = jsonParameters;
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
     }
 }

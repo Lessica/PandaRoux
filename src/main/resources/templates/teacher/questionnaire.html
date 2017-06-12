@@ -5,6 +5,60 @@
       layout:decorate="site-base">
 <head>
     <title>Questionnaire</title>
+    <link th:href="@{/css/sweetalert.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap-datetimepicker.css}" rel="stylesheet">
+    <script th:src="@{/js/sweetalert.min.js}"></script>
+    <script th:src="@{/js/bootstrap-datetimepicker.js}"></script>
+    <script th:src="@{/js/multiselect.js}"></script>
+    <script>
+        $(function () {
+            // DOM Binding
+
+            'use strict';
+
+            class PanelController {
+
+                constructor() {
+
+                }
+
+                bindEvent() {
+
+                }
+
+            }
+
+            class QuizDetailController extends PanelController {
+
+                constructor() {
+                    super();
+                    this.DOMStorage = {
+                        startAtInput: $("#quiz-start-at"),
+                        endAtInput: $("#quiz-end-at"),
+                        questionSelectInput: $("#question-selection")
+                    };
+                    this.bindEvent();
+                }
+
+                bindEvent() {
+                    super.bindEvent();
+                    const datetimePickerConfig = {
+                        format: 'dd/mm/yyyy hh:ii',
+                        initialDate: new Date()
+                    };
+                    const changeDateCallback = function () {};
+                    this.DOMStorage.startAtInput.datetimepicker(datetimePickerConfig).on("changeDate", changeDateCallback);
+                    this.DOMStorage.endAtInput.datetimepicker(datetimePickerConfig).on("changeDate", changeDateCallback);
+                    this.DOMStorage.questionSelectInput.multiselect();
+                }
+
+            }
+
+            const quizDetailController = new QuizDetailController();
+
+
+        });
+    </script>
 </head>
 <body>
 

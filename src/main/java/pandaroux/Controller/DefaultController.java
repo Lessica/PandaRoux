@@ -23,7 +23,7 @@ public class DefaultController {
 
     @RequestMapping(value = "/")
     public String index(HttpServletRequest request) {
-        return SecurityService.fireWall("index", request);
+        return "index";
     }
 
     @RequestMapping(value = "/teacher")
@@ -49,6 +49,11 @@ public class DefaultController {
     @RequestMapping(value = "/teacher/questionnaire")
     public String teacherQuestionnaire(HttpServletRequest request) throws Exception {
         return SecurityService.fireWall("teacher/questionnaire", request, new String[] {"prof"});
+    }
+
+    @RequestMapping(value = "/teacher/statistics")
+    public String teacherStatistics(HttpServletRequest request) throws Exception {
+        return SecurityService.fireWall("teacher/statistics", request, new String[] {"prof"});
     }
 
     @RequestMapping(value = "/student")
