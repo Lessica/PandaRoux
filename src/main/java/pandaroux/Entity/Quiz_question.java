@@ -13,11 +13,11 @@ public class Quiz_question {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "id_question", insertable = false, updatable = false)
+    @JoinColumn(name = "id_question")
     private Question question;
 
     @ManyToOne
-    @JoinColumn(name = "id_quiz", insertable = false, updatable = false)
+    @JoinColumn(name = "id_quiz")
     private Quiz quiz;
 
     @OneToMany(mappedBy = "quiz_question")

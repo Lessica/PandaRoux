@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import pandaroux.Entity.Quiz_question;
 import pandaroux.Service.Entity.Quiz_questionService;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("api/quiz_question")
 public class Quiz_questionAPI {
@@ -16,7 +18,7 @@ public class Quiz_questionAPI {
     private Quiz_questionService quiz_questionService;
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public void add(@RequestBody Quiz_question quiz_question) {
-        quiz_questionService.save(quiz_question);
+    public Map add(@RequestBody Map quiz_question) throws Exception {
+        return quiz_questionService.add(quiz_question);
     }
 }
