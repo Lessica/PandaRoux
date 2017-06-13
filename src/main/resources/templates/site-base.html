@@ -17,81 +17,105 @@
     <link rel="stylesheet" th:href="@{/css/sweetalert.css}">
     <script th:src="@{/js/sweetalert.min.js}"></script>
     <script>
+        class BaseAPIService {
+            constructor() {
+                $.ajaxSetup({
+                    method: "POST",
+                    dataType: "json",
+                    contentType: "application/json; charset=UTF-8",
+                    timeout: 10000,
+                    error: BaseAPIService.errorHandler,
+                    async: true
+                });
+            }
+
+            static errorHandler(xmlHTTP, status, httperror) {
+                const resp = $.parseJSON(xmlHTTP.responseText);
+                if (resp && resp["message"]) {
+                    swal("Oops...", resp['message'], "error");
+                }
+            }
+        }
+
+        class DOMFactory {
+            elementWithId() {
+                if (arguments.length === 0)
+                    return null;
+                const elem_id = arguments[0];
+                let result = $("#template-" + elem_id).html();
+                for (let i = 1; i < arguments.length; i++) {
+                    const re = new RegExp('\\{' + (i) + '\\}', 'gm');
+                    result = result.replace(re, arguments[i]);
+                }
+                return $(result);
+            }
+        }
+    </script>
+    <script>
         $(function () {
 
             'use strict';
 
-            console.log("document ready");
+            console.log("base ready");
 
-            var APIService = {
-                init: function () {
-                    $.ajaxSetup({
-                        method: "POST",
-                        dataType: "json",
-                        contentType: "application/json; charset=UTF-8",
-                        timeout: 10000,
-                        error: APIService.errorHandler,
-                        async: true
-                    });
-                },
-                errorHandler: function (xmlHTTP, status, httperror) {
-                    if (httperror === "timeout") {
-                        swal("Oops...", "Connection Timeout (10)", "error");
-                    } else {
-                        var resp = $.parseJSON(xmlHTTP.responseText);
-                        if (resp && resp["message"]) {
-                            swal("Oops...", resp['message'], "error");
-                        }
-                    }
-                },
-                sessionCheck: function (callback) {
+            class SessionAPIService extends BaseAPIService {
+                sessionCheck(callback) {
                     $.ajax("/session", {
                         success: callback
                     });
-                },
-                logout: function (callback) {
+                }
+
+                logout(callback) {
                     $.ajax("/logout", {
                         success: callback
                     });
                 }
-            };
+            }
 
-            var SessionController = {
+            class SessionController {
 
-                storage: {
-                    logoutButton: $("#logout-button"),
-                    sessionButton: $("#session-button")
-                },
+                constructor() {
+                    this.SessionAPIService = new SessionAPIService();
+                    this.DOM = {
+                        logoutButton: $("#logout-button"),
+                        sessionButton: $("#session-button")
+                    };
+                    this.bindEvent();
+                    this.load();
+                }
 
-                init: function () {
-                    SessionController.bindEvent();
-                    if (SessionController.storage.sessionButton.length > 0) {
-                        APIService.sessionCheck(function (resp) {
-                            if (resp["name"]) {
-                                SessionController.storage.sessionButton.text(resp["name"]);
-                                SessionController.storage.logoutButton.data(resp);
-                            }
-                        });
+                load() {
+                    if (this.DOM.sessionButton.length > 0) {
+                        this.SessionAPIService.sessionCheck($.proxy(this.loadSessionData, this));
                     }
-                },
+                }
 
-                bindEvent: function () {
-                    SessionController.storage.logoutButton.click(SessionController.logoutButtonClicked);
-                },
+                bindEvent() {
+                    this.DOM.logoutButton.click($.proxy(this.logoutButtonClicked, this));
+                }
 
-                logoutButtonClicked: function (event) {
-                    var sender = $(this);
-                    var data = sender.data();
+                loadSessionData (resp) {
+                    if (resp["name"]) {
+                        this.DOM.sessionButton.text(resp["name"]);
+                        this.DOM.logoutButton.data(resp);
+                    }
+                }
+
+                logoutButtonClicked(event) {
+                    const sender = $(event.currentTarget);
+                    const data = sender.data();
                     console.log(data);
-                    APIService.logout(function (resp) {
+                    this.SessionAPIService.logout(function (resp) {
                         window.location.href = "/login";
                     });
                 }
 
-            };
+            }
 
-            APIService.init();
-            SessionController.init();
+            {
+                document.DOMFactory = new DOMFactory();
+                document.SessionController = new SessionController();
+            }
 
         });
     </script>

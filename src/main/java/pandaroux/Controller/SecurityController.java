@@ -35,11 +35,11 @@ public class SecurityController {
             put("loginSucces", true);
             put("redirectionLink", "/student/index");
             put("user", new User() {{
-                setId(2);
+                setId(1);
                 setName("Not on isep network");
                 setFirst_name("test");
                 setRole(new Role() {{
-                    setName("eleve");
+                    setName("prof");
                 }});
             }});
         }};

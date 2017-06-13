@@ -12,40 +12,7 @@
 
             console.log("document ready");
 
-            class DOMFactory {
-                elementWithId () {
-                    if (arguments.length === 0)
-                        return null;
-                    const elem_id = arguments[0];
-                    let result = $("#template-" + elem_id).html();
-                    for (let i = 1; i < arguments.length; i++) {
-                        const re = new RegExp('\\{' + (i) + '\\}', 'gm');
-                        result = result.replace(re, arguments[i]);
-                    }
-                    return $(result);
-                }
-            }
-
-            class APIService {
-
-                constructor() {
-                    $.ajaxSetup({
-                        method: "POST",
-                        dataType: "json",
-                        contentType: "application/json; charset=UTF-8",
-                        timeout: 10000,
-                        error: APIService.errorHandler,
-                        async: true
-                    });
-                }
-
-                static errorHandler(xmlHTTP, status, httperror) {
-                    const resp = $.parseJSON(xmlHTTP.responseText);
-                    if (resp && resp["message"]) {
-                        swal("Oops...", resp['message'], "error");
-                    }
-                }
-
+            class APIService extends BaseAPIService {
                 getMyGroupList (callback) {
                     $.ajax("/api/groupe/my", {
                         success: callback
@@ -86,7 +53,6 @@
             }
 
             {
-                document.DOMFactory = new DOMFactory();
                 document.APIService = new APIService();
                 document.RootController = new MyGroupController();
             }
