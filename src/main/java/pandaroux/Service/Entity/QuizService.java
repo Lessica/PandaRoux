@@ -84,6 +84,7 @@ public class QuizService {
 
         Map data = new HashMap();
         data.put("result", "succeed");
+        data.put("id_quiz", quizDB.getId());
 
         return data;
     }
