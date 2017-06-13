@@ -23,7 +23,7 @@ public class SecurityController {
 
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Map loginCheck(@RequestBody Map loginData,
+    public Map login(@RequestBody Map loginData,
                           HttpServletRequest request) throws Exception {
 
         // with isep network
@@ -33,13 +33,13 @@ public class SecurityController {
 
         Map result = new HashMap() {{
             put("loginSucces", true);
-            put("redirectionLink", "/teacher/index");
+            put("redirectionLink", "/student/index");
             put("user", new User() {{
-                setId(1);
+                setId(2);
                 setName("Not on isep network");
                 setFirst_name("test");
                 setRole(new Role() {{
-                    setName("prof");
+                    setName("eleve");
                 }});
             }});
         }};
@@ -65,14 +65,14 @@ public class SecurityController {
     }
 
     @RequestMapping(value = "/session", method = RequestMethod.POST)
-    public String viewSession(HttpServletRequest request) {
+    public Map viewSession(HttpServletRequest request) throws Exception {
 
         Map user = (Map) request.getSession(true).getAttribute("user");
 
         if (user == null) {
-            return "No user connected";
+            throw new Exception("No user connected");
         }
 
-        return "session : " + user.toString();
+        return user;
     }
 }

@@ -18,7 +18,6 @@ public class GroupeAPI {
     @Autowired
     private GroupeService groupeService;
 
-
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public Map getGroup(@PathVariable("id") int id) {
         return groupeService.getGroup(id);
@@ -47,9 +46,15 @@ public class GroupeAPI {
         return groupeService.removeStudentsFromGroupe(id_groupe, (List<Integer>) map.get("id_students"));
     }
 
-    @RequestMapping(value = "{id}/modify", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/modify", method = RequestMethod.POST)
     private Map modifyGroupe(@PathVariable("id") int id_groupe,
                              @RequestBody Map groupe) {
         return groupeService.modifyGroupe(id_groupe, groupe);
     }
+
+    @RequestMapping(value = "/my", method = RequestMethod.POST)
+    private Map myGroupe(HttpServletRequest request) throws Exception {
+        return groupeService.getStudentGroupes(SecurityService.getUserId(request));
+    }
+
 }

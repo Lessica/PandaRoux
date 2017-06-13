@@ -117,4 +117,15 @@ public class GroupeService {
 
         return data;
     }
+
+    public Map getStudentGroupes(int userId) {
+
+        Map groupesData = new HashMap();
+
+        groupesData.put("result", "succeed");
+        groupesData.put("groupes", groupeRepository.getStudentGroups(userId));
+
+        return groupesData;
+    }
+
 }

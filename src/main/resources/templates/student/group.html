@@ -5,7 +5,113 @@
       layout:decorate="site-base">
 <head>
     <title>Group</title>
+    <script>
+        $(document).ready(function () {
+
+            'use strict';
+
+            console.log("document ready");
+
+            class DOMFactory {
+                elementWithId () {
+                    if (arguments.length === 0)
+                        return null;
+                    const elem_id = arguments[0];
+                    let result = $("#template-" + elem_id).html();
+                    for (let i = 1; i < arguments.length; i++) {
+                        const re = new RegExp('\\{' + (i) + '\\}', 'gm');
+                        result = result.replace(re, arguments[i]);
+                    }
+                    return $(result);
+                }
+            }
+
+            class APIService {
+
+                constructor() {
+                    $.ajaxSetup({
+                        method: "POST",
+                        dataType: "json",
+                        contentType: "application/json; charset=UTF-8",
+                        timeout: 10000,
+                        error: APIService.errorHandler,
+                        async: true
+                    });
+                }
+
+                static errorHandler(xmlHTTP, status, httperror) {
+                    const resp = $.parseJSON(xmlHTTP.responseText);
+                    if (resp && resp["message"]) {
+                        swal("Oops...", resp['message'], "error");
+                    }
+                }
+
+                getMyGroupList (callback) {
+                    $.ajax("/api/groupe/my", {
+                        success: callback
+                    });
+                }
+            }
+
+            class MyGroupController {
+                constructor () {
+                    this.DOM = {
+                        courseList: $("#my-group-list")
+                    };
+                    this.bindEvent();
+                    this.load();
+                }
+
+                bindEvent() {
+
+                }
+
+                load() {
+                    document.APIService.getMyGroupList($.proxy(this.reloadMyGroupList, this));
+                }
+
+                reloadMyGroupList(resp) {
+                    console.log(resp);
+                    this.DOM.courseList.html("");
+                    if (resp["result"] === "succeed") {
+                        const groupes = resp["groupes"];
+                        for (let i in groupes) {
+                            const groupe = groupes[i];
+                            const new_groupe_panel = document.DOMFactory.elementWithId("course-panel", groupe["name"], groupe["id"], groupe["lecture_count"], groupe["quiz_count"]);
+                            this.DOM.courseList.prepend(new_groupe_panel);
+                        }
+                    }
+                }
+
+            }
+
+            {
+                document.DOMFactory = new DOMFactory();
+                document.APIService = new APIService();
+                document.RootController = new MyGroupController();
+            }
+
+        });
+    </script>
+    <script id="template-course-panel" type="text/plain" language="text">
+        <div class="col-sm-4 col-md-3 pt-course-panel">
+            <div class="panel panel-info course-panel">
+                <div class="panel-heading">
+                    <strong class="course-title">{1}</strong>
+                </div>
+                <div class="panel-body">
+                    <div class="quiz-notify">
+                        {3} session(s) in total.<br />
+                        {4} questionnaire(s) available .
+                    </div>
+                    <hr>
+                    <a href="/student/group/{2}">Access to sessions</a>
+                </div>
+            </div>
+        </div>
+    </script>
 </head>
+
 <body>
 
 <nav class="navbar navbar-default navbar-fixed-top">
@@ -31,7 +137,7 @@
 
     <div class="row roux-row">
 
-
+        <div id="my-group-list" class="course-panel-list"></div>
 
     </div>
 

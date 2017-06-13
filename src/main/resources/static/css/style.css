@@ -446,6 +446,9 @@ code {
     .row {
         margin: 0;
     }
+    .page-header {
+        display: none;
+    }
 }
 
 @media (min-width: 768px) {
@@ -454,18 +457,14 @@ code {
     }
 }
 
-#pt-course-panel {
+.course-panel-list {
+    margin-top: 16px;
+}
+
+.course-panel-list .pt-course-panel {
     text-align: center;
 }
 
-#sub1 {
-    background-color: #c4e6f5;
-}
-
-#pt-ques-panel {
-    text-align: center;
-}
-
-#left {
-    text-align: left;
+.pt-course-panel .quiz-notify {
+    min-height: 40px;
 }
