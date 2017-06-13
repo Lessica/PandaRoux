@@ -184,12 +184,12 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1497363756480,
+			"time": 1497365836333,
 			"name": "quiz_question add",
 			"description": "",
 			"collectionId": "24b876e5-415f-35bf-da07-7a2c94d1f448",
 			"responses": [],
-			"rawModeData": "{\n\t\"id_question\": 6,\n\t\"id_quiz\": 2\n}"
+			"rawModeData": "{\n\t\"id_question\": 6,\n\t\"id_quiz\": 1\n}"
 		},
 		{
 			"id": "4121bf0f-e0d3-5c48-cbf9-c245e772a49c",
@@ -340,12 +340,12 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1497276452822,
+			"time": 1497366943062,
 			"name": "quiz add",
 			"description": "",
 			"collectionId": "24b876e5-415f-35bf-da07-7a2c94d1f448",
 			"responses": [],
-			"rawModeData": "{\n\t\"id\": 1,\n\t\"active\": true,\n\t\"name\": \"quiz 1\",\n\t\"date_start\": \"2017-03-02\",\n\t\"date_end\": \"2017-03-03\",\n\t\"id_group\": 1,\n\t\"id_teacher\": 1\n}"
+			"rawModeData": "{\n\t\"id\": 1,\n\t\"active\": true,\n\t\"name\": \"quiz 1\",\n\t\"date_start\": \"2017-03-02\",\n\t\"date_end\": \"2017-03-03\",\n\t\"id_group\": 1,\n\t\"id_teacher\": 1,\n\t\"id_questions\" : [6, 7]\n}"
 		},
 		{
 			"id": "a1e4dbb8-bea1-2b50-2ef9-cd09e9caf53e",
@@ -511,21 +511,31 @@
 		{
 			"id": "d9cac859-f286-dc2c-b0c9-570ed825201f",
 			"headers": "Content-Type: application/json\n",
-			"url": "http://localhost:8080/api/answer/add2",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/api/answer/add",
+			"queryParams": [],
 			"preRequestScript": null,
 			"pathVariables": {},
+			"pathVariableData": [],
 			"method": "POST",
 			"data": [],
 			"dataMode": "raw",
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1494763063629,
+			"time": 1497364733199,
 			"name": "answer add",
 			"description": "",
 			"collectionId": "24b876e5-415f-35bf-da07-7a2c94d1f448",
 			"responses": [],
-			"rawModeData": "{\n\t\"text\": \"test\",\n\t\"date\": \"2017-03-02\",\n\t\"id_student\": 9604,\n\t\"id_quiz_question\": 1\n}"
+			"rawModeData": "{\n\t\"id\": 2,\n\t\"text\": \"test\",\n\t\"date\": \"2017-03-02\",\n\t\"parameters\": [2, 4]\n}"
 		},
 		{
 			"id": "e14f1db1-61c9-c4d6-3d46-84d94c44ccd4",

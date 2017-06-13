@@ -3,9 +3,7 @@ package pandaroux.Service.Entity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pandaroux.Entity.*;
-import pandaroux.Repository.GroupeRepository;
-import pandaroux.Repository.QuizRepository;
-import pandaroux.Repository.UserRepository;
+import pandaroux.Repository.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,6 +24,12 @@ public class QuizService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private Quiz_questionRepository quiz_questionRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
 
     public List<Map> findAll() {
         return quizRepository.findAllQuizzes();
@@ -36,7 +40,7 @@ public class QuizService {
     }
 
 
-    public Map add(Map quiz, int teacherId) throws ParseException {
+    public Map add(Map quiz, int teacherId) throws Exception {
 
         Quiz quizDB;
 
@@ -77,6 +81,25 @@ public class QuizService {
         if (quiz.containsKey("id_group")) {
             Groupe groupe = groupeRepository.findOne((int) quiz.get("id_group"));
             quizDB.setGroupe(groupe);
+        }
+
+        if (quiz.containsKey("id_questions")) {
+
+            List<Integer> id_questions = (List) quiz.get("id_questions");
+
+            for (int id_question : id_questions) {
+
+                Question question = questionRepository.findOne(id_question);
+
+                if (question == null) throw new Exception("Quiz or question does not exist");
+
+                Quiz_question quiz_question = new Quiz_question();
+
+                quiz_question.setQuiz(quizDB);
+                quiz_question.setQuestion(question);
+
+                quiz_questionRepository.save(quiz_question);
+            }
         }
 
 
