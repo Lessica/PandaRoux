@@ -129,9 +129,9 @@
                             confirmButtonText: "Yes, delete it!",
                             closeOnConfirm: false,
                             html: false
-                        }, function () {
+                        }, $.proxy(function () {
 
-                        });
+                        }, this));
                     }
                 }
 

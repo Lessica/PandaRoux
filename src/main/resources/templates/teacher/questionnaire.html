@@ -78,9 +78,9 @@
                             confirmButtonText: "Yes, delete it!",
                             closeOnConfirm: false,
                             html: false
-                        }, function () {
+                        }, $.proxy(function () {
 
-                        });
+                        }, this));
                     }
                 }
 
@@ -90,6 +90,11 @@
 
                 constructor () {
                     this.detailController = new QuizDetailController();
+                    this.load();
+                }
+
+                load () {
+
                 }
 
             }
@@ -103,8 +108,9 @@
 
                 bindSearchPair () {
                     const BindSearchEventPair = function (input_s, list_s, where_s) {
-                        $(input_s).on("change keyup paste", function (event) {
-                            const sc = $(event.currentTarget).val();
+                        $(input_s).on("change keyup paste", $.proxy(function (event) {
+                            const sender = $(event.currentTarget);
+                            const sc = sender.val();
                             $(list_s).each(function () {
                                 const e = $(this);
                                 let st;
@@ -121,7 +127,7 @@
                                     e.hide();
                                 }
                             });
-                        });
+                        }, this));
                     };
                     BindSearchEventPair("#search-quiz-opened", "#quiz-button-list-opened > button", null);
                     BindSearchEventPair("#search-quiz-closed", "#quiz-button-list-closed > button", null);
