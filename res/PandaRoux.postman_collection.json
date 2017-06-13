@@ -378,7 +378,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"id\": 1,\n\t\"active\": true,\n\t\"name\": \"quiz 1\",\n\t\"date_start\": \"2017-03-02\",\n\t\"date_end\": \"2017-03-03\",\n\t\"id_groupe\": 1\n}"
+							"raw": "{\n\t\"id\": 1,\n\t\"active\": true,\n\t\"name\": \"quiz 1\",\n\t\"date_start\": \"2017-03-02\",\n\t\"date_end\": \"2017-03-03\",\n\t\"id_groupe\": 1,\n\t\"id_questions\": [\n\t\t100,\n\t\t101,\n\t\t102,\n\t\t103,\n\t\t107,\n\t\t106,\n\t\t105,\n\t\t127\n\t]\n}"
 						},
 						"description": ""
 					},
@@ -408,6 +408,23 @@
 							"mode": "raw",
 							"raw": ""
 						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Student",
+			"description": "",
+			"item": [
+				{
+					"name": "my groups",
+					"request": {
+						"url": "http://localhost:8080/api/groupe/my",
+						"method": "POST",
+						"header": [],
+						"body": {},
 						"description": ""
 					},
 					"response": []
