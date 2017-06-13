@@ -10,6 +10,7 @@ import pandaroux.Repository.AnswerRepository;
 import pandaroux.Repository.QuestionRepository;
 import pandaroux.Repository.Quiz_questionRepository;
 import pandaroux.Repository.UserRepository;
+import pandaroux.Service.ParametersService;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -88,14 +89,7 @@ public class AnswerService {
 
         List<Map> answers = answerRepository.getAnswers();
 
-        for(int i=0; i<answers.size(); i++) {
-
-            String parameters = (String) answers.get(i).get("parameters");
-
-            Object object = new Gson().fromJson(parameters, Object.class);
-
-            answers.get(i).put("parameters", object);
-        }
+        answers = ParametersService.parametersObject(answers);
 
         data.put("answer_list", answers);
 

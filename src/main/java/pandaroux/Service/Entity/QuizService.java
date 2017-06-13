@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pandaroux.Entity.*;
 import pandaroux.Repository.*;
+import pandaroux.Service.ParametersService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,14 +43,7 @@ public class QuizService {
 
         List<Map> questions = questionRepository.getQuizQuestions(id);
 
-        for(int i=0; i<questions.size(); i++) {
-
-            String parameters = (String) questions.get(i).get("parameters");
-
-            Object object = new Gson().fromJson(parameters, Object.class);
-
-            questions.get(i).put("parameters", object);
-        }
+        questions = ParametersService.parametersObject(questions);
 
         data.put("questons", questions);
 

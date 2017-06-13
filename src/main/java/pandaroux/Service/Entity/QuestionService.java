@@ -9,6 +9,7 @@ import pandaroux.Entity.User;
 import pandaroux.Repository.QuestionRepository;
 import pandaroux.Repository.QuestionTypeRepository;
 import pandaroux.Repository.UserRepository;
+import pandaroux.Service.ParametersService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,14 +33,7 @@ public class QuestionService {
 
         List<Map> questions = questionRepository.getQuestions();
 
-        for(int i=0; i<questions.size(); i++) {
-
-            String parameters = (String) questions.get(i).get("parameters");
-
-            Object object = new Gson().fromJson(parameters, Object.class);
-
-            questions.get(i).put("parameters", object);
-        }
+        questions = ParametersService.parametersObject(questions);
 
         data.put("question_list", questions);
 
