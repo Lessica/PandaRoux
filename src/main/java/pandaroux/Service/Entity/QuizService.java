@@ -1,5 +1,6 @@
 package pandaroux.Service.Entity;
 
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pandaroux.Entity.*;
@@ -36,7 +37,23 @@ public class QuizService {
     }
 
     public Map getQuiz(int id) {
-        return quizRepository.getQuiz(id);
+
+        Map data = quizRepository.getQuiz(id);
+
+        List<Map> questions = questionRepository.getQuizQuestions(id);
+
+        for(int i=0; i<questions.size(); i++) {
+
+            String parameters = (String) questions.get(i).get("parameters");
+
+            Object object = new Gson().fromJson(parameters, Object.class);
+
+            questions.get(i).put("parameters", object);
+        }
+
+        data.put("questons", questions);
+
+        return data;
     }
 
 
@@ -101,7 +118,6 @@ public class QuizService {
                 quiz_questionRepository.save(quiz_question);
             }
         }
-
 
         quizRepository.save(quizDB);
 
