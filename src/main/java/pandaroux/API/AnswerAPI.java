@@ -26,8 +26,9 @@ public class AnswerAPI {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    private Map add(@RequestBody Map answer) throws ParseException {
+    public Map add(@RequestBody Map answer) throws ParseException {
         return answerService.add(answer);
     }
+
 
 }
