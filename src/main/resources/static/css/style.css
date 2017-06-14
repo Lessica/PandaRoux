@@ -482,6 +482,14 @@ code {
     text-align: center;
 }
 
+.quiz-panel-list {
+    margin-top: 16px;
+}
+
+.quiz-panel-list .pt-quiz-panel {
+    text-align: center;
+}
+
 .datepicker-inline {
     margin-left: auto;
     margin-right: auto;
@@ -512,4 +520,17 @@ code {
 
 .c-rating__item {
     background-position: -24px 0 !important;
+}
+
+.session-page-header {
+    padding-bottom: 9px;
+    margin-top: 40px;
+}
+
+.tab-content {
+    padding-top: 18px;
+}
+
+.quiz-cover {
+    height: 24px;
 }

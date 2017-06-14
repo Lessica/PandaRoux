@@ -22,6 +22,11 @@
                         success: callback
                     });
                 }
+                getGroupQuizList (callback, gid) {
+                    $.ajax("/api/groupe/" + gid.toString() + "/quiz", {
+                        success: callback
+                    });
+                }
             }
 
             class MySessionController {
@@ -30,6 +35,7 @@
                     this.DOM = {
                         groupNameHeader: $("#my-group-name"),
                         mySessionList: $("#my-session-list"),
+                        myQuizList: $("#my-quiz-list")
                     };
                     const href = window.location.href;
                     const pattern = /\/student\/group\/(\d+)/;
@@ -39,6 +45,7 @@
 
                 load () {
                     document.APIService.getGroupDetail($.proxy(this.loadGroupDetail, this), this.group_id);
+                    document.APIService.getGroupQuizList($.proxy(this.loadGroupQuizList, this), this.group_id);
                 }
 
                 loadGroupDetail(resp) {
@@ -49,7 +56,12 @@
                     session_list.html("");
                     for (let i in lectures) {
                         const lecture = lectures[i];
-                        const new_session_panel = document.DOMFactory.elementWithId("session-panel", lecture["name"], lecture["commentary"]);
+                        let panel_type = "success";
+                        const date_sec = Date.parse(lecture["date"]);
+                        if (date_sec < new Date().getTime()) {
+                            panel_type = "default";
+                        }
+                        const new_session_panel = document.DOMFactory.elementWithId("session-panel", lecture["name"], lecture["commentary"], "panel-" + panel_type, "btn-" + panel_type);
                         const date_elem = new_session_panel.find(".session-date");
                         date_elem.datepicker({
                             todayHighlight: true,
@@ -63,6 +75,7 @@
                         } else {
                             edit_button.prop("disabled", false);
                         }
+                        edit_button.data(lecture);
                         const session_overlay = new_session_panel.find(".session-overlay");
                         edit_button.click($.proxy(function (event) {
                             session_overlay.fadeToggle(200);
@@ -70,6 +83,36 @@
                         const session_rate = new_session_panel.find(".session-rate")[0];
                         rating(session_rate, lecture["rate"], 5, function (rating) {});
                         session_list.prepend(new_session_panel);
+                    }
+                }
+
+                loadGroupQuizList (resp) {
+                    console.log(resp);
+                    const quizzes = resp["quizzes"];
+                    const quizzes_list = this.DOM.myQuizList;
+                    quizzes_list.html("");
+                    for (let i in quizzes) {
+                        const quiz = quizzes[i];
+                        if (!quiz["active"]) {
+                            continue;
+                        }
+                        let panel_type = "success";
+                        const now_sec = new Date().getTime();
+                        const date_start_sec = Date.parse(quiz["date_start"]);
+                        const date_end_sec = Date.parse(quiz["date_end"]);
+                        if (date_start_sec > now_sec) {
+                            panel_type = "warning";
+                        } else if (date_end_sec < now_sec) {
+                            panel_type = "default";
+                        }
+                        const new_quiz_panel = document.DOMFactory.elementWithId("quiz-panel", quiz["name"], "panel-" + panel_type, "btn-" + panel_type, quiz["date_start"], quiz["date_end"]);
+                        const edit_button = new_quiz_panel.find(".edit-quiz");
+                        edit_button.data(quiz);
+                        if (date_end_sec < now_sec) {
+                            quizzes_list.append(new_quiz_panel);
+                        } else {
+                            quizzes_list.prepend(new_quiz_panel);
+                        }
                     }
                 }
 
@@ -84,7 +127,7 @@
     </script>
     <script id="template-session-panel" type="text/plain" language="text">
         <div class="col-sm-6 col-md-4 col-lg-3 pt-session-panel">
-            <div class="panel panel-success session-panel">
+            <div class="panel {3} session-panel">
                 <div class="panel-heading">
                     <strong class="session-title">{1}</strong>
                 </div>
@@ -98,9 +141,30 @@
                         </div>
                     </div>
                     <hr />
-                    <button type="button" class="btn btn-success btn-block edit-session">
+                    <button type="button" class="btn {4} btn-block edit-session">
                         <span class="glyphicon glyphicon-search"></span>
                         Toggle Note
+                    </button>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script id="template-quiz-panel" type="text/plain" language="text">
+        <div class="col-sm-6 col-md-4 col-lg-3 pt-quiz-panel">
+            <div class="panel {2} quiz-panel">
+                <div class="panel-heading">
+                    <strong class="quiz-title">{1}</strong>
+                </div>
+                <div class="panel-body">
+                    <div class="quiz-cover">
+                        <div>
+                            From {4} To {5}
+                        </div>
+                    </div>
+                    <hr />
+                    <button type="button" class="btn {3} btn-block edit-quiz">
+                        <span class="glyphicon glyphicon-edit"></span>
+                        Reply to
                     </button>
                 </div>
             </div>
@@ -127,13 +191,31 @@
 
 <div layout:fragment="container">
 
-    <div class="page-header">
+    <div class="session-page-header">
         <h1 id="my-group-name">&nbsp;</h1>
     </div>
 
     <div class="row roux-row">
 
-        <div id="my-session-list" class="session-panel-list"></div>
+        <div class="session-tabs" style="margin-left: 16px; margin-right: 16px;">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#sessions" role="tab" data-toggle="tab">Sessions</a></li>
+                <li role="presentation"><a href="#questionnaires" role="tab" data-toggle="tab">Questionnaires</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="sessions">
+                    <div id="my-session-list" class="row session-panel-list"></div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="questionnaires">
+                    <div id="my-quiz-list" class="row quiz-panel-list"></div>
+                </div>
+            </div>
+
+        </div>
 
     </div>
 

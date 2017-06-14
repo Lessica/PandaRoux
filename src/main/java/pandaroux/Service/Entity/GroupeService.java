@@ -138,36 +138,8 @@ public class GroupeService {
         data.put("id_groupe", groupeDB.getId());
 
         List<Map> groupQuizzes = groupeRepository.getGroupQuizzes(id_groupe);
-        data.put("quizzes_active", new ArrayList<Map>());
-        data.put("quizzes_inactive", new ArrayList<Map>());
-        data.put("quizzes_finished", new ArrayList<Map>());
-        data.put("quizzes_coming", new ArrayList<Map>());
+        data.put("quizzes", groupQuizzes);
 
-
-        Date now = new Date();
-
-        System.out.println(new SimpleDateFormat("yyyy-MM-dd").format(now));
-
-        for (Map groupQuiz : groupQuizzes) {
-
-            Date date_start = (Date) groupQuiz.get("date_start");
-            Date date_end = (Date) groupQuiz.get("date_end");
-            boolean active = (boolean) groupQuiz.get("active");
-
-            if (!active) {
-                ((List) data.get("quizzes_inactive")).add(groupQuiz);
-            }
-            else if (now.after(date_start) && now.before(date_end)){
-                ((List) data.get("quizzes_active")).add(groupQuiz);
-            }
-            else if (now.after(date_end)) {
-                ((List) data.get("quizzes_finished")).add(groupQuiz);
-            }
-            else {
-                ((List) data.get("quizzes_coming")).add(groupQuiz);
-            }
-
-        }
         return data;
     }
 
