@@ -21,7 +21,4 @@ public interface QuestionRepository extends CrudRepository<Question, Integer> {
     @Query("SELECT q.id AS id, q.has_commentary AS has_commentary, q.mandatory AS mandatory, q.name AS name, q.questionType.id AS id_question_type, q.teacher.id AS id_teacher,  q.jsonParameters AS parameters FROM Question q JOIN q.quiz_question qq WHERE qq.quiz.id = ?1")
     List<Map> getQuizQuestions(int id_quiz);
 
-    @Query("SELECT q.id AS id, q.name AS name FROM Question q WHERE q.teacher.id = ?1")
-    List<Map> getTeacherQuestionsBrief(int id);
-
 }
