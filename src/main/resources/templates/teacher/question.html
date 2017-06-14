@@ -566,10 +566,10 @@
                 reloadQuestionList (resp) {
                     console.log(resp);
                     this.DOM.questionList.html("");
-                    const resp_question_list = resp["question_list"];
+                    const resp_question_list = resp["teacher_questions"];
                     for (let i in resp_question_list) {
                         const resp_question = resp_question_list[i];
-                        const new_question_button = document.DOMFactory.elementWithId("question-button", "Question " + resp_question["id"], "btn-default");
+                        const new_question_button = document.DOMFactory.elementWithId("question-button", resp_question["name"], "btn-default");
                         new_question_button.attr('id', "question-button-" + resp_question['id']);
                         new_question_button.data(resp_question);
                         new_question_button.click($.proxy(this.questionButtonClicked, this));

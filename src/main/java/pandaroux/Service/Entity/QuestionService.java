@@ -45,7 +45,10 @@ public class QuestionService {
         Map data = new HashMap();
 
         data.put("result", "succeed");
-        data.put("teacher_questions", questionRepository.getTeacherQuestions(userId));
+
+        List<Map> questions = questionRepository.getTeacherQuestions(userId);
+        questions = ParametersService.parametersObject(questions);
+        data.put("teacher_questions", questions);
 
         return data;
 

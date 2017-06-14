@@ -17,8 +17,24 @@
             console.log("document ready");
 
             class APIService extends BaseAPIService {
+                getGroupList (callback) {
+                    $.ajax("/api/groupe", {
+                        success: callback
+                    });
+                }
+                getQuestionList (callback) {
+                    $.ajax("/api/question/teacher", {
+                        success: callback
+                    });
+                }
                 getQuizList (callback) {
-                    $.ajax("/api/quiz/initData", {
+                    $.ajax("/api/quiz/teacher", {
+                        success: callback
+                    });
+                }
+                addQuiz (callback, form_data) {
+                    $.ajax("/api/quiz/add", {
+                        data: JSON.stringify(form_data),
                         success: callback
                     });
                 }
@@ -32,19 +48,42 @@
                         quizTitleInput: $("#quiz-title-input"),
                         startAtInput: $("#quiz-start-at"),
                         endAtInput: $("#quiz-end-at"),
+                        quizActiveOption: $("#quiz-active-option"),
                         quizDeleteButton: $("#quiz-delete-button"),
+                        quizResetButton: $("#quiz-reset-button"),
+                        quizPublishButton: $("#quiz-publish-button"),
                         quizRepeatFor: $("#quiz-repeat-for"),
                         quizTargetClass: $("#quiz-target-class"),
                         quizQuestionLeft: $("#question-selection"),
                         quizQuestionRight: $("#question-selection_to"),
+                        quizQuestionData: null,
                         quizDetailData: null
                     };
                     this.bindEvent();
+                    this.load();
+                }
+
+                load () {
+                    document.APIService.getGroupList($.proxy(function (resp) {
+                        console.log(resp);
+                        const group_list = this.DOM.quizTargetClass;
+                        if (resp["result"] === "succeed") {
+                            const resp_group_list = resp["groupes"];
+                            let options = '';
+                            for (let i in resp_group_list) {
+                                const resp_group = resp_group_list[i];
+                                options = '<option value="' + resp_group['id'] + '">' + resp_group['name'] + '</option>' + options;
+                            }
+                            options = '<option value="0">Unassigned</option>' + options;
+                            group_list.html(options);
+                        }
+                    }, this));
+                    document.APIService.getQuestionList($.proxy(this.loadQuestionList, this));
                 }
 
                 bindEvent () {
                     const datetimePickerConfig = {
-                        format: 'dd/mm/yyyy hh:ii',
+                        format: 'yyyy-mm-dd hh:ii',
                         initialDate: new Date(),
                         autoclose: true
                     };
@@ -53,7 +92,11 @@
                     this.DOM.startAtInput.datetimepicker(datetimePickerConfig).on("changeDate", changeDateCallback);
                     this.DOM.endAtInput.datetimepicker(datetimePickerConfig).on("changeDate", changeDateCallback);
                     this.DOM.quizQuestionLeft.multiselect();
-                    this.DOM.quizDeleteButton.click();
+                    this.DOM.quizDeleteButton.click($.proxy(this.quizDeleteButtonClicked, this));
+                    this.DOM.quizResetButton.click($.proxy(function (event) {
+                        this.reset();
+                    }, this));
+                    this.DOM.quizPublishButton.click($.proxy(this.quizPublishButtonClicked, this));
                 }
 
                 hide () {
@@ -69,6 +112,8 @@
                 }
 
                 reset () {
+                    this.DOM.quizActiveOption.prop("checked", true);
+                    this.DOM.quizDetailData = null;
                     this.DOM.quizTitleInput.val("");
                     this.DOM.quizRepeatFor.val("1");
                     this.DOM.quizTargetClass.val("0");
@@ -76,12 +121,11 @@
                     this.DOM.endAtInput.datetimepicker('update', new Date(new Date().getTime() + (7 * 24 * 3600 * 1000)));
 //                    this.DOM.quizQuestionLeft.html("");
                     this.DOM.quizQuestionRight.html("");
+                    this.loadQuestionList(this.DOM.quizQuestionData);
                 }
 
                 quizDeleteButtonClicked (event) {
                     const sender = $(event.currentTarget);
-                    const data = sender.data();
-                    console.log(data);
                     if (this.DOM.quizDetailData === null) { // new question
                         this.hide();
                         this.reset();
@@ -102,6 +146,76 @@
                     }
                 }
 
+                quizPublishButtonClicked (event) {
+                    const sender = $(event.currentTarget);
+                    const quiz_active = this.DOM.quizActiveOption.is(":checked");
+                    const quiz_name = this.DOM.quizTitleInput.val();
+                    if (quiz_name.length === 0) {
+                        swal("Oops...", "The title of questionnaire cannot be empty.", "error");
+                        return;
+                    }
+                    const quiz_id_groupe = parseInt(this.DOM.quizTargetClass.val());
+                    const quiz_date_start = this.DOM.startAtInput.val();
+                    const quiz_date_end = this.DOM.endAtInput.val();
+                    const quiz_repeat_for = parseInt(this.DOM.quizRepeatFor.val());
+                    const quiz_questions_elem = this.DOM.quizQuestionRight.children();
+                    const quiz_questions = [];
+                    $.each(quiz_questions_elem, function (index, value) {
+                        const input_value = $(value).val();
+                        quiz_questions.push(parseInt(input_value));
+                    });
+                    if (quiz_questions.length === 0) {
+                        swal("Oops...", "The questionnaire should contain at least 1 question.", "error");
+                        return;
+                    }
+                    const quiz = {
+                        "active": quiz_active,
+                        "name": quiz_name,
+                        "id_groupe": quiz_id_groupe,
+                        "date_start": quiz_date_start,
+                        "date_end": quiz_date_end,
+                        "repeat_for": quiz_repeat_for,
+                        "id_questions": quiz_questions
+                    };
+                    console.log(quiz);
+                    document.APIService.addQuiz($.proxy(function (resp) {
+                        if (resp["result"] === "succeed") {
+                            swal("Saved!",
+                                "This quiz has been saved.",
+                                "success");
+                            if (this.DOM.quizDetailData === null)
+                            {
+                                document.RootController.listController.load();
+                            }
+                            else
+                            {
+                                // Never
+                            }
+                        }
+                    }, this), quiz);
+                }
+
+                loadQuestionList (resp) {
+                    if (resp !== null) {
+                        console.log(resp);
+                        this.DOM.quizQuestionData = resp;
+                        const question_list = this.DOM.quizQuestionLeft;
+                        if (resp["result"] === "succeed") {
+                            const resp_teacher_questions = resp["teacher_questions"];
+                            let options = '';
+                            for (let i in resp_teacher_questions) {
+                                const resp_teacher_question = resp_teacher_questions[i];
+                                options = '<option value="' + resp_teacher_question['id'] + '">' + resp_teacher_question['name'] + '</option>' + options;
+                            }
+                            question_list.html(options);
+                        }
+                    }
+                }
+
+                loadRelatedData (resp) {
+
+                }
+
             }
 
             class QuizListController {
@@ -109,8 +223,10 @@
                 constructor () {
                     this.DOM = {
                         addQuizButton: $("#add-new-quiz"),
-                        quizOpenedList: $("#quiz-button-list-opened"),
-                        quizClosedList: $("#quiz-button-list-closed"),
+                        quizActiveList: $("#quiz-button-list-active"),
+                        quizInactiveList: $("#quiz-button-list-inactive"),
+                        quizFinishedList: $("#quiz-button-list-finished"),
+                        quizComingList: $("#quiz-button-list-coming"),
                         selectedQuizId: null
                     };
                     this.detailController = new QuizDetailController();
@@ -178,8 +294,12 @@
                             });
                         }, this));
                     };
-                    BindSearchEventPair("#search-quiz-opened", "#quiz-button-list-opened > button", null);
-                    BindSearchEventPair("#search-quiz-closed", "#quiz-button-list-closed > button", null);
+                    const categories = ["active", "coming", "finished", "inactive"];
+                    for (let i = 0; i < categories.length; i++)
+                    {
+                        const category = categories[i];
+                        BindSearchEventPair("#search-quiz-" + category, "#quiz-button-list-" + category + " > button", null);
+                    }
                 }
 
             }
@@ -225,39 +345,40 @@
         <!-- Quiz Area -->
         <div class="col-sm-4">
 
+            <button id="add-new-quiz" type="button" class="btn btn-success btn-block"
+                    data-toggle="modal" data-target="#new-quiz-popup">
+                <span class="glyphicon glyphicon-plus"></span>
+                New Questionnaire
+            </button>
+            <hr>
+
             <div class="panel-group quiz-category" id="quiz-category" role="tablist">
 
-                <!-- Opened -->
+                <!-- Active -->
                 <div class="panel panel-default roux-panel">
                     <div class="panel-heading" role="tab">
                         <h4 class="panel-title">
-                            <a role="button" data-toggle="collapse" data-parent="#quiz-category" href="#quiz-opened">
-                                Opened
+                            <a role="button" data-toggle="collapse" data-parent="#quiz-category" href="#quiz-active">
+                                Active
                             </a>
                         </h4>
                     </div>
-                    <div id="quiz-opened" class="panel-collapse collapse in" role="tabpanel">
+                    <div id="quiz-active" class="panel-collapse collapse in" role="tabpanel">
                         <div class="panel-body">
 
                             <div class="input-group">
                                 <span class="input-group-addon">
                                     <span class="glyphicon glyphicon-search"></span>
                                 </span>
-                                <input type="text" id="search-quiz-opened" class="form-control"
+                                <input type="text" id="search-quiz-active" class="form-control"
                                        placeholder="Search questionnaire">
                             </div>
 
                             <br>
 
                             <div class="scroll-list">
-                                <div class="scroll-list-quiz opened">
-                                    <button id="add-new-quiz" type="button" class="btn btn-success btn-block"
-                                            data-toggle="modal" data-target="#new-quiz-popup">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                        New
-                                    </button>
-                                    <hr>
-                                    <div id="quiz-button-list-opened"></div>
+                                <div class="scroll-list-quiz active">
+                                    <div id="quiz-button-list-active"></div>
                                 </div>
                             </div>
 
@@ -267,32 +388,32 @@
                     </div>
                 </div>
 
-                <!-- Closed -->
+                <!-- Coming -->
                 <div class="panel panel-default roux-panel">
                     <div class="panel-heading" role="tab">
                         <h4 class="panel-title">
                             <a class="collapsed" role="button" data-toggle="collapse" data-parent="#quiz-category"
-                               href="#quiz-closed">
-                                Closed
+                               href="#quiz-coming">
+                                Coming
                             </a>
                         </h4>
                     </div>
-                    <div id="quiz-closed" class="panel-collapse collapse" role="tabpanel">
+                    <div id="quiz-coming" class="panel-collapse collapse" role="tabpanel">
                         <div class="panel-body">
 
                             <div class="input-group">
                                 <span class="input-group-addon">
                                     <span class="glyphicon glyphicon-search"></span>
                                 </span>
-                                <input type="text" id="search-quiz-closed" class="form-control"
+                                <input type="text" id="search-quiz-coming" class="form-control"
                                        placeholder="Search questionnaire">
                             </div>
 
                             <br>
 
                             <div class="scroll-list">
-                                <div class="scroll-list-quiz closed">
-                                    <div id="quiz-button-list-closed"></div>
+                                <div class="scroll-list-quiz coming">
+                                    <div id="quiz-button-list-coming"></div>
                                 </div>
                             </div>
 
@@ -301,6 +422,77 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Finished -->
+                <div class="panel panel-default roux-panel">
+                    <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#quiz-category"
+                               href="#quiz-finished">
+                                Finished
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="quiz-finished" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
+
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </span>
+                                <input type="text" id="search-quiz-finished" class="form-control"
+                                       placeholder="Search questionnaire">
+                            </div>
+
+                            <br>
+
+                            <div class="scroll-list">
+                                <div class="scroll-list-quiz finished">
+                                    <div id="quiz-button-list-finished"></div>
+                                </div>
+                            </div>
+
+                            <br>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inactive -->
+                <div class="panel panel-default roux-panel">
+                    <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#quiz-category"
+                               href="#quiz-inactive">
+                                Inactive
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="quiz-inactive" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
+
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </span>
+                                <input type="text" id="search-quiz-inactive" class="form-control"
+                                       placeholder="Search questionnaire">
+                            </div>
+
+                            <br>
+
+                            <div class="scroll-list">
+                                <div class="scroll-list-quiz inactive">
+                                    <div id="quiz-button-list-inactive"></div>
+                                </div>
+                            </div>
+
+                            <br>
+
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -319,6 +511,17 @@
                                 <input id="quiz-title-input" class="edit-title quiz-title" type="text" placeholder="Untitled Questionnaire">
 
                                 <hr/>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label for="quiz-active-option" class="col-sm-3 control-label">Active</label>
+                                        <div class="checkbox col-sm-9">
+                                            <label>
+                                                <input id="quiz-active-option" type="checkbox" checked value="">
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="form-group">
                                     <div class="row">
@@ -429,7 +632,7 @@
                                             </button>
                                         </div>
                                         <div class="float-right">
-                                            <button id="quiz-reset-button" type="reset" class="btn btn-default">Reset
+                                            <button id="quiz-reset-button" type="button" class="btn btn-default">Reset
                                             </button>
                                             <button id="quiz-publish-button" type="button" class="btn btn-success">
                                                 Publish

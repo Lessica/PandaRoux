@@ -84,17 +84,14 @@ public class QuizService {
             quizDB.setDate_end(date_end);
         }
 
-        if (quiz.containsKey("id_group")) {
-            Groupe groupe = groupeRepository.findOne((int) quiz.get("id_group"));
+        if (quiz.containsKey("id_groupe")) {
+            Groupe groupe = groupeRepository.findOne((int) quiz.get("id_groupe"));
             quizDB.setGroupe(groupe);
         }
 
         if (quiz.containsKey("id_questions")) {
-
             List<Integer> id_questions = (List) quiz.get("id_questions");
-
             for (int id_question : id_questions) {
-
                 Question question = questionRepository.findOne(id_question);
 
                 if (question == null) throw new Exception("Quiz or question does not exist");
