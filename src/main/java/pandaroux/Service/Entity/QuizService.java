@@ -38,7 +38,7 @@ public class QuizService {
 
         List<Map> questions = questionRepository.getQuizQuestions(id);
 
-        data.put("questons", ParametersService.parametersObject(questions));
+        data.put("questions", ParametersService.parametersObject(questions));
 
         return data;
     }
