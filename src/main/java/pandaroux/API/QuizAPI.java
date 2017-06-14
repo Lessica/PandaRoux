@@ -23,8 +23,13 @@ public class QuizAPI {
 
 
     @RequestMapping(method = RequestMethod.POST)
-    public List<Map> findAll() {
-        return quizService.findAll();
+    public Map getQuizzes(HttpServletRequest request) throws Exception {
+        return quizService.getQuizzes(SecurityService.getUserId(request));
+    }
+
+    @RequestMapping(value = "/initData", method = RequestMethod.POST)
+    public Map quizRelatedData(HttpServletRequest request) throws Exception {
+        return quizService.quizRelatedData(SecurityService.getUserId(request));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)

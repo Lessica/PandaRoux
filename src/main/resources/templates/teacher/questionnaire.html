@@ -18,7 +18,7 @@
 
             class APIService extends BaseAPIService {
                 getQuizList (callback) {
-                    $.ajax("/api/quiz", {
+                    $.ajax("/api/quiz/initData", {
                         success: callback
                     });
                 }
@@ -29,10 +29,14 @@
                 constructor () {
                     this.DOM = {
                         quizView: $(".quiz-detail"),
+                        quizTitleInput: $("#quiz-title-input"),
                         startAtInput: $("#quiz-start-at"),
                         endAtInput: $("#quiz-end-at"),
-                        questionSelectInput: $("#question-selection"),
                         quizDeleteButton: $("#quiz-delete-button"),
+                        quizRepeatFor: $("#quiz-repeat-for"),
+                        quizTargetClass: $("#quiz-target-class"),
+                        quizQuestionLeft: $("#question-selection"),
+                        quizQuestionRight: $("#question-selection_to"),
                         quizDetailData: null
                     };
                     this.bindEvent();
@@ -48,7 +52,7 @@
                     };
                     this.DOM.startAtInput.datetimepicker(datetimePickerConfig).on("changeDate", changeDateCallback);
                     this.DOM.endAtInput.datetimepicker(datetimePickerConfig).on("changeDate", changeDateCallback);
-                    this.DOM.questionSelectInput.multiselect();
+                    this.DOM.quizQuestionLeft.multiselect();
                     this.DOM.quizDeleteButton.click();
                 }
 
@@ -56,8 +60,22 @@
                     this.DOM.quizView.fadeOut(200);
                 }
 
-                reset () {
+                show () {
+                    this.DOM.quizView.fadeIn(200);
+                }
 
+                focusOnTitle () {
+                    this.DOM.quizTitleInput.focus();
+                }
+
+                reset () {
+                    this.DOM.quizTitleInput.val("");
+                    this.DOM.quizRepeatFor.val("1");
+                    this.DOM.quizTargetClass.val("0");
+                    this.DOM.startAtInput.datetimepicker('update', new Date());
+                    this.DOM.endAtInput.datetimepicker('update', new Date(new Date().getTime() + (7 * 24 * 3600 * 1000)));
+//                    this.DOM.quizQuestionLeft.html("");
+                    this.DOM.quizQuestionRight.html("");
                 }
 
                 quizDeleteButtonClicked (event) {
@@ -89,11 +107,42 @@
             class QuizListController {
 
                 constructor () {
+                    this.DOM = {
+                        addQuizButton: $("#add-new-quiz"),
+                        quizOpenedList: $("#quiz-button-list-opened"),
+                        quizClosedList: $("#quiz-button-list-closed"),
+                        selectedQuizId: null
+                    };
                     this.detailController = new QuizDetailController();
+                    this.bindEvent();
                     this.load();
                 }
 
                 load () {
+                    document.APIService.getQuizList($.proxy(this.loadQuizList, this));
+                }
+
+                bindEvent() {
+                    this.DOM.addQuizButton.click($.proxy(this.addQuizButtonClicked, this));
+                }
+
+                addQuizButtonClicked(event) {
+                    this.setSelectedQuiz(null);
+                    this.detailController.reset();
+                    this.detailController.show();
+                    this.detailController.focusOnTitle();
+                }
+
+                setSelectedQuiz (quiz_id) {
+                    this.DOM.selectedQuizId = parseInt(quiz_id);
+                    $(".quiz-button").removeClass("btn-primary");
+                    if (quiz_id) {
+                        $("#quiz-button-" + quiz_id.toString()).addClass("btn-primary");
+                    }
+                }
+
+                loadQuizList (resp) {
+                    console.log(resp);
 
                 }
 
@@ -141,6 +190,12 @@
             }
 
         });
+    </script>
+    <script id="template-quiz-button" type="text/plain" language="text">
+        <button type="button" class="btn {2} btn-block quiz-button">
+            {1}
+            <span class="glyphicon glyphicon-chevron-right btn-icon float-right"></span>
+        </button>
     </script>
 </head>
 <body>
@@ -196,37 +251,13 @@
 
                             <div class="scroll-list">
                                 <div class="scroll-list-quiz opened">
-
-                                    <button type="button" class="btn btn-success btn-block"
+                                    <button id="add-new-quiz" type="button" class="btn btn-success btn-block"
                                             data-toggle="modal" data-target="#new-quiz-popup">
                                         <span class="glyphicon glyphicon-plus"></span>
                                         New
                                     </button>
                                     <hr>
-                                    <button type="button" class="prototype btn btn-default btn-block quiz-button"
-                                            id="pt-quiz-button-opened"
-                                            data-id="1"
-                                            data-action="select">
-                                        N/A
-                                    </button>
-                                    <div class="quiz-button-list-opened">
-
-                                        <!-- BEGIN -->
-
-                                        <button type="button" class="btn btn-primary btn-block quiz-button">
-                                            Questionnaire 1
-                                        </button>
-                                        <button type="button" class="btn btn-default btn-block quiz-button">
-                                            Questionnaire 2
-                                        </button>
-                                        <button type="button" class="btn btn-default btn-block quiz-button">
-                                            Questionnaire 3
-                                        </button>
-
-                                        <!-- END -->
-
-                                    </div>
-
+                                    <div id="quiz-button-list-opened"></div>
                                 </div>
                             </div>
 
@@ -261,31 +292,7 @@
 
                             <div class="scroll-list">
                                 <div class="scroll-list-quiz closed">
-
-                                    <button type="button" class="prototype btn btn-default btn-block quiz-button"
-                                            id="pt-quiz-button-closed"
-                                            data-id="1"
-                                            data-action="select">
-                                        N/A
-                                    </button>
-                                    <div class="quiz-button-list-closed">
-
-                                        <!-- BEGIN -->
-
-                                        <button type="button" class="btn btn-default btn-block quiz-button">
-                                            Questionnaire 1
-                                        </button>
-                                        <button type="button" class="btn btn-default btn-block quiz-button">
-                                            Questionnaire 2
-                                        </button>
-                                        <button type="button" class="btn btn-default btn-block quiz-button">
-                                            Questionnaire 3
-                                        </button>
-
-                                        <!-- END -->
-
-                                    </div>
-
+                                    <div id="quiz-button-list-closed"></div>
                                 </div>
                             </div>
 
@@ -309,21 +316,16 @@
 
                             <form method="POST" class="form-horizontal">
 
-                                <input class="edit-title quiz-title" type="text" placeholder="Untitled Questionnaire"
-                                       value="Questionnaire 1">
+                                <input id="quiz-title-input" class="edit-title quiz-title" type="text" placeholder="Untitled Questionnaire">
 
                                 <hr/>
 
                                 <div class="form-group">
                                     <div class="row">
-                                        <label for="target-class" class="col-sm-3 control-label">Group</label>
+                                        <label for="quiz-target-class" class="col-sm-3 control-label">Group</label>
                                         <div class="col-sm-9">
-                                            <select id="target-class" class="form-control" name="target-class" title="">
-                                                <option value="1">Group 1</option>
-                                                <option value="2">Group 2</option>
-                                                <option value="3">Group 3</option>
-                                                <option value="4">Group 4</option>
-                                                <option value="5">Group 5</option>
+                                            <select id="quiz-target-class" class="form-control" title="">
+                                                <option value="0">Unassigned</option>
                                             </select>
                                         </div>
                                     </div>
@@ -388,15 +390,6 @@
                                             <select multiple id="question-selection"
                                                     class="form-control question-select"
                                                     name="question-selection-from[]" title="">
-                                                <option value="1">Question 1</option>
-                                                <option value="2">Question 2</option>
-                                                <option value="3">Question 3</option>
-                                                <option value="4">Question 4</option>
-                                                <option value="5">Question 5</option>
-                                                <option value="6">Question 6</option>
-                                                <option value="7">Question 7</option>
-                                                <option value="8">Question 8</option>
-                                                <option value="9">Question 9</option>
                                             </select>
                                         </div>
                                         <div class="col-sm-2">
@@ -420,7 +413,8 @@
                                         <div class="col-sm-5">
                                             <select multiple id="question-selection_to"
                                                     class="form-control question-select" name="question-selection-to[]"
-                                                    title=""></select>
+                                                    title="">
+                                            </select>
                                         </div>
                                     </div>
                                 </div>

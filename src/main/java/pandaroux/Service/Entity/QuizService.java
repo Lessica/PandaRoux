@@ -121,4 +121,18 @@ public class QuizService {
 
         return data;
     }
+
+    public Map getQuizzes(int teacherId) {
+        Map data = new HashMap();
+        data.put("quiz_list", quizRepository.findAllTeacherQuizzes(teacherId));
+        return data;
+    }
+
+    public Map quizRelatedData(int teacherId) {
+        Map data = new HashMap();
+        data.put("quiz_list", quizRepository.findAllTeacherQuizzes(teacherId));
+        data.put("group_list", groupeRepository.getGroupes(teacherId));
+        data.put("question_list", questionRepository.getTeacherQuestionsBrief(teacherId));
+        return data;
+    }
 }
