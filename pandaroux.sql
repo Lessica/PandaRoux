@@ -46,7 +46,11 @@
 
   INSERT INTO pandaRoux.quiz (id, name, active, date_start, date_end, id_groupe, id_teacher) VALUES
     (1, 'Quiz 1', true, '2017-03-03', '2017-03-05', 1, 1),
-    (2, 'Quiz 2', true, '2017-03-06', '2017-03-07', 1, 1);
+    (2, 'Quiz 2', false, '2017-06-13', '2017-06-20', 1, 1),
+    (3, 'Quiz 3', true, '2017-06-13', '2017-06-20', 1, 1),
+    (4, 'Quiz 4', true, '2017-07-06', '2017-07-07', 1, 1),
+    (5, 'Quiz 5', true, '2017-03-06', '2017-03-07', 1, 1),
+    (6, 'Quiz 6', true, '2017-08-06', '2017-08-20', 1, 1);
 
   INSERT INTO pandaRoux.quiz_question (id, id_question, id_quiz) VALUES
     (1, 1, 1),

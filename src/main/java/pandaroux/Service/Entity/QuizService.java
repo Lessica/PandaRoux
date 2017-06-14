@@ -9,10 +9,7 @@ import pandaroux.Service.ParametersService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class QuizService {
@@ -118,6 +115,46 @@ public class QuizService {
         Map data = new HashMap();
         data.put("result", "succeed");
         data.put("id_quiz", quizDB.getId());
+
+        return data;
+    }
+
+    public Map getTeacherQuizzes(int id_teacher) {
+
+        List<Map> teacherQuizzes = quizRepository.getTeacherQuizzes(id_teacher);
+
+        Map data = new HashMap();
+
+        data.put("result", "succeed");
+        data.put("quizzes_active", new ArrayList<Map>());
+        data.put("quizzes_inactive", new ArrayList<Map>());
+        data.put("quizzes_finished", new ArrayList<Map>());
+        data.put("quizzes_coming", new ArrayList<Map>());
+
+
+        Date now = new Date();
+
+        System.out.println(new SimpleDateFormat("yyyy-MM-dd").format(now));
+
+        for (Map teacherQuiz : teacherQuizzes) {
+
+            Date date_start = (Date) teacherQuiz.get("date_start");
+            Date date_end = (Date) teacherQuiz.get("date_end");
+            boolean active = (boolean) teacherQuiz.get("active");
+
+            if (!active) {
+                ((List) data.get("quizzes_inactive")).add(teacherQuiz);
+            }
+            else if (now.after(date_start) && now.before(date_end)){
+                ((List) data.get("quizzes_active")).add(teacherQuiz);
+            }
+            else if (now.after(date_end)) {
+                ((List) data.get("quizzes_finished")).add(teacherQuiz);
+            }
+            else {
+                ((List) data.get("quizzes_coming")).add(teacherQuiz);
+            }
+        }
 
         return data;
     }
