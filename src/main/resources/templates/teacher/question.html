@@ -15,7 +15,7 @@
 
             class APIService extends BaseAPIService {
                 getQuestionList (callback) {
-                    $.ajax("/api/question", {
+                    $.ajax("/api/question/teacher", {
                         success: callback
                     });
                 }
