@@ -5,7 +5,7 @@ html {
     min-height: 100%;
 }
 body {
-    font-family: Ubuntu, serif;
+    font-family: Ubuntu, sans-serif;
     /* Margin bottom by footer height */
     margin-bottom: 60px;
 }
@@ -472,4 +472,44 @@ code {
 
 .pt-course-panel .quiz-notify {
     min-height: 40px;
+}
+
+.session-panel-list {
+    margin-top: 16px;
+}
+
+.session-panel-list .pt-session-panel {
+    text-align: center;
+}
+
+.datepicker-inline {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.session-cover {
+    position: relative;
+}
+
+.session-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: #fff;
+    /*opacity: .5;*/
+}
+
+.session-rate {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    width: 120px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.c-rating__item {
+    background-position: -24px 0 !important;
 }

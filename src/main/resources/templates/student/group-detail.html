@@ -1,10 +1,146 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="site-base">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Group</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-datepicker.css}">
+    <script th:src="@{/js/bootstrap-datepicker.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/rating.css}">
+    <script th:src="@{/js/rating.js}"></script>
+    <script>
+        $(document).ready(function () {
+
+            'use strict';
+
+            console.log("document ready");
+
+            class APIService extends BaseAPIService {
+                getGroupDetail (callback, gid) {
+                    $.ajax("/api/groupe/" + gid.toString(), {
+                        success: callback
+                    });
+                }
+            }
+
+            class MySessionController {
+
+                constructor () {
+                    this.DOM = {
+                        groupNameHeader: $("#my-group-name"),
+                        mySessionList: $("#my-session-list"),
+                    };
+                    const href = window.location.href;
+                    const pattern = /\/student\/group\/(\d+)/;
+                    this.group_id = parseInt(href.match(pattern)[1]);
+                    this.load();
+                }
+
+                load () {
+                    document.APIService.getGroupDetail($.proxy(this.loadGroupDetail, this), this.group_id);
+                }
+
+                loadGroupDetail(resp) {
+                    console.log(resp);
+                    this.DOM.groupNameHeader.text(resp["name"]);
+                    const lectures = resp["groupeDetails"]["lectures"];
+                    const session_list = this.DOM.mySessionList;
+                    session_list.html("");
+                    for (let i in lectures) {
+                        const lecture = lectures[i];
+                        const new_session_panel = document.DOMFactory.elementWithId("session-panel", lecture["name"], lecture["commentary"]);
+                        const date_elem = new_session_panel.find(".session-date");
+                        date_elem.datepicker({
+                            todayHighlight: true,
+                            format: "yyyy-mm-dd",
+                            daysOfWeekDisabled: [0, 1, 2, 3, 4, 5, 6]
+                        });
+                        date_elem.datepicker("update", lecture["date"]);
+                        const edit_button = new_session_panel.find(".edit-session");
+                        if (lecture["commentary"] === null || lecture["commentary"].length === 0) {
+                            edit_button.prop("disabled", true);
+                        } else {
+                            edit_button.prop("disabled", false);
+                        }
+                        const session_overlay = new_session_panel.find(".session-overlay");
+                        edit_button.click($.proxy(function (event) {
+                            session_overlay.fadeToggle(200);
+                        }, this));
+                        const session_rate = new_session_panel.find(".session-rate")[0];
+                        console.log(session_rate);
+                        rating(session_rate, lecture["rate"], 5, function (rating) {
+
+                        });
+                        session_list.prepend(new_session_panel);
+                    }
+                }
+
+            }
+
+            {
+                document.APIService = new APIService();
+                document.RootController = new MySessionController();
+            }
+
+        });
+    </script>
+    <script id="template-session-panel" type="text/plain" language="text">
+        <div class="col-sm-6 col-md-4 col-lg-3 pt-session-panel">
+            <div class="panel panel-success session-panel">
+                <div class="panel-heading">
+                    <strong class="session-title">{1}</strong>
+                </div>
+                <div class="panel-body">
+                    <div class="session-cover">
+                        <div class="session-date"></div>
+                        <div class="session-overlay" style="z-index: 200; display: none;">
+                            <ul class="session-rate"></ul>
+                            <hr />
+                            <span>{2}</span>
+                        </div>
+                    </div>
+                    <hr />
+                    <button type="button" class="btn btn-success btn-block edit-session">
+                        <span class="glyphicon glyphicon-search"></span>
+                        Toggle Note
+                    </button>
+                </div>
+            </div>
+        </div>
+    </script>
 </head>
+
 <body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand header-brand" th:href="@{/student/index}" layout:fragment="nav-header">
+                <img class="header-icon" th:src="@{/img/roux.png}" src="">
+            </a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav" layout:fragment="nav-content">
+                <li class="active"><a th:href="@{/student/group}">Group</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div layout:fragment="container">
+
+    <div class="page-header">
+        <h1 id="my-group-name">&nbsp;</h1>
+    </div>
+
+    <div class="row roux-row">
+
+        <div id="my-session-list" class="session-panel-list"></div>
+
+    </div>
+
+</div>
 
 </body>
 </html>
