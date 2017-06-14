@@ -68,10 +68,7 @@
                             session_overlay.fadeToggle(200);
                         }, this));
                         const session_rate = new_session_panel.find(".session-rate")[0];
-                        console.log(session_rate);
-                        rating(session_rate, lecture["rate"], 5, function (rating) {
-
-                        });
+                        rating(session_rate, lecture["rate"], 5, function (rating) {});
                         session_list.prepend(new_session_panel);
                     }
                 }
