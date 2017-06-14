@@ -200,7 +200,9 @@
                                 "success");
                             if (this.DOM.quizDetailData === null)
                             {
+                                this.DOM.quizDetailData = quiz;
                                 document.RootController.listController.load();
+                                document.RootController.listController.DOM.selectedQuizId = resp["id_quiz"];
                             }
                             else
                             {
@@ -219,7 +221,7 @@
                             let options = '';
                             for (let i in resp_teacher_questions) {
                                 const resp_teacher_question = resp_teacher_questions[i];
-                                options = '<option value="' + resp_teacher_question['id'] + '">' + resp_teacher_question['name'] + '</option>' + options;
+                                options += '<option value="' + resp_teacher_question['id'] + '">' + resp_teacher_question['name'] + '</option>';
                             }
                             question_list.html(options);
                         }
@@ -237,15 +239,23 @@
 
                 loadQuizForm (data) {
                     this.lockView(true);
+                    this.DOM.quizTitleInput.val(data["name"]);
+                    this.DOM.quizActiveOption.prop("checked", data["active"]);
+                    this.DOM.quizTargetClass.val(data["id_groupe"]);
+                    this.DOM.startAtInput.val(data["date_start"]);
+                    this.DOM.endAtInput.val(data["date_end"]);
+                    const question_left = this.DOM.quizQuestionLeft;
+                    const question_right = this.DOM.quizQuestionRight;
                     document.APIService.getQuizQuestions($.proxy(function (resp) {
                         console.log(resp);
                         if (typeof resp["id"] !== 'undefined') {
-                            this.DOM.quizTitleInput.val(resp["name"]);
-                            this.DOM.quizActiveOption.prop("checked", resp["active"]);
-                            this.DOM.quizTargetClass.val(resp["id_groupe"]);
-                            this.DOM.startAtInput.val(resp["date_start"]);
-                            this.DOM.endAtInput.val(resp["date_end"]);
-
+                            const question_list = resp["questions"];
+                            for (let i in question_list) {
+                                const question_elem = question_list[i];
+                                const question_id = question_elem["id"];
+                                question_left.find("option[value=" + question_id + "]").remove();
+                                question_right.append('<option value="' + question_id + '">' + question_elem['name'] + '</option>');
+                            }
                         }
                     }, this), data["id"]);
                 }
