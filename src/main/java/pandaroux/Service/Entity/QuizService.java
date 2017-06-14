@@ -118,6 +118,8 @@ public class QuizService {
 
         List<Map> teacherQuizzes = quizRepository.getTeacherQuizzes(id_teacher);
 
+        System.out.println(teacherQuizzes);
+
         Map data = new HashMap();
 
         data.put("result", "succeed");

@@ -21,10 +21,6 @@ public class QuizAPI {
     @Autowired
     private QuizService quizService;
 
-    @RequestMapping(method = RequestMethod.POST)
-    public List<Map> findAll(HttpServletRequest request) {
-        return quizService.findAll();
-    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public Map getQuiz(@PathVariable("id") int id) {

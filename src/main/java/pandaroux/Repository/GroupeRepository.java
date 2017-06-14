@@ -11,8 +11,6 @@ import java.util.Map;
 @Repository
 public interface GroupeRepository extends CrudRepository<Groupe, Integer> {
 
-    List<Groupe> findAll();
-
     @Query("SELECT g.id AS id, g.name AS name FROM Groupe g WHERE g.teacher.id = ?1")
     List<Map> getGroupes(int teacherId);
 

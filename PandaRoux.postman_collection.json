@@ -62,7 +62,6 @@
 			"description": "",
 			"order": [
 				"91ccbcec-9054-3017-12f7-0baa3f28aef4",
-				"3118fc49-27de-1326-dee5-0adb4698570d",
 				"6026959f-5bfa-ae8b-8e56-e39c83d1f59f",
 				"0fe887cf-cd16-ee7b-fb02-d8ed379d8f87"
 			]
@@ -159,27 +158,6 @@
 			"helperAttributes": {},
 			"time": 1494845714504,
 			"name": "lecture delete",
-			"description": "",
-			"collectionId": "24b876e5-415f-35bf-da07-7a2c94d1f448",
-			"responses": []
-		},
-		{
-			"id": "3118fc49-27de-1326-dee5-0adb4698570d",
-			"headers": "",
-			"headerData": [],
-			"url": "http://localhost:8080/api/quiz",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "POST",
-			"data": null,
-			"dataMode": "params",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1497276480474,
-			"name": "quiz",
 			"description": "",
 			"collectionId": "24b876e5-415f-35bf-da07-7a2c94d1f448",
 			"responses": []

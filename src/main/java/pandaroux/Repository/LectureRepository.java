@@ -6,6 +6,4 @@ import pandaroux.Entity.Lecture;
 
 @Repository
 public interface LectureRepository extends CrudRepository<Lecture, Integer> {
-
-    void delete(int id);
 }
