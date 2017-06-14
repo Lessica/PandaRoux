@@ -33,9 +33,7 @@ public class QuestionService {
 
         List<Map> questions = questionRepository.getQuestions();
 
-        questions = ParametersService.parametersObject(questions);
-
-        data.put("question_list", questions);
+        data.put("question_list", ParametersService.parametersObject(questions));
 
         return data;
     }
@@ -45,7 +43,10 @@ public class QuestionService {
         Map data = new HashMap();
 
         data.put("result", "succeed");
-        data.put("teacher_questions", questionRepository.getTeacherQuestions(userId));
+
+        List<Map> teacher_questions = questionRepository.getTeacherQuestions(userId);
+
+        data.put("teacher_questions", ParametersService.parametersObject(teacher_questions));
 
         return data;
 

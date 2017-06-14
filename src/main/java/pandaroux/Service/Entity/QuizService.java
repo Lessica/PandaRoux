@@ -38,9 +38,7 @@ public class QuizService {
 
         List<Map> questions = questionRepository.getQuizQuestions(id);
 
-        questions = ParametersService.parametersObject(questions);
-
-        data.put("questons", questions);
+        data.put("questons", ParametersService.parametersObject(questions));
 
         return data;
     }
@@ -88,6 +86,8 @@ public class QuizService {
             Groupe groupe = groupeRepository.findOne((int) quiz.get("id_group"));
             quizDB.setGroupe(groupe);
         }
+
+        quizRepository.save(quizDB);
 
         if (quiz.containsKey("id_questions")) {
 
