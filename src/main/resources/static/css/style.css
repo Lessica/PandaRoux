@@ -380,6 +380,11 @@ code {
     margin-left: 3px;
 }
 
+.roux-panel .btn-block {
+    overflow: hidden;
+    height: 34px;
+}
+
 .roux-panel .question-form {
 
 }
