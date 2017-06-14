@@ -1,5 +1,7 @@
 package pandaroux.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -38,6 +40,7 @@ public class Quiz {
     private List<Quiz_question> quiz_question;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "id_groupe")
     private Groupe groupe;
 

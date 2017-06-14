@@ -23,4 +23,7 @@ public interface GroupeRepository extends CrudRepository<Groupe, Integer> {
     @Query("SELECT g.id AS id, g.name AS name, (SELECT COUNT(*) FROM g.lectures) AS lecture_count, (SELECT COUNT(*) FROM g.quizzes) AS quiz_count FROM Groupe g JOIN g.students s WHERE s.id = ?1")
     List<Map> getStudentGroups(int studentId);
 
+    @Query("SELECT q.id AS id, q.name AS name, q.active AS active, q.date_start AS date_start, q.date_end AS date_end, q.teacher.id AS id_teacher, q.groupe.id AS id_groupe, q.groupe.name AS groupe_name FROM Groupe g JOIN g.quizzes q WHERE g.id = ?1")
+    List<Map> getGroupQuizzes(int groupeId);
+
 }
