@@ -227,6 +227,7 @@
                             else
                             {
                                 document.RootController.listController.setQuestionData(form_data);
+                                document.RootController.listController.setQuestionName(form_data["id"], question_content);
                                 this.loadWithData(form_data);
                             }
                         }
@@ -563,6 +564,13 @@
                     $("#question-button-" + data["id"]).data(data);
                 }
 
+                setQuestionName (question_id, question_name) {
+                    if (question_id && question_name) {
+                        const new_question_button = document.DOMFactory.elementWithId("question-button", question_name, "btn-default");
+                        $("#question-button-" + question_id.toString()).html(new_question_button.html());
+                    }
+                }
+
                 reloadQuestionList (resp) {
                     console.log(resp);
                     this.DOM.questionList.html("");
@@ -846,7 +854,7 @@
                         <div class="scroll-list-question">
                             <button id="common-new-question" type="button" class="btn btn-success btn-block">
                                 <span class="glyphicon glyphicon-plus"></span>
-                                New
+                                New Question
                             </button>
                             <hr>
                             <div id="search-question-list" class="question-button-list"></div>

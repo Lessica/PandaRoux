@@ -155,6 +155,10 @@
                         return;
                     }
                     const quiz_id_groupe = parseInt(this.DOM.quizTargetClass.val());
+                    if (quiz_id_groupe === 0) {
+                        swal("Oops...", "The group of questionnaire is invalid.", "error");
+                        return;
+                    }
                     const quiz_date_start = this.DOM.startAtInput.val();
                     const quiz_date_end = this.DOM.endAtInput.val();
                     const quiz_repeat_for = parseInt(this.DOM.quizRepeatFor.val());
