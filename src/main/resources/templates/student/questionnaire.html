@@ -140,7 +140,7 @@
                     console.log(form_data);
                     swal({
                         title: "Submit Confirm",
-                        text: "Do you want to submit this survey?\nNo change will be allowed after submission!",
+                        text: "Do you want to submit this questionnaire?\nNo change will be allowed after submission!",
                         type: "warning",
                         showCancelButton: true,
                         confirmButtonColor: "#DD6B55",
@@ -159,7 +159,7 @@
                         if (resp["result"] === "succeed") {
                             swal({
                                 title: "Submit Succeed",
-                                text: "This survey has been submitted!",
+                                text: "This questionnaire has been submitted!",
                                 type: "success",
                                 showCancelButton: false,
                                 confirmButtonColor: "#5cb85c",
@@ -167,7 +167,7 @@
                                 closeOnConfirm: false,
                                 html: false
                             }, $.proxy(function () {
-                                window.location.reload(true);
+                                window.close();
                             }, this));
                         }
                     }, this), form_data);
@@ -478,7 +478,7 @@
 
             <div class="quiz-well">
                 <button type="button" class="btn btn-default quiz-close">
-                    Exit Survey
+                    Exit
                 </button>
                 <div class="quiz-title"></div>
             </div>
@@ -490,7 +490,7 @@
             <div class="quiz-footer">
                 <div class="quiz-actions">
                     <button id="quiz-submit" type="button" class="btn btn-success">
-                        Submit Survey
+                        Submit
                     </button>
                 </div>
             </div>

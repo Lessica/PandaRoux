@@ -27,6 +27,11 @@
                         success: callback
                     });
                 }
+                getQuizAnswers(callback, qid) {
+                    $.ajax("/api/answer/quiz/" + qid.toString(), {
+                        success: callback
+                    });
+                }
             }
 
             class MySessionController {
@@ -130,7 +135,17 @@
                     const sender = $(event.currentTarget);
                     const data = sender.data();
                     console.log(data);
-                    window.open("/student/questionnaire/" + data["id"]);
+                    document.APIService.getQuizAnswers($.proxy(this.loadQuizAnswers, this), data["id"]);
+                }
+
+                loadQuizAnswers(resp) {
+                    console.log(resp);
+                    const answers = resp["answers"];
+                    if (answers.length === 0) {
+                        window.open("/student/questionnaire/" + resp["id_quiz"]);
+                    } else {
+                        swal("Finished", "You have already replied to this questionnaire.", "success");
+                    }
                 }
 
             }

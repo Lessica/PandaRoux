@@ -139,6 +139,7 @@ public class AnswerService {
     public Map answersForQuiz(int id_quiz, int userId) {
         Map data = new HashMap();
         data.put("result", "succeed");
+        data.put("id_quiz", id_quiz);
         data.put("answers", answerRepository.getAnswerUserStatistic(userId, id_quiz));
         return data;
     }
