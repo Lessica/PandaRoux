@@ -101,19 +101,23 @@
                         const now_sec = new Date().getTime();
                         const date_start_sec = Date.parse(quiz["date_start"]);
                         const date_end_sec = Date.parse(quiz["date_end"]);
+                        let disable_flag = "";
                         if (date_start_sec > now_sec) {
+                            disable_flag = "disabled";
                             panel_type = "warning";
                         } else if (date_end_sec < now_sec) {
                             panel_type = "default";
+                        } else {
+
                         }
                         if (date_end_sec < now_sec) {
-                            const new_quiz_panel = document.DOMFactory.elementWithId("quiz-panel", quiz["name"], "panel-" + panel_type, "btn-" + panel_type, quiz["date_start"], quiz["date_end"], "View status", "glyphicon-search");
+                            const new_quiz_panel = document.DOMFactory.elementWithId("quiz-panel", quiz["name"], "panel-" + panel_type, "btn-" + panel_type, quiz["date_start"], quiz["date_end"], "View status", "glyphicon-search", disable_flag);
                             const edit_button = new_quiz_panel.find(".edit-quiz");
                             edit_button.data(quiz);
                             edit_button.click($.proxy(this.editQuizButtonClicked, this));
                             quizzes_list.append(new_quiz_panel);
                         } else {
-                            const new_quiz_panel = document.DOMFactory.elementWithId("quiz-panel", quiz["name"], "panel-" + panel_type, "btn-" + panel_type, quiz["date_start"], quiz["date_end"], "Reply to", "glyphicon-edit");
+                            const new_quiz_panel = document.DOMFactory.elementWithId("quiz-panel", quiz["name"], "panel-" + panel_type, "btn-" + panel_type, quiz["date_start"], quiz["date_end"], "Reply to", "glyphicon-edit", disable_flag);
                             const edit_button = new_quiz_panel.find(".edit-quiz");
                             edit_button.data(quiz);
                             edit_button.click($.proxy(this.editQuizButtonClicked, this));
@@ -175,7 +179,7 @@
                         </div>
                     </div>
                     <hr />
-                    <button type="button" class="btn {3} btn-block edit-quiz">
+                    <button type="button" class="btn {3} btn-block edit-quiz" {8}>
                         <span class="glyphicon {7}"></span>
                         &nbsp;{6}
                     </button>

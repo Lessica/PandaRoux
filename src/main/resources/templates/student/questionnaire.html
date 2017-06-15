@@ -35,6 +35,7 @@
                         quidId: $("#quiz-id"),
                         quizTitle: $(".quiz-title"),
                         quizCloseButton: $(".quiz-close"),
+                        quizSubmitButton: $("#quiz-submit"),
                         quizBody: $(".quiz-body")
                     };
                     const href = window.location.href;
@@ -46,12 +47,29 @@
 
                 bindEvent() {
                     this.DOM.quizCloseButton.click($.proxy(function (event) {
-                        window.close();
+                        swal({
+                            title: "Exit Confirm",
+                            text: "Do you want to close this window?\nAll changes will be lost!",
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#DD6B55",
+                            confirmButtonText: "Yes, close it!",
+                            closeOnConfirm: false,
+                            html: false
+                        }, $.proxy(function () {
+                            window.close();
+                        }, this));
                     }, this));
                 }
 
                 load() {
                     document.APIService.getQuizDetail($.proxy(this.loadQuizDetail, this), this.quiz_id);
+                }
+
+                lockView (lock) {
+                    this.DOM.quizBody.find("input, select, button").each(function () {
+                        if (typeof this.disabled !== "undefined") this.disabled = lock;
+                    });
                 }
 
                 loadQuizDetail(resp) {
@@ -62,6 +80,22 @@
                     $("title").text(quiz_name + " | PandaRoux");
                     $("#nav-title").text(quiz_name);
                     this.DOM.quizTitle.text(quiz_name);
+                    const quiz_active = resp["active"];
+                    if (!quiz_active) {
+                        swal("Oops...", "This questionnaire is no longer available!", "error");
+                        this.DOM.quizSubmitButton.hide();
+                        return;
+                    }
+                    const now_sec = new Date().getTime();
+                    const date_start_sec = Date.parse(resp["date_start"]);
+                    const date_end_sec = Date.parse(resp["date_end"]);
+                    if (date_start_sec > now_sec) {
+                        swal("Oops...", "This questionnaire is not available now!", "error");
+                        this.DOM.quizSubmitButton.hide();
+                        return;
+                    } else if (date_end_sec < now_sec) {
+                        this.DOM.quizSubmitButton.hide();
+                    }
                     const quiz_body = this.DOM.quizBody;
                     const question_list_data = resp["questions"];
                     for (let i in question_list_data) {
@@ -152,6 +186,9 @@
                             const question_elem = document.DOMFactory.elementWithId("quiz-dropdown", question_name, question_id, option_list, multiple_flag);
                             quiz_body.append(question_elem);
                         }
+                    }
+                    if (date_end_sec < now_sec) {
+                        this.lockView(true);
                     }
                 }
             }
@@ -314,7 +351,7 @@
 
             <div class="quiz-footer">
                 <div class="quiz-actions">
-                    <button type="submit" class="btn btn-success">
+                    <button id="quiz-submit" type="submit" class="btn btn-success">
                         Submit Survey
                     </button>
                 </div>
