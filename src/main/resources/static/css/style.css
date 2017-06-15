@@ -537,9 +537,10 @@ code {
         margin: 0;
     }
 
-    .page-header {
+    .page-header, .session-page-header {
         display: none;
     }
+
 }
 
 @media (min-width: 768px) {

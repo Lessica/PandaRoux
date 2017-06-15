@@ -30,7 +30,7 @@ public class Answer {
     @Type(type = "date")
     private Date date;
 
-    @Column
+    @Column(columnDefinition="TEXT")
     private String jsonParameters;
 
 

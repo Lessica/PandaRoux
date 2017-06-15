@@ -37,7 +37,8 @@
                         quizTitle: $(".quiz-title"),
                         quizCloseButton: $(".quiz-close"),
                         quizSubmitButton: $("#quiz-submit"),
-                        quizBody: $(".quiz-body")
+                        quizBody: $(".quiz-body"),
+                        quizData: null
                     };
                     const href = window.location.href;
                     const pattern = /\/student\/questionnaire\/(\d+)/;
@@ -71,10 +72,36 @@
                             confirmButtonText: "Yes, submit!",
                             closeOnConfirm: false,
                             html: false
-                        }, $.proxy(function () {
-                            this.DOM.quizForm.submit();
-                        }, this));
+                        }, $.proxy(this.beforeSubmit, this));
                     }, this));
+                }
+
+                beforeSubmit() {
+                    const resp = this.DOM.quizData;
+                    const question_list_data = resp["questions"];
+                    for (let i in question_list_data) {
+                        const question_data = question_list_data[i];
+                        const question_id = question_data["id"];
+                        const question_type = question_data["id_question_type"];
+                        const question_name = question_data["name"];
+                        const question_parameters = question_data["parameters"];
+                        const question_mandatory = question_data["mandatory"];
+                        if (question_type === 1) {
+
+                        }
+                        else if (question_type === 2) {
+
+                        }
+                        else if (question_type === 4) {
+                            // checkbox
+
+                        }
+                    }
+                    this.submit();
+                }
+
+                submit () {
+                    this.DOM.quizForm.submit();
                 }
 
                 load() {
@@ -89,6 +116,7 @@
 
                 loadQuizDetail(resp) {
                     console.log(resp);
+                    this.DOM.quizData = resp;
                     const quiz_id = resp["id"];
                     this.DOM.quidId.val(quiz_id);
                     const quiz_name = resp["name"];
@@ -128,6 +156,19 @@
                             }
                             const required_flag = question_mandatory ? "required" : "";
                             const question_elem = document.DOMFactory.elementWithId("quiz-short", question_name, question_id, question_placeholder, required_flag);
+                            if (question_mandatory) {
+                                const question_group = question_elem.find(".form-group");
+                                const question_input = question_elem.find("input");
+                                question_input.blur($.proxy(function (event) {
+                                    const sender = $(event.currentTarget);
+                                    const input_val = sender.val();
+                                    if (input_val.length === 0) {
+                                        question_group.addClass("has-error");
+                                    } else {
+                                        question_group.removeClass("has-error");
+                                    }
+                                }, this));
+                            }
                             quiz_body.append(question_elem);
                         }
                         else if (question_type === 2)
@@ -139,6 +180,19 @@
                             }
                             const required_flag = question_mandatory ? "required" : "";
                             const question_elem = document.DOMFactory.elementWithId("quiz-paragraph", question_name, question_id, question_placeholder, required_flag);
+                            if (question_mandatory) {
+                                const question_group = question_elem.find(".form-group");
+                                const question_input = question_elem.find("textarea");
+                                question_input.blur($.proxy(function (event) {
+                                    const sender = $(event.currentTarget);
+                                    const input_val = sender.val();
+                                    if (input_val.length === 0) {
+                                        question_group.addClass("has-error");
+                                    } else {
+                                        question_group.removeClass("has-error");
+                                    }
+                                }, this));
+                            }
                             quiz_body.append(question_elem);
                         }
                         else if (question_type === 3)
@@ -226,7 +280,7 @@
             <div class="question-answer">
                 <div class="row">
                     <div class="col-xs-12 col-md-10 col-lg-8">
-                        <div class="form-group">
+                        <div id="question-{2}" class="form-group">
                             <div class="input-group">
                                 <input type="text" class="form-control" name="question-{2}" placeholder="{3}"
                                        value="" {4}>
@@ -251,7 +305,7 @@
             <div class="question-answer">
                 <div class="row">
                     <div class="col-xs-12 col-md-10 col-lg-8">
-                        <div class="form-group">
+                        <div id="question-{2}" class="form-group">
                             <textarea rows="6" class="form-control" name="question-{2}" placeholder="{3}" {4}></textarea>
                         </div>
                     </div>
