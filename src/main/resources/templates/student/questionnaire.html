@@ -27,6 +27,12 @@
                         success: callback
                     });
                 }
+                answerQuiz(callback, data) {
+                    $.ajax("/api/answer/quiz", {
+                        data: JSON.stringify(data),
+                        success: callback
+                    });
+                }
             }
 
             class MyQuizController {
@@ -62,46 +68,105 @@
                             window.close();
                         }, this));
                     }, this));
-                    this.DOM.quizSubmitButton.click($.proxy(function (event) {
-                        swal({
-                            title: "Submit Confirm",
-                            text: "Do you want to submit this survey?\nNo change will be allowed after submission!",
-                            type: "warning",
-                            showCancelButton: true,
-                            confirmButtonColor: "#DD6B55",
-                            confirmButtonText: "Yes, submit!",
-                            closeOnConfirm: false,
-                            html: false
-                        }, $.proxy(this.beforeSubmit, this));
-                    }, this));
+                    this.DOM.quizSubmitButton.click($.proxy(this.onSubmit, this));
                 }
 
-                beforeSubmit() {
+                onSubmit() {
+                    const form_data = {
+                        "id_quiz": parseInt(this.quiz_id)
+                    };
+                    const answers = [];
                     const resp = this.DOM.quizData;
                     const question_list_data = resp["questions"];
                     for (let i in question_list_data) {
+                        const question_map = {};
                         const question_data = question_list_data[i];
                         const question_id = question_data["id"];
                         const question_type = question_data["id_question_type"];
                         const question_name = question_data["name"];
                         const question_parameters = question_data["parameters"];
                         const question_mandatory = question_data["mandatory"];
+                        question_map["id_question"] = parseInt(question_id);
                         if (question_type === 1) {
-
+                            const text_val = $("[name='question-" + question_id + "']").val();
+                            if (question_mandatory && text_val.length === 0) {
+                                swal("Oops...", "Please fill all mandatory field.\nField: " + question_name, "error");
+                                return;
+                            }
+                            question_map["text"] = text_val;
+                            question_map["parameters"] = text_val;
                         }
                         else if (question_type === 2) {
-
+                            const text_val = $("[name='question-" + question_id + "']").val();
+                            if (question_mandatory && text_val.length === 0) {
+                                swal("Oops...", "Please fill all mandatory field.\nField: " + question_name, "error");
+                                return;
+                            }
+                            question_map["text"] = text_val;
+                            question_map["parameters"] = text_val;
                         }
-                        else if (question_type === 4) {
-                            // checkbox
-
+                        else if (question_type === 3 || question_type === 4) {
+                            const arr_elem = $("[name='question-" + question_id + "']:checked");
+                            const arr_val = [];
+                            $.each(arr_elem, function (index, value) {
+                                arr_val.push($(value).val());
+                            });
+                            if (question_type === 4) {
+                                const count = arr_val.length;
+                                const min_count = parseInt(question_parameters["user-property-checkbox-min"]);
+                                const max_count = parseInt(question_parameters["user-property-checkbox-max"]);
+                                if (min_count > count || max_count < count) {
+                                    swal("Oops...", "The count of selection cannot satisfy the range(" + min_count + ", " + max_count + ").\nField: " + question_name, "error");
+                                    return;
+                                }
+                            }
+                            question_map["parameters"] = arr_val;
                         }
+                        else if (question_type === 5) {
+                            const arr_elem = $("[name='question-" + question_id + "'] :selected");
+                            const arr_val = [];
+                            $.each(arr_elem, function (index, value) {
+                                arr_val.push($(value).val());
+                            });
+                            question_map["parameters"] = arr_val;
+                        }
+                        answers.push(question_map);
                     }
-                    this.submit();
+                    form_data["questions"] = answers;
+                    console.log(form_data);
+                    swal({
+                        title: "Submit Confirm",
+                        text: "Do you want to submit this survey?\nNo change will be allowed after submission!",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Yes, submit!",
+                        closeOnConfirm: false,
+                        html: false
+                    }, $.proxy(function () {
+                        this.submit(form_data);
+                    }, this));
                 }
 
-                submit () {
-                    this.DOM.quizForm.submit();
+                submit (form_data) {
+//                    this.DOM.quizForm.submit();
+                    document.APIService.answerQuiz($.proxy(function (resp) {
+                        console.log(resp);
+                        if (resp["result"] === "succeed") {
+                            swal({
+                                title: "Submit Succeed",
+                                text: "This survey has been submitted!",
+                                type: "success",
+                                showCancelButton: false,
+                                confirmButtonColor: "#5cb85c",
+                                confirmButtonText: "OK",
+                                closeOnConfirm: false,
+                                html: false
+                            }, $.proxy(function () {
+                                window.location.reload(true);
+                            }, this));
+                        }
+                    }, this), form_data);
                 }
 
                 load() {

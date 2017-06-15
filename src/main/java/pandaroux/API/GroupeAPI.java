@@ -57,4 +57,9 @@ public class GroupeAPI {
         return groupeService.getStudentGroupes(SecurityService.getUserId(request));
     }
 
+    @RequestMapping(value = "/{id}/quiz", method = RequestMethod.POST)
+    private Map getGroupQuizzes(@PathVariable("id") int id_groupe) throws Exception {
+        return groupeService.getGroupQuizzes(id_groupe);
+    }
+
 }

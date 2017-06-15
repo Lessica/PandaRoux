@@ -23,7 +23,7 @@ public class Answer {
     @JoinColumn(name = "id_student")
     private User student;
 
-    @Column
+    @Column(columnDefinition="TEXT")
     private String text;
 
     @Column
