@@ -172,6 +172,13 @@
                     }
                     const quiz_date_start = this.DOM.startAtInput.val();
                     const quiz_date_end = this.DOM.endAtInput.val();
+                    const now_sec = new Date().getTime();
+                    const date_start_sec = Date.parse(quiz_date_start);
+                    const date_end_sec = Date.parse(quiz_date_end);
+                    if (date_start_sec > date_end_sec) {
+                        swal("Oops...", "The start time must be earlier than end time.", "error");
+                        return;
+                    }
                     const quiz_repeat_for = parseInt(this.DOM.quizRepeatFor.val());
                     const quiz_questions_elem = this.DOM.quizQuestionRight.children();
                     const quiz_questions = [];
