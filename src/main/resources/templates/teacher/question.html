@@ -62,7 +62,8 @@
                     this.DOM.createChartInput.prop("checked", false);
 //                    this.DOM.questionSaveButton.prop("disabled", true);
                     this.DOM.createChartInput.prop("disabled", true);
-                    this.DOM.questionFieldContainer.html("");
+//                    this.DOM.questionFieldContainer.html("");
+                    this.loadQuestionFieldShort(null);
                 }
 
                 hide () {
@@ -103,6 +104,9 @@
                     else if (question_type === 5)
                     {
                         this.loadQuestionFieldDropdown(null);
+                    }
+                    else {
+                        this.loadQuestionFieldShort(null);
                     }
                 }
 
@@ -272,6 +276,27 @@
                     else if (question_type === 5)
                     {
                         this.loadQuestionFieldDropdown(data);
+                    }
+                    else {
+                        this.loadQuestionFieldShort(data);
+                    }
+                }
+
+                loadQuestionFieldShort (data) {
+                    let field = document.DOMFactory.elementWithId(
+                        "question-field-short"
+                    ).wrap('<div>').parent().html();
+                    field += "<hr/>";
+                    this.DOM.questionFieldContainer.html(field);
+                    if (data !== null) {
+                        const para = data["parameters"];
+                        if (para !== null) {
+                            let elem_name;
+                            elem_name = "user-property-short-placeholder";
+                            if (typeof para[elem_name] !== 'undefined') {
+                                $("input[name=" + elem_name + "]").val(para[elem_name]);
+                            }
+                        }
                     }
                 }
 
@@ -656,6 +681,22 @@
         <button type="button" class="btn {2} btn-block question-button">
             {1}
         </button>
+    </script>
+    <script id="template-question-field-short" type="text/plain" language="text">
+        <div id="question-field-short" class="question-area">
+            <div class="question-field question-field-property">
+                <div class="form-group">
+                    <div class="row">
+                        <label for="user-property-short-placeholder" class="col-sm-3 control-label">Placeholder</label>
+                        <div class="col-sm-9">
+                            <input id="user-property-short-placeholder" name="user-property-short-placeholder"
+                                    class="form-control"
+                                    type="text" placeholder="placeholder for the question" value="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </script>
     <script id="template-field-group-radio" type="text/plain" language="text">
         <div class="form-group">
