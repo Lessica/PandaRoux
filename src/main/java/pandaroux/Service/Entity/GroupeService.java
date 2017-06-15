@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import pandaroux.Repository.LectureRepository;
 import pandaroux.Repository.UserRepository;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -126,6 +127,20 @@ public class GroupeService {
         groupesData.put("groupes", groupeRepository.getStudentGroups(userId));
 
         return groupesData;
+    }
+
+    public Map getGroupQuizzes(int id_groupe) {
+
+        Groupe groupeDB = groupeRepository.findOne(id_groupe);
+        
+        Map data = new HashMap();
+        data.put("result", "succeed");
+        data.put("id_groupe", groupeDB.getId());
+
+        List<Map> groupQuizzes = groupeRepository.getGroupQuizzes(id_groupe);
+        data.put("quizzes", groupQuizzes);
+
+        return data;
     }
 
 }

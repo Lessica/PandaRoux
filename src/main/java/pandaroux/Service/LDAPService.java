@@ -27,7 +27,7 @@ public class LDAPService {
 
         Map result = new HashMap();
 
-        result.put("loginSucces", false);
+        result.put("loginSuccess", false);
 
         try {
             LDAPAccess access = new LDAPAccess();
@@ -80,7 +80,7 @@ public class LDAPService {
 
             result.put("redirectionLink", SecurityService.getRedirectionLink(user));
             result.put("user", user);
-            result.replace("loginSucces", true);
+            result.replace("loginSuccess", true);
 
         } catch (Exception e) {
             result.put("message", e.getMessage());
