@@ -34,7 +34,8 @@
                     this.DOM = {
                         quidId: $("#quiz-id"),
                         quizTitle: $(".quiz-title"),
-                        quizCloseButton: $(".quiz-close")
+                        quizCloseButton: $(".quiz-close"),
+                        quizBody: $(".quiz-body")
                     };
                     const href = window.location.href;
                     const pattern = /\/student\/questionnaire\/(\d+)/;
@@ -61,6 +62,97 @@
                     $("title").text(quiz_name + " | PandaRoux");
                     $("#nav-title").text(quiz_name);
                     this.DOM.quizTitle.text(quiz_name);
+                    const quiz_body = this.DOM.quizBody;
+                    const question_list_data = resp["questions"];
+                    for (let i in question_list_data) {
+                        const question_data = question_list_data[i];
+                        const question_id = question_data["id"];
+                        const question_type = question_data["id_question_type"];
+                        const question_name = question_data["name"];
+                        const question_parameters = question_data["parameters"];
+                        const question_mandatory = question_data["mandatory"];
+                        if (question_type === 1) {
+                            // Short Answer
+                            let question_placeholder = "";
+                            if (question_parameters !== null && typeof question_parameters["user-property-short-placeholder"] !== 'undefined') {
+                                question_placeholder = question_parameters["user-property-short-placeholder"];
+                            }
+                            const required_flag = question_mandatory ? "required" : "";
+                            const question_elem = document.DOMFactory.elementWithId("quiz-short", question_name, question_id, question_placeholder, required_flag);
+                            quiz_body.append(question_elem);
+                        }
+                        else if (question_type === 2)
+                        {
+                            // Paragraph
+                            let question_placeholder = "";
+                            if (question_parameters !== null && typeof question_parameters["user-property-short-placeholder"] !== 'undefined') {
+                                question_placeholder = question_parameters["user-property-short-placeholder"];
+                            }
+                            const required_flag = question_mandatory ? "required" : "";
+                            const question_elem = document.DOMFactory.elementWithId("quiz-paragraph", question_name, question_id, question_placeholder, required_flag);
+                            quiz_body.append(question_elem);
+                        }
+                        else if (question_type === 3)
+                        {
+                            // Radio boxes
+                            const question_elem = document.DOMFactory.elementWithId("quiz-radio", question_name);
+                            const option_list = question_elem.find(".option-list");
+                            if (question_parameters !== null && typeof question_parameters["user-options"] !== 'undefined' && question_parameters["user-default"] !== 'undefined') {
+                                const user_options = question_parameters["user-options"];
+                                const user_default = question_parameters["user-default"];
+                                for (let j in user_options) {
+                                    const user_option = user_options[j];
+                                    const option_id = parseInt(user_option["name"].split("-")[2]);
+                                    let check_flag = "";
+                                    if ($.inArray(option_id, user_default) >= 0) {
+                                        check_flag = "checked";
+                                    }
+                                    const option_elem = document.DOMFactory.elementWithId("quiz-radio-option", user_option["value"], question_id, user_option["name"], check_flag);
+                                    option_list.append(option_elem);
+                                }
+                            }
+                            quiz_body.append(question_elem);
+                        }
+                        else if (question_type === 4)
+                        {
+                            // Check boxes
+                            const question_elem = document.DOMFactory.elementWithId("quiz-checkbox", question_name);
+                            const option_list = question_elem.find(".option-list");
+                            if (question_parameters !== null && typeof question_parameters["user-options"] !== 'undefined' && question_parameters["user-default"] !== 'undefined') {
+                                const user_options = question_parameters["user-options"];
+                                const user_default = question_parameters["user-default"];
+                                for (let j in user_options) {
+                                    const user_option = user_options[j];
+                                    const option_id = parseInt(user_option["name"].split("-")[2]);
+                                    let check_flag = "";
+                                    if ($.inArray(option_id, user_default) >= 0) {
+                                        check_flag = "checked";
+                                    }
+                                    const option_elem = document.DOMFactory.elementWithId("quiz-checkbox-option", user_option["value"], question_id, user_option["name"], check_flag);
+                                    option_list.append(option_elem);
+                                }
+                            }
+                            quiz_body.append(question_elem);
+                        }
+                        else if (question_type === 5)
+                        {
+                            // Dropdown list
+                            let option_list = "";
+                            if (question_parameters !== null && typeof question_parameters["user-options"] !== 'undefined') {
+                                const user_options = question_parameters["user-options"];
+                                for (let j in user_options) {
+                                    const user_option = user_options[j];
+                                    option_list += '<option value="' + user_option["name"] + '">' + user_option["value"] + '</option>';
+                                }
+                            }
+                            let multiple_flag = "";
+                            if (question_parameters !== null && typeof question_parameters["user-property-dropdown-multiple"] !== 'undefined') {
+                                multiple_flag = "multiple";
+                            }
+                            const question_elem = document.DOMFactory.elementWithId("quiz-dropdown", question_name, question_id, option_list, multiple_flag);
+                            quiz_body.append(question_elem);
+                        }
+                    }
                 }
             }
 
@@ -70,6 +162,119 @@
             }
 
         });
+    </script>
+    <script id="template-quiz-short" type="text/plain" language="text">
+        <!-- Short Answer -->
+        <div class="question-block">
+            <div class="row">
+                <span class="question-title col-xs-12">
+                    {1}
+                </span>
+            </div>
+            <div class="question-answer">
+                <div class="row">
+                    <div class="col-xs-12 col-md-10 col-lg-8">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="question-{2}" placeholder="{3}"
+                                       value="" {4}>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-edit"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script id="template-quiz-paragraph" type="text/plain" language="text">
+        <!-- Paragraph -->
+        <div class="question-block">
+            <div class="row">
+                <span class="question-title col-xs-12">
+                    {1}
+                </span>
+            </div>
+            <div class="question-answer">
+                <div class="row">
+                    <div class="col-xs-12 col-md-10 col-lg-8">
+                        <div class="form-group">
+                            <textarea rows="6" class="form-control" name="question-{2}" placeholder="{3}" {4}></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script id="template-quiz-radio-option" type="text/plain" language="text">
+        <div class="col-sm-6 col-md-4 col-lg-2">
+            <div class="radio">
+                <label class="radio-inline">
+                    <input type="radio" name="question-{2}" value="{3}" {4}>{1}
+                </label>
+            </div>
+        </div>
+    </script>
+    <script id="template-quiz-radio" type="text/plain" language="text">
+        <!-- Radio Boxes -->
+        <div class="question-block">
+            <div class="row">
+                <span class="question-title col-xs-12">
+                    {1}
+                </span>
+            </div>
+            <div class="question-answer">
+                <div class="row option-list">
+
+                </div>
+            </div>
+        </div>
+    </script>
+    <script id="template-quiz-checkbox-option" type="text/plain" language="text">
+        <div class="col-sm-6 col-md-4 col-lg-2">
+            <div class="checkbox">
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="question-{2}" value="{3}" {4}>{1}
+                </label>
+            </div>
+        </div>
+    </script>
+    <script id="template-quiz-checkbox" type="text/plain" language="text">
+        <!-- Checkboxes -->
+        <div class="question-block">
+            <div class="row">
+                <span class="question-title col-xs-12">
+                    {1}
+                </span>
+            </div>
+            <div class="question-answer">
+                <div class="row option-list">
+
+                </div>
+            </div>
+        </div>
+    </script>
+    <script id="template-quiz-dropdown" type="text/plain" language="text">
+        <!-- Dropdown list -->
+        <div class="question-block">
+            <div class="row">
+                <span class="question-title col-xs-12">
+                    {1}
+                </span>
+            </div>
+            <div class="question-answer">
+                <div class="row">
+                    <div class="col-xs-12 col-md-10 col-lg-8">
+                        <div class="form-group">
+                            <select class="form-control option-list" name="question-{2}" {4}>
+                                {3}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </script>
 </head>
 
@@ -93,11 +298,11 @@
 <div layout:fragment="container">
 
     <div class="quiz">
-        <form th:action="@{/student/quiz/submit}" method="post">
+        <form th:action="@{/student/questionnaire/submit}" method="post">
             <input id="quiz-id" type="hidden" name="id_quiz" value="">
 
             <div class="quiz-well">
-                <button class="btn btn-default quiz-close">
+                <button type="button" class="btn btn-default quiz-close">
                     Exit Survey
                 </button>
                 <div class="quiz-title"></div>
@@ -105,159 +310,16 @@
 
             <div class="quiz-body">
 
-                <!-- Short Answer -->
-                <div class="question-block">
-                    <div class="row">
-                        <span class="question-title col-xs-12">
-                            What is your favourite color?
-                        </span>
-                    </div>
-                    <div class="question-answer">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" name="question-1" placeholder=""
-                                               value="">
-                                        <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-edit"></span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Paragraph -->
-                <div class="question-block">
-                    <div class="row">
-                        <span class="question-title col-xs-12">
-                            Do you have some better ideas or advices?
-                        </span>
-                    </div>
-                    <div class="question-answer">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="form-group">
-                                    <textarea rows="6" class="form-control" name="question-2" placeholder=""></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Checkboxes -->
-                <div class="question-block">
-                    <div class="row">
-                        <span class="question-title col-xs-12">
-                            Select your favourite programming languages.
-                        </span>
-                    </div>
-                    <div class="question-answer">
-                        <div class="row">
-                            <div class="col-sm-6 col-md-4 col-lg-2">
-                                <div class="checkbox">
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="question-3" value="1">C
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-md-4 col-lg-2">
-                                <div class="checkbox">
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="question-3" value="2" checked>C++
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-md-4 col-lg-2">
-                                <div class="checkbox">
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="question-3" value="3">Java
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-md-4 col-lg-2">
-                                <div class="checkbox">
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="question-3" value="4" checked>Objective-C
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-md-4 col-lg-2">
-                                <div class="checkbox">
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="question-3" value="5">PHP
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-md-4 col-lg-2">
-                                <div class="checkbox">
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="question-3" value="6">Javascript
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-md-4 col-lg-2">
-                                <div class="checkbox">
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="question-3" value="7" checked>Swift
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-md-4 col-lg-2">
-                                <div class="checkbox">
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="question-3" value="8">C#
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-md-4 col-lg-2">
-                                <div class="checkbox">
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="question-3" value="9" checked>Python
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Radio Boxes -->
-                <div class="question-block">
-                    <div class="row">
-                        <span class="question-title col-xs-12">
-                            Your gender?
-                        </span>
-                    </div>
-                    <div class="question-answer">
-                        <div class="row">
-                            <div class="col-sm-6 col-md-4 col-lg-2">
-                                <div class="radio">
-                                    <label class="radio-inline">
-                                        <input type="radio" name="question-4" value="1" checked>Male
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-md-4 col-lg-2">
-                                <div class="radio">
-                                    <label class="radio-inline">
-                                        <input type="radio" name="question-4" value="2">Female
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-md-4 col-lg-2">
-                                <div class="radio">
-                                    <label class="radio-inline">
-                                        <input type="radio" name="question-4" value="3">Asexual
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
+
+            <div class="quiz-footer">
+                <div class="quiz-actions">
+                    <button type="submit" class="btn btn-success">
+                        Submit Survey
+                    </button>
+                </div>
+            </div>
+
         </form>
     </div>
 

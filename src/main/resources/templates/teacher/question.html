@@ -147,7 +147,7 @@
                     $.each(parameters_property_element, function (index, value) {
                         const elem_type = $(value).attr("type");
                         const elem_name = $(value).attr("name");
-                        if (elem_type === "text") {
+                        if (elem_type === "text" || elem_type === "number") {
                             parameters[elem_name] = $(value).val();
                         } else if (elem_type === "checkbox") {
                             if ($(value).is(':checked')) {
