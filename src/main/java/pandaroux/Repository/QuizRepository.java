@@ -19,4 +19,7 @@ public interface QuizRepository extends CrudRepository<Quiz, Integer> {
 
     @Query("SELECT q.id AS id, q.name AS name, q.active AS active, q.date_start AS date_start, q.date_end AS date_end, q.teacher.id AS id_teacher, q.groupe.id AS id_groupe, q.groupe.name AS groupe_name FROM Quiz q WHERE q.teacher.id = ?1")
     List<Map> getTeacherQuizzes(int id_teacher);
+
+    @Query("SELECT q.id AS id, q.name AS name, q.active AS active, q.date_start AS date_start, q.date_end AS date_end, q.teacher.id AS id_teacher, q.groupe.id AS id_groupe, q.groupe.name AS groupe_name FROM Quiz q JOIN q.groupe.students s WHERE q.date_start <= CURRENT_DATE AND q.date_end >= CURRENT_DATE AND s.id = ?1")
+    List<Map> getStudentQuizzes(int userId);
 }

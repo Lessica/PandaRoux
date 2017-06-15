@@ -3,7 +3,9 @@ package pandaroux.API;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pandaroux.Service.Entity.AnswerService;
+import pandaroux.Service.SecurityService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.Map;
 
@@ -28,6 +30,12 @@ public class AnswerAPI {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public Map add(@RequestBody Map answer) throws ParseException {
         return answerService.add(answer);
+    }
+
+    @RequestMapping(value = "/quiz", method = RequestMethod.POST)
+    public Map quiz(@RequestBody Map answers,
+                    HttpServletRequest request) throws Exception {
+        return answerService.quiz(answers, SecurityService.getUserId(request));
     }
 
 

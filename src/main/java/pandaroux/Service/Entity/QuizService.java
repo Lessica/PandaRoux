@@ -156,4 +156,13 @@ public class QuizService {
 
         return data;
     }
+
+    public Map getStudentQuizzes(int userId) {
+
+        Map data = new HashMap();
+        data.put("result", "succeed");
+        data.put("quizzes", quizRepository.getStudentQuizzes(userId));
+
+        return data;
+    }
 }

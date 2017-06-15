@@ -14,12 +14,6 @@ public class QuestionType {
     @Column(unique = true)
     private String name;
 
-    @Column
-    private String jsonParameters;
-
-    @Column
-    private String jsonAnswer;
-
 
     public QuestionType() {}
 
@@ -38,21 +32,5 @@ public class QuestionType {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getJsonParameters() {
-        return jsonParameters;
-    }
-
-    public void setJsonParameters(String jsonParameters) {
-        this.jsonParameters = jsonParameters;
-    }
-
-    public String getJsonAnswer() {
-        return jsonAnswer;
-    }
-
-    public void setJsonAnswer(String jsonAnswer) {
-        this.jsonAnswer = jsonAnswer;
     }
 }

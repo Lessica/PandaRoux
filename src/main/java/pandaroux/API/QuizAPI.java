@@ -37,4 +37,9 @@ public class QuizAPI {
     public Map getTeacherQuizzes(HttpServletRequest request) throws Exception {
         return quizService.getTeacherQuizzes(SecurityService.getUserId(request));
     }
+
+    @RequestMapping(value = "/student", method = RequestMethod.POST)
+    public Map getStudentQuizzes(HttpServletRequest request) throws Exception {
+        return quizService.getStudentQuizzes(SecurityService.getUserId(request));
+    }
 }

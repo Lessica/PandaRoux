@@ -76,8 +76,8 @@ public class DefaultController {
         return SecurityService.fireWall("student/group-detail", request, new String[] {"eleve"});
     }
 
-    @RequestMapping(value = "/student/questionnaire/{id}")
-    public String studentQuizDetail(@PathVariable("id") int id, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/student/questionnaire")
+    public String studentQuizDetail(HttpServletRequest request) throws Exception {
         return SecurityService.fireWall("student/questionnaire", request, new String[] {"eleve"});
     }
 
