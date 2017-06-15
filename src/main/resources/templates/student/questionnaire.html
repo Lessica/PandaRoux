@@ -28,7 +28,7 @@
                     });
                 }
                 answerQuiz(callback, data) {
-                    $.ajax("/api/answer/quiz", {
+                    $.ajax("/api/answer/add/quiz", {
                         data: JSON.stringify(data),
                         success: callback
                     });

@@ -105,8 +105,6 @@ public class AnswerService {
 
     public Map quiz(Map answers, int id_student) {
 
-        System.out.println(answers);
-
         int id_quiz = (int) answers.get("id_quiz");
         List<Map> questions = (List<Map>) answers.get("questions");
 
@@ -135,6 +133,13 @@ public class AnswerService {
         Map data = new HashMap();
         data.put("result", "succeed");
 
+        return data;
+    }
+
+    public Map answersForQuiz(int id_quiz, int userId) {
+        Map data = new HashMap();
+        data.put("result", "succeed");
+        data.put("answers", answerRepository.getAnswerUserStatistic(userId, id_quiz));
         return data;
     }
 }

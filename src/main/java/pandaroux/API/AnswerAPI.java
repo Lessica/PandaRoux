@@ -29,11 +29,16 @@ public class AnswerAPI {
         return answerService.add(answer);
     }
 
-    @RequestMapping(value = "/quiz", method = RequestMethod.POST)
-    public Map quiz(@RequestBody Map answers,
+    @RequestMapping(value = "/add/quiz", method = RequestMethod.POST)
+    public Map addByQuiz(@RequestBody Map answers,
                     HttpServletRequest request) throws Exception {
         return answerService.quiz(answers, SecurityService.getUserId(request));
     }
 
+    @RequestMapping(value = "/quiz/{id}", method = RequestMethod.POST)
+    public Map answersForQuiz(@PathVariable("id") int id_quiz,
+                            HttpServletRequest request) throws Exception {
+        return answerService.answersForQuiz(id_quiz, SecurityService.getUserId(request));
+    }
 
 }
