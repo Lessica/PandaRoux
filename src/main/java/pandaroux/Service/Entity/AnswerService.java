@@ -6,10 +6,7 @@ import org.springframework.stereotype.Service;
 import pandaroux.Entity.Answer;
 import pandaroux.Entity.Quiz_question;
 import pandaroux.Entity.User;
-import pandaroux.Repository.AnswerRepository;
-import pandaroux.Repository.QuestionRepository;
-import pandaroux.Repository.Quiz_questionRepository;
-import pandaroux.Repository.UserRepository;
+import pandaroux.Repository.*;
 import pandaroux.Service.ParametersService;
 
 import java.text.DateFormat;
@@ -29,9 +26,14 @@ public class AnswerService {
     @Autowired
     private Quiz_questionRepository quiz_questionRepository;
 
-
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private QuizRepository quizRepository;
     
 
     public Map add(Map answer) throws ParseException {
@@ -99,5 +101,40 @@ public class AnswerService {
     public Map getAnswer(int id) {
 
         return null;
+    }
+
+    public Map quiz(Map answers, int id_student) {
+
+        System.out.println(answers);
+
+        int id_quiz = (int) answers.get("id_quiz");
+        List<Map> questions = (List<Map>) answers.get("questions");
+
+        for (Map question : questions) {
+
+            int id_question = (int) question.get("id_question");
+
+            Answer answer = new Answer();
+
+            answer.setDate(new Date());
+            answer.setQuiz_question(quiz_questionRepository.findOneQuiz_question(id_quiz, id_question));
+            answer.setStudent(userRepository.findOne(id_student));
+
+
+            if (question.containsKey("text")) {
+                answer.setText((String) question.get("text"));
+            }
+
+            if (question.containsKey("parameters")) {
+                answer.setJsonParameters(new Gson().toJson(question.get("parameters"), Object.class));
+            }
+
+            answerRepository.save(answer);
+        }
+
+        Map data = new HashMap();
+        data.put("result", "succeed");
+
+        return data;
     }
 }

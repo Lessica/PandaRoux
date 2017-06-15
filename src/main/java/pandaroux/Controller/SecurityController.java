@@ -39,7 +39,7 @@ public class SecurityController {
                 setName("Not on isep network");
                 setFirst_name("test");
                 setRole(new Role() {{
-                    setName("prof");
+                    setName("eleve");
                 }});
             }});
         }};

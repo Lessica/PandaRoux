@@ -21,8 +21,8 @@
 
                 data.quizzes.forEach(function(quiz) {
                     html += quizButtonHtlm
-                        .replace("{quizId}", questionnaire.id)
-                        .replace("{quizName}", questionnaire.name);
+                        .replace("{quizId}", quiz.id)
+                        .replace("{quizName}", quiz.name);
                 });
 
                 $('#search-quiz-list').html(html);
@@ -39,11 +39,11 @@
 
             $.ajax({ url: "/api/quiz/"+id_quiz, success: function(quiz) {
 
-                var html = $('#block-quiz-detail').text().replace('{quizName}', questionnaire.name);
+                var html = $('#block-quiz-detail').text().replace('{quizName}', quiz.name);
 
                 var questionHtml = "";
 
-                questionnaire.questions.forEach(function(question) {
+                quiz.questions.forEach(function(question) {
 
                     questionHtml += questionToHtml(question);
                 });
@@ -315,7 +315,7 @@
             </div>
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav" layout:fragment="nav-content">
-                    <li><a th:href="@{/student/group}">Group</a></li>
+                    <li><a th:href="@{/student/group}">Group</a>
                     <li class="active"><a th:href="@{/student/questionnaire}">Questionnaire</a></li>
                 </ul>
             </div>
