@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="site-base">
+<head>
+    <title>Quiz</title>
+
+    <!-- script -->
+    <script>
+        // global variable
+        var id_quiz = null;
+
+        $(document).ready(function () {
+
+            var quizButtonHtlm = $('#block-quiz-button').text();
+
+            $.ajax({ url: "/api/quiz/student", success: function(data) {
+
+                var html = "";
+
+                data.quizzes.forEach(function(quiz) {
+                    html += quizButtonHtlm
+                        .replace("{quizId}", quiz.id)
+                        .replace("{quizName}", quiz.name);
+                });
+
+                $('#search-quiz-list').html(html);
+            }
+            });
+        });
+
+        function selectQuiz(div) {
+
+            $('#search-quiz-list button').removeClass('btn-primary');
+            $(div).addClass('btn-primary');
+
+            id_quiz = $(div).data('quizid')
+
+            $.ajax({ url: "/api/quiz/"+id_quiz, success: function(quiz) {
+
+                var html = $('#block-quiz-detail').text().replace('{quizName}', quiz.name);
+
+                var questionHtml = "";
+
+                quiz.questions.forEach(function(question) {
+
+                    questionHtml += questionToHtml(question);
+                });
+
+                html = html.replace('{quizQuestions}', questionHtml);
+
+                $('#quiz-detail').html(html);
+
+            }});
+        }
+
+        function questionToHtml(question) {
+
+            console.log(question);
+
+            var html = "";
+
+            switch (question.id_question_type) {
+
+                case 1:  // Short Answer
+                    html =  $('.block-quiz-question[data-questiontypeid="1"]').text();
+                    break;
+
+                case 2: // Paragraph
+                    html =  $('.block-quiz-question[data-questiontypeid="2"]').text();
+                    break;
+
+                case 3: // Radio Boxes
+                    html =  $('.block-quiz-question[data-questiontypeid="3"]').text();
+
+                    var optionHtml = $('.block-quiz-option[data-questiontypeid="3"]').text();
+
+                    var optionsHtml = "";
+
+                    question.parameters['user-options'].forEach(function (option) {
+
+                        optionsHtml += optionHtml
+                            .replace('{questionName}', 'option-'+question.id)
+                            .replace('{optionId}', option.name.split('-')[2])
+                            .replace('{optionName}', option.value);
+                    });
+
+                    html = html.replace('{questionOptions}', optionsHtml);
+
+                    break;
+
+                case 4: // Check Boxes
+                    html =  $('.block-quiz-question[data-questiontypeid="4"]').text();
+
+                    var optionHtml = $('.block-quiz-option[data-questiontypeid="4"]').text();
+
+                    var optionsHtml = "";
+
+                    question.parameters['user-options'].forEach(function (option) {
+
+                        optionsHtml += optionHtml
+                            .replace('{optionId}', option.name.split('-')[2])
+                            .replace('{optionName}', option.value);
+                    });
+
+                    html = html.replace('{questionOptions}', optionsHtml);
+
+                    break;
+
+                case 5: // Dropdown List
+                    html =  $('.block-quiz-question[data-questiontypeid="5"]').text();
+
+                    var optionHtml = $('.block-quiz-option[data-questiontypeid="5"]').text();
+
+                    var optionsHtml = "";
+
+                    question.parameters['user-options'].forEach(function (option) {
+
+                        var id_option = option.name.split('-')[2];
+
+                        optionsHtml += optionHtml
+                            .replace('{optionId}', id_option)
+                            .replace('{optionName}', option.value);
+
+                        if (question.parameters['user-default'].indexOf(id_option) != -1) {
+                            optionHtml.replace('{questionOptionSelected}', 'selected')
+                        }
+                    });
+
+                    html = html.replace('{questionOption}', optionsHtml);
+
+                    break;
+            }
+
+<<<<<<< HEAD
+            html = html
+                .replace('{questionName}', question.name)
+                .replace('{questionId}', question.id);
+
+            return html;
+        }
+        
+        function submitForm() {
+=======
+            class MyQuizController {
+                constructor() {
+                    this.DOM = {
+                        quizForm: $("#quiz-form"),
+                        quidId: $("#quiz-id"),
+                        quizTitle: $(".quiz-title"),
+                        quizCloseButton: $(".quiz-close"),
+                        quizSubmitButton: $("#quiz-submit"),
+                        quizBody: $(".quiz-body")
+                    };
+                    const href = window.location.href;
+                    const pattern = /\/student\/questionnaire\/(\d+)/;
+                    this.quiz_id = parseInt(href.match(pattern)[1]);
+                    this.bindEvent();
+                    this.load();
+                }
+
+                bindEvent() {
+                    this.DOM.quizCloseButton.click($.proxy(function (event) {
+                        swal({
+                            title: "Exit Confirm",
+                            text: "Do you want to close this window?\nAll changes will be lost!",
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#DD6B55",
+                            confirmButtonText: "Yes, close it!",
+                            closeOnConfirm: false,
+                            html: false
+                        }, $.proxy(function () {
+                            window.close();
+                        }, this));
+                    }, this));
+                    this.DOM.quizSubmitButton.click($.proxy(function (event) {
+                        swal({
+                            title: "Submit Confirm",
+                            text: "Do you want to submit this survey?\nNo change will be allowed after submission!",
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#DD6B55",
+                            confirmButtonText: "Yes, submit!",
+                            closeOnConfirm: false,
+                            html: false
+                        }, $.proxy(function () {
+                            this.DOM.quizForm.submit();
+                        }, this));
+                    }, this));
+                }
+>>>>>>> origin/master
+
+
+<<<<<<< HEAD
+            var questionsDetails = [];
+
+            $('#form .question-form').each(function () {
+
+                // console.log($(this));
+
+                var questionDetail = {
+                    'id_question': $(this).data('questionid')
+                };
+
+                switch ($(this).data('questiontypeid')) {
+
+                    case 1: // Short Answer
+
+                        questionDetail['text'] = $(this).find('textarea').val();
+
+                        break;
+
+                    case 2: // Paragraph
+
+                        questionDetail['text'] = $(this).find('textarea').val();
+
+                        break;
+
+                    case 3: // Radio Boxes
+
+                        questionDetail['parameters'] = parseInt($(this).find('input:checked').val())    ;
+
+                        break;
+
+                    case 4: // Check Boxes
+
+                        var parameters = [];
+
+                        $(this).find('input:checked').each(function() {
+                            parameters.push(parseInt($(this).val()));
+                        });
+
+                        questionDetail['parameters'] = parameters;
+
+                        break;
+
+                    case 5: // Dropdown List
+
+                        questionDetail['parameters'] = parseInt($(this).find('option:selected').val());
+
+                        break;
+=======
+                lockView (lock) {
+                    this.DOM.quizBody.find("input, select, button").each(function () {
+                        if (typeof this.disabled !== "undefined") this.disabled = lock;
+                    });
+                }
+
+                loadQuizDetail(resp) {
+                    console.log(resp);
+                    const quiz_id = resp["id"];
+                    this.DOM.quidId.val(quiz_id);
+                    const quiz_name = resp["name"];
+                    $("title").text(quiz_name + " | PandaRoux");
+                    $("#nav-title").text(quiz_name);
+                    this.DOM.quizTitle.text(quiz_name);
+                    const quiz_active = resp["active"];
+                    if (!quiz_active) {
+                        swal("Oops...", "This questionnaire is no longer available!", "error");
+                        this.DOM.quizSubmitButton.hide();
+                        return;
+                    }
+                    const now_sec = new Date().getTime();
+                    const date_start_sec = Date.parse(resp["date_start"]);
+                    const date_end_sec = Date.parse(resp["date_end"]);
+                    if (date_start_sec > now_sec) {
+                        swal("Oops...", "This questionnaire is not available now!", "error");
+                        this.DOM.quizSubmitButton.hide();
+                        return;
+                    } else if (date_end_sec < now_sec) {
+                        this.DOM.quizSubmitButton.hide();
+                    }
+                    const quiz_body = this.DOM.quizBody;
+                    const question_list_data = resp["questions"];
+                    for (let i in question_list_data) {
+                        const question_data = question_list_data[i];
+                        const question_id = question_data["id"];
+                        const question_type = question_data["id_question_type"];
+                        const question_name = question_data["name"];
+                        const question_parameters = question_data["parameters"];
+                        const question_mandatory = question_data["mandatory"];
+                        if (question_type === 1) {
+                            // Short Answer
+                            let question_placeholder = "";
+                            if (question_parameters !== null && typeof question_parameters["user-property-short-placeholder"] !== 'undefined') {
+                                question_placeholder = question_parameters["user-property-short-placeholder"];
+                            }
+                            const required_flag = question_mandatory ? "required" : "";
+                            const question_elem = document.DOMFactory.elementWithId("quiz-short", question_name, question_id, question_placeholder, required_flag);
+                            quiz_body.append(question_elem);
+                        }
+                        else if (question_type === 2)
+                        {
+                            // Paragraph
+                            let question_placeholder = "";
+                            if (question_parameters !== null && typeof question_parameters["user-property-short-placeholder"] !== 'undefined') {
+                                question_placeholder = question_parameters["user-property-short-placeholder"];
+                            }
+                            const required_flag = question_mandatory ? "required" : "";
+                            const question_elem = document.DOMFactory.elementWithId("quiz-paragraph", question_name, question_id, question_placeholder, required_flag);
+                            quiz_body.append(question_elem);
+                        }
+                        else if (question_type === 3)
+                        {
+                            // Radio boxes
+                            const question_elem = document.DOMFactory.elementWithId("quiz-radio", question_name);
+                            const option_list = question_elem.find(".option-list");
+                            if (question_parameters !== null && typeof question_parameters["user-options"] !== 'undefined' && question_parameters["user-default"] !== 'undefined') {
+                                const user_options = question_parameters["user-options"];
+                                const user_default = question_parameters["user-default"];
+                                for (let j in user_options) {
+                                    const user_option = user_options[j];
+                                    const option_id = parseInt(user_option["name"].split("-")[2]);
+                                    let check_flag = "";
+                                    if ($.inArray(option_id, user_default) >= 0) {
+                                        check_flag = "checked";
+                                    }
+                                    const option_elem = document.DOMFactory.elementWithId("quiz-radio-option", user_option["value"], question_id, user_option["name"], check_flag);
+                                    option_list.append(option_elem);
+                                }
+                            }
+                            quiz_body.append(question_elem);
+                        }
+                        else if (question_type === 4)
+                        {
+                            // Check boxes
+                            const question_elem = document.DOMFactory.elementWithId("quiz-checkbox", question_name);
+                            const option_list = question_elem.find(".option-list");
+                            if (question_parameters !== null && typeof question_parameters["user-options"] !== 'undefined' && question_parameters["user-default"] !== 'undefined') {
+                                const user_options = question_parameters["user-options"];
+                                const user_default = question_parameters["user-default"];
+                                for (let j in user_options) {
+                                    const user_option = user_options[j];
+                                    const option_id = parseInt(user_option["name"].split("-")[2]);
+                                    let check_flag = "";
+                                    if ($.inArray(option_id, user_default) >= 0) {
+                                        check_flag = "checked";
+                                    }
+                                    const option_elem = document.DOMFactory.elementWithId("quiz-checkbox-option", user_option["value"], question_id, user_option["name"], check_flag);
+                                    option_list.append(option_elem);
+                                }
+                            }
+                            quiz_body.append(question_elem);
+                        }
+                        else if (question_type === 5)
+                        {
+                            // Dropdown list
+                            let option_list = "";
+                            if (question_parameters !== null && typeof question_parameters["user-options"] !== 'undefined') {
+                                const user_options = question_parameters["user-options"];
+                                for (let j in user_options) {
+                                    const user_option = user_options[j];
+                                    option_list += '<option value="' + user_option["name"] + '">' + user_option["value"] + '</option>';
+                                }
+                            }
+                            let multiple_flag = "";
+                            if (question_parameters !== null && typeof question_parameters["user-property-dropdown-multiple"] !== 'undefined') {
+                                multiple_flag = "multiple";
+                            }
+                            const question_elem = document.DOMFactory.elementWithId("quiz-dropdown", question_name, question_id, option_list, multiple_flag);
+                            quiz_body.append(question_elem);
+                        }
+                    }
+                    if (date_end_sec < now_sec) {
+                        this.lockView(true);
+                    }
+>>>>>>> origin/master
+                }
+
+                questionsDetails.push(questionDetail);
+
+            });
+
+            var dataAnswers = {
+                'questions': questionsDetails,
+                'id_quiz': id_quiz
+            };
+
+            console.log(JSON.stringify(dataAnswers));
+
+            $.ajax({
+                url: '/api/answer/quiz',
+                data: JSON.stringify(dataAnswers),
+                success: swal("Quiz send", "success", "success")
+            });
+        }
+
+    </script>
+<<<<<<< HEAD
+=======
+    <script id="template-quiz-short" type="text/plain" language="text">
+        <!-- Short Answer -->
+        <div class="question-block">
+            <div class="row">
+                <span class="question-title col-xs-12">
+                    {1}
+                </span>
+            </div>
+            <div class="question-answer">
+                <div class="row">
+                    <div class="col-xs-12 col-md-10 col-lg-8">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="question-{2}" placeholder="{3}"
+                                       value="" {4}>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-edit"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script id="template-quiz-paragraph" type="text/plain" language="text">
+        <!-- Paragraph -->
+        <div class="question-block">
+            <div class="row">
+                <span class="question-title col-xs-12">
+                    {1}
+                </span>
+            </div>
+            <div class="question-answer">
+                <div class="row">
+                    <div class="col-xs-12 col-md-10 col-lg-8">
+                        <div class="form-group">
+                            <textarea rows="6" class="form-control" name="question-{2}" placeholder="{3}" {4}></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script id="template-quiz-radio-option" type="text/plain" language="text">
+        <div class="col-sm-6 col-md-4 col-lg-2">
+            <div class="radio">
+                <label class="radio-inline">
+                    <input type="radio" name="question-{2}" value="{3}" {4}>{1}
+                </label>
+            </div>
+        </div>
+    </script>
+    <script id="template-quiz-radio" type="text/plain" language="text">
+        <!-- Radio Boxes -->
+        <div class="question-block">
+            <div class="row">
+                <span class="question-title col-xs-12">
+                    {1}
+                </span>
+            </div>
+            <div class="question-answer">
+                <div class="row option-list">
+
+                </div>
+            </div>
+        </div>
+    </script>
+    <script id="template-quiz-checkbox-option" type="text/plain" language="text">
+        <div class="col-sm-6 col-md-4 col-lg-2">
+            <div class="checkbox">
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="question-{2}" value="{3}" {4}>{1}
+                </label>
+            </div>
+        </div>
+    </script>
+    <script id="template-quiz-checkbox" type="text/plain" language="text">
+        <!-- Checkboxes -->
+        <div class="question-block">
+            <div class="row">
+                <span class="question-title col-xs-12">
+                    {1}
+                </span>
+            </div>
+            <div class="question-answer">
+                <div class="row option-list">
+
+                </div>
+            </div>
+        </div>
+    </script>
+    <script id="template-quiz-dropdown" type="text/plain" language="text">
+        <!-- Dropdown list -->
+        <div class="question-block">
+            <div class="row">
+                <span class="question-title col-xs-12">
+                    {1}
+                </span>
+            </div>
+            <div class="question-answer">
+                <div class="row">
+                    <div class="col-xs-12 col-md-10 col-lg-8">
+                        <div class="form-group">
+                            <select class="form-control option-list" name="question-{2}" {4}>
+                                {3}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+</head>
+>>>>>>> origin/master
+
+    <!-- HTML component -->
+    <script id="block-quiz-button" type="text/html" >
+        <button type="button" class="btn btn-default btn-block question-button" data-quizid="{quizId}" onclick="selectQuiz(this)">
+            {quizName}
+            <span class="glyphicon glyphicon-chevron-right btn-icon float-right"></span>
+        </button>
+    </script>
+
+    <!-- main panel -->
+    <script id="block-quiz-detail" type="text/html" >
+        <div class="col-sm-8">
+            <div class="panel panel-default roux-panel">
+                <div class="panel-body">
+                    <div class="text-center">
+                        <h3>{quizName}</h3>
+                    </div>
+                    <div id="form">
+                        {quizQuestions}
+                        <br/>
+
+                        <div class="text-right">
+                            <button class="btn btn-success" onclick="submitForm()">Send</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <!-- Short Answer -->
+    <script class="block-quiz-question" data-questiontypeid="1" type="text/html" >
+        <div class="question-form" data-questionid="{questionId}" data-questiontypeid="1">
+            <h3>{questionName}</h3>
+            <textarea rows="3" class="form-control"></textarea>
+        </div>
+    </script>
+
+    <!-- Paragraph -->
+    <script class="block-quiz-question" data-questiontypeid="2" type="text/html" >
+        <div class="question-form" data-questionid="{questionId}" data-questiontypeid="2">
+            <h3>{questionName}</h3>
+            <textarea rows="6" class="form-control"></textarea>
+        </div>
+    </script>
+
+    <!-- Radio Boxes -->
+    <script class="block-quiz-question" data-questiontypeid="3" type="text/html" >
+        <div class="question-form" data-questionid="{questionId}" data-questiontypeid="3">
+            <h3>{questionName}</h3>
+            {questionOptions}
+        </div>
+    </script>
+    <!-- Radio Boxes option -->
+    <script class="block-quiz-option" data-questiontypeid="3" type="text/html">
+        <div class="radio">
+            <label><input type="radio" name="{questionName}" value="{optionId}">{optionName}</label>
+        </div>
+    </script>
+
+    <!-- Check Boxes -->
+    <script class="block-quiz-question" data-questiontypeid="4" type="text/html" >
+        <div class="question-form" data-questionid="{questionId}" data-questiontypeid="4">
+            <h3>{questionName}</h3>
+            {questionOptions}
+        </div>
+    </script>
+    <!-- Check Boxes option -->
+    <script class="block-quiz-option" data-questiontypeid="4" type="text/html">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" value="{optionId}">
+                {optionName}
+            </label>
+        </div>
+    </script>
+
+    <!-- Dropdown List -->
+    <script class="block-quiz-question" data-questiontypeid="5" type="text/html" >
+        <div class="question-form" data-questionid="{questionId}" data-questiontypeid="5">
+            <h3>{questionName}</h3>
+            <select class="form-control" {questionOptionSelected}>
+                {questionOption}
+            </select>
+        </div>
+    </script>
+    <!-- Dropdown option -->
+    <script class="block-quiz-option" data-questiontypeid="5" type="text/html">
+        <option value="{optionId}" {optionSelected}>{optionName}</option>
+    </script>
+
+<<<<<<< HEAD
+</head>
+<body>
+
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand header-brand" th:href="@{/student/index}" layout:fragment="nav-header">
+                    <img class="header-icon" th:src="@{/img/roux.png}" src="">
+                </a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav" layout:fragment="nav-content">
+                    <li><a th:href="@{/student/group}">Group</a>
+                    <li class="active"><a th:href="@{/student/questionnaire}">Questionnaire</a></li>
+                </ul>
+=======
+    <div class="quiz">
+        <form id="quiz-form" th:action="@{/student/questionnaire/submit}" method="post">
+            <input id="quiz-id" type="hidden" name="id_quiz" value="">
+
+            <div class="quiz-well">
+                <button type="button" class="btn btn-default quiz-close">
+                    Exit Survey
+                </button>
+                <div class="quiz-title"></div>
+>>>>>>> origin/master
+            </div>
+        </div>
+    </nav>
+
+    <div layout:fragment="container">
+
+<<<<<<< HEAD
+        <div class="row roux-row">
+
+            <!-- Question List Panel -->
+            <div class="col-sm-4">
+                <div class="panel panel-default roux-panel">
+                    <div class="panel-body">
+
+                        <div class="input-group">
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </span>
+                            <input type="text" id="search-question" class="form-control" placeholder="Search question">
+                        </div>
+                        <br>
+
+                        <div class="scroll-list">
+                            <div class="scroll-list-question">
+                                <div id="search-quiz-list" class="quiz-button-list"></div>
+                            </div>
+                        </div>
+                        <br>
+
+                    </div>
+                </div>
+            </div>
+=======
+            </div>
+
+            <div class="quiz-footer">
+                <div class="quiz-actions">
+                    <button id="quiz-submit" type="button" class="btn btn-success">
+                        Submit Survey
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+>>>>>>> origin/master
+
+            <div id="quiz-detail"></div>
+        </div>
+
+    </div>
+
+</body>
+</html>
