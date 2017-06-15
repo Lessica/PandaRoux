@@ -94,7 +94,6 @@
                                 return;
                             }
                             question_map["text"] = text_val;
-                            question_map["parameters"] = text_val;
                         }
                         else if (question_type === 2) {
                             const text_val = $("[name='question-" + question_id + "']").val();
@@ -103,13 +102,15 @@
                                 return;
                             }
                             question_map["text"] = text_val;
-                            question_map["parameters"] = text_val;
                         }
                         else if (question_type === 3 || question_type === 4) {
                             const arr_elem = $("[name='question-" + question_id + "']:checked");
                             const arr_val = [];
                             $.each(arr_elem, function (index, value) {
-                                arr_val.push($(value).val());
+                                arr_val.push({
+                                    "title": $(value).attr("title"),
+                                    "value": $(value).val()
+                                });
                             });
                             if (question_type === 4) {
                                 const count = arr_val.length;
@@ -126,7 +127,10 @@
                             const arr_elem = $("[name='question-" + question_id + "'] :selected");
                             const arr_val = [];
                             $.each(arr_elem, function (index, value) {
-                                arr_val.push($(value).val());
+                                arr_val.push({
+                                    "title": $(value).attr("title"),
+                                    "value": $(value).val()
+                                });
                             });
                             question_map["parameters"] = arr_val;
                         }
@@ -310,7 +314,7 @@
                                 const user_options = question_parameters["user-options"];
                                 for (let j in user_options) {
                                     const user_option = user_options[j];
-                                    option_list += '<option value="' + user_option["name"] + '">' + user_option["value"] + '</option>';
+                                    option_list += '<option title="' + user_option["value"] + '" value="' + user_option["name"] + '">' + user_option["value"] + '</option>';
                                 }
                             }
                             let multiple_flag = "";
@@ -382,7 +386,7 @@
         <div class="col-sm-6 col-md-4 col-lg-2">
             <div class="radio">
                 <label class="radio-inline">
-                    <input type="radio" name="question-{2}" value="{3}" {4}>{1}
+                    <input type="radio" title="{1}" name="question-{2}" value="{3}" {4}>{1}
                 </label>
             </div>
         </div>
@@ -406,7 +410,7 @@
         <div class="col-sm-6 col-md-4 col-lg-2">
             <div class="checkbox">
                 <label class="checkbox-inline">
-                    <input type="checkbox" name="question-{2}" value="{3}" {4}>{1}
+                    <input type="checkbox" title="{1}" name="question-{2}" value="{3}" {4}>{1}
                 </label>
             </div>
         </div>

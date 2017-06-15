@@ -16,13 +16,10 @@ public class AnswerAPI {
     @Autowired
     private AnswerService answerService;
 
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public Map getAnswer(@PathVariable("id") int id) {
         return answerService.getAnswer(id);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
     public Map getAnswers() {
         return answerService.getAnswers();
     }
