@@ -32,6 +32,7 @@
             class MyQuizController {
                 constructor() {
                     this.DOM = {
+                        quizForm: $("#quiz-form"),
                         quidId: $("#quiz-id"),
                         quizTitle: $(".quiz-title"),
                         quizCloseButton: $(".quiz-close"),
@@ -58,6 +59,20 @@
                             html: false
                         }, $.proxy(function () {
                             window.close();
+                        }, this));
+                    }, this));
+                    this.DOM.quizSubmitButton.click($.proxy(function (event) {
+                        swal({
+                            title: "Submit Confirm",
+                            text: "Do you want to submit this survey?\nNo change will be allowed after submission!",
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#DD6B55",
+                            confirmButtonText: "Yes, submit!",
+                            closeOnConfirm: false,
+                            html: false
+                        }, $.proxy(function () {
+                            this.DOM.quizForm.submit();
                         }, this));
                     }, this));
                 }
@@ -335,7 +350,7 @@
 <div layout:fragment="container">
 
     <div class="quiz">
-        <form th:action="@{/student/questionnaire/submit}" method="post">
+        <form id="quiz-form" th:action="@{/student/questionnaire/submit}" method="post">
             <input id="quiz-id" type="hidden" name="id_quiz" value="">
 
             <div class="quiz-well">
@@ -351,7 +366,7 @@
 
             <div class="quiz-footer">
                 <div class="quiz-actions">
-                    <button id="quiz-submit" type="submit" class="btn btn-success">
+                    <button id="quiz-submit" type="button" class="btn btn-success">
                         Submit Survey
                     </button>
                 </div>
