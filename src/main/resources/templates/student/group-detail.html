@@ -50,6 +50,7 @@
 
                 loadGroupDetail(resp) {
                     console.log(resp);
+                    $("title").text(resp["name"] + " | PandaRoux");
                     this.DOM.groupNameHeader.text(resp["name"]);
                     const lectures = resp["groupeDetails"]["lectures"];
                     const session_list = this.DOM.mySessionList;
@@ -105,15 +106,27 @@
                         } else if (date_end_sec < now_sec) {
                             panel_type = "default";
                         }
-                        const new_quiz_panel = document.DOMFactory.elementWithId("quiz-panel", quiz["name"], "panel-" + panel_type, "btn-" + panel_type, quiz["date_start"], quiz["date_end"]);
-                        const edit_button = new_quiz_panel.find(".edit-quiz");
-                        edit_button.data(quiz);
                         if (date_end_sec < now_sec) {
+                            const new_quiz_panel = document.DOMFactory.elementWithId("quiz-panel", quiz["name"], "panel-" + panel_type, "btn-" + panel_type, quiz["date_start"], quiz["date_end"], "View status", "glyphicon-search");
+                            const edit_button = new_quiz_panel.find(".edit-quiz");
+                            edit_button.data(quiz);
+                            edit_button.click($.proxy(this.editQuizButtonClicked, this));
                             quizzes_list.append(new_quiz_panel);
                         } else {
+                            const new_quiz_panel = document.DOMFactory.elementWithId("quiz-panel", quiz["name"], "panel-" + panel_type, "btn-" + panel_type, quiz["date_start"], quiz["date_end"], "Reply to", "glyphicon-edit");
+                            const edit_button = new_quiz_panel.find(".edit-quiz");
+                            edit_button.data(quiz);
+                            edit_button.click($.proxy(this.editQuizButtonClicked, this));
                             quizzes_list.prepend(new_quiz_panel);
                         }
                     }
+                }
+
+                editQuizButtonClicked(event) {
+                    const sender = $(event.currentTarget);
+                    const data = sender.data();
+                    console.log(data);
+                    window.open("/student/questionnaire/" + data["id"]);
                 }
 
             }
@@ -142,8 +155,8 @@
                     </div>
                     <hr />
                     <button type="button" class="btn {4} btn-block edit-session">
-                        <span class="glyphicon glyphicon-search"></span>
-                        Toggle Note
+                        <span class="glyphicon glyphicon-tags"></span>
+                        &nbsp;Toggle Note
                     </button>
                 </div>
             </div>
@@ -158,13 +171,13 @@
                 <div class="panel-body">
                     <div class="quiz-cover">
                         <div>
-                            From {4} To {5}
+                            From <u>{4}</u> To <u>{5}</u>
                         </div>
                     </div>
                     <hr />
                     <button type="button" class="btn {3} btn-block edit-quiz">
-                        <span class="glyphicon glyphicon-edit"></span>
-                        Reply to
+                        <span class="glyphicon {7}"></span>
+                        &nbsp;{6}
                     </button>
                 </div>
             </div>
