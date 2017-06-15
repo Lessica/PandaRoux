@@ -30,22 +30,22 @@
     (4, 1),
     (5, 1);
 
-  INSERT INTO pandaRoux.question_type (id, name, json_parameters, json_answer) VALUES
-    (1, 'Short Answer', null, 'I love this course ...'),
-    (2, 'Paragraph', null, 'I love this course ...'),
-    (3, 'Radio Boxes', '{"options": ["option 1", "option 2", "option 3"], "default": 1}', '2'),
-    (4, 'Check Boxes', '{"options": ["option 1", "option 2", "option 3"]}', '[0, 2]'),
-    (5, 'Dropdown List', '{"options": ["option 1", "option 2", "option 3"], "default": 1}', '1');
+  INSERT INTO pandaRoux.question_type (id, name) VALUES
+    (1, 'Short Answer'),
+    (2, 'Paragraph'),
+    (3, 'Radio Boxes'),
+    (4, 'Check Boxes'),
+    (5, 'Dropdown List');
 
-  INSERT INTO pandaRoux.question (id, name, has_commentary, mandatory, id_question_type, json_parameters, id_teacher) VALUES
-    (1, 'Question 1', true, true, 1, null, 1),
-    (2, 'Question 2', true, true, 2, null, 1),
-    (3, 'Question 3', true, true, 3, '{"options": ["option 1", "option 2", "option 3"], "default": 1}', 1),
-    (4, 'Question 4', true, true, 4, '{"options": ["option 1", "option 2", "option 3"]}', 1),
-    (5, 'Question 5', true, true, 5, '{"options": ["option 1", "option 2", "option 3"], "default": 1}', 1);
+  INSERT INTO pandaRoux.question (id, id_teacher, name, has_commentary, mandatory, id_question_type, json_parameters) VALUES
+    (1, 1, 'Question 1', true, true, 1, null),
+    (2, 1, 'Question 2', true, true, 2, null),
+    (3, 1, 'Question 3', true, true, 3, '{"user-options":[{"name":"user-radio-1","value":"Option 1"},{"name":"user-radio-2","value":"Option 2"}],"user-default":[1]}'),
+    (4, 1, 'Question 4', true, true, 4, '{"user-options":[{"name":"user-checkbox-1","value":"Option 1"},{"name":"user-checkbox-2","value":"Option 2"},{"name":"user-checkbox-3","value":"Option 3"},{"name":"user-checkbox-4","value":"Option 4"}],"user-default":[1,3]}'),
+    (5, 1, 'Question 5', true, true, 5, '{"user-property-dropdown-multiple":"checked","user-options":[{"name":"user-dropdown-1","value":"Option 1"},{"name":"user-dropdown-2","value":"Option 2"},{"name":"user-dropdown-3","value":"Option 3"}],"user-default":[]}');
 
   INSERT INTO pandaRoux.quiz (id, name, active, date_start, date_end, id_groupe, id_teacher) VALUES
-    (1, 'Quiz 1', true, '2017-03-03', '2017-03-05', 1, 1),
+    (1, 'Quiz 1', true, '2017-06-13', '2017-06-20', 1, 1),
     (2, 'Quiz 2', false, '2017-06-13', '2017-06-20', 1, 1),
     (3, 'Quiz 3', true, '2017-06-13', '2017-06-20', 1, 1),
     (4, 'Quiz 4', true, '2017-07-06', '2017-07-07', 1, 1),
